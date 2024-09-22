@@ -54,7 +54,7 @@ public class ClawColor extends LinearOpMode {
         // contain the value. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
         // for an explanation of HSV color.
         final float[] hsvValues = new float[3];
-
+        boolean ClawClose = false;
         // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
         // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
@@ -102,17 +102,30 @@ public class ClawColor extends LinearOpMode {
             if (colorSensor instanceof DistanceSensor) {
                 telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
             }
-            if (hsvValues[0] >= -10 && hsvValues[0] <= 50) {
-                telemetry.addData("Final Color", "Red");
-                claw.setPosition(0);
-                sleep(1000);
-                claw.setPosition(1);
+            if (hsvValues[0] == 0){
+                continue;
             }
-            else if (hsvValues[0] >= 200 && hsvValues[0] <= 300) {
-                telemetry.addData("Final Color", "Blue");
+            else if (hsvValues[0] >= -10 && hsvValues[0] <= 50) {
+                ClawClose = true;
             }
-            telemetry.update();
+            else if (hsvValues[0] >= 200 && hsvValues[0] <=280){
+                ClawClose = false;
+                telemetry.addData("Color is Blue", "Claw doesn't close.");
+            }
+            else {
+                ClawClose = false;
+                telemetry.addData("Color Is Not Seen", "Claw doesn't close");
+            }
 
+            telemetry.update();
+            if (ClawClose){
+             claw.setPosition(0.5);
+             telemetry.addData("close claw", "true");
+            }
+            else {
+                claw.setPosition(0);
+                telemetry.addData("close claw", "false");
+            }
             // Change the Robot Controller's background color to match the color detected by the color sensor.
             relativeLayout.post(new Runnable() {
                 public void run() {
