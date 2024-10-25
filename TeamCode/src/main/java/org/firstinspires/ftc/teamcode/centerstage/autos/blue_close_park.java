@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.centerstage.autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous
+@Disabled
 public class blue_close_park extends LinearOpMode {
     DcMotor backLeftMotor;
     DcMotor frontLeftMotor;

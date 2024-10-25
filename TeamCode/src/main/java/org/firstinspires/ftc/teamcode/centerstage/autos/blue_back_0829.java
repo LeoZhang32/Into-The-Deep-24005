@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Autonomous (name = "Blue Back Aug 29")
+@Disabled
 public final class blue_back_0829 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     double cX = 0;

@@ -42,10 +42,10 @@ public class test1 extends LinearOpMode{
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            frontLeft.setPower(frontLeftPower);
-            backLeft.setPower(backLeftPower);
-            frontRight.setPower(frontRightPower);
-            backRight.setPower(backRightPower);
+            frontLeft.setPower(frontLeftPower*0.75);
+            backLeft.setPower(backLeftPower*0.75);
+            frontRight.setPower(frontRightPower*0.75);
+            backRight.setPower(backRightPower*0.75);
         }
 
     }

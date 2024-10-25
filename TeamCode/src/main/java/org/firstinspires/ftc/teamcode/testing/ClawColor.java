@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp (name = "Color Claw Testing")
+@Disabled
 public class ClawColor extends LinearOpMode {
     NormalizedColorSensor colorSensor;
     Servo claw;

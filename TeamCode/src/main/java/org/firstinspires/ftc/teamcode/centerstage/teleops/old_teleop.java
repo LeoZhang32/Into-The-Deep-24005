@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.centerstage.teleops;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
+@Disabled
 public class old_teleop extends LinearOpMode {
     Servo claw;
     Servo clawPivot;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opencv_testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Autonomous
-
+@Disabled
 public class NewOpenCVTest extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     double cX = 0;

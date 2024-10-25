@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 import org.firstinspires.ftc.teamcode.rr.TuningOpModes;
 
 @Autonomous (name = "Blue Back Aug 26")
+@Disabled
 public final class blue_back_0826 extends LinearOpMode {
     //intake servo class
     public class IntakeDrop {
