@@ -192,20 +192,20 @@ public class test1 extends LinearOpMode{
             }
 
         if (intakeRight_extended){
-            intakeRight.setPosition(0.12);
-            telemetry.addData("intakeRightPos","0.12");
+            intakeRight.setPosition(0.16);
+            telemetry.addData("intakeRightPos","0.16");
             telemetry.update();
         }
         else {
-            intakeRight.setPosition(0.42); //this is the initial position
-            telemetry.addData("intakeRightPos","0.42");
+            intakeRight.setPosition(0.43); //this is the initial position
+            telemetry.addData("intakeRightPos","0.43");
             telemetry.update();
         }
         if (intakeLeft_extended){
-            intakeLeft.setPosition(0.88);
+            intakeLeft.setPosition(0.84);
         }
         else {
-            intakeLeft.setPosition(0.58);
+            intakeLeft.setPosition(0.57);
         }
 
         if (intakeBack_extended){
@@ -214,8 +214,8 @@ public class test1 extends LinearOpMode{
             telemetry.update();
         }
         else {
-            intakeBack.setPosition(0.7); //this is the initial position
-            telemetry.addData("intakeBackPos","0.7");
+            intakeBack.setPosition(0.72); //this is the initial position
+            telemetry.addData("intakeBackPos","0.72");
             telemetry.update();
         }
 
