@@ -185,33 +185,37 @@ public class test1 extends LinearOpMode{
         }
     public void updateBooleans() {
         if (sample_closed){
-            sample.setPosition(0.4);
+            sample.setPosition(0.6);//this is the initial position
          }
         else{
             sample.setPosition(1);
             }
 
         if (intakeRight_extended){
-            intakeRight.setPosition(0);
-        }
-        else {
-            intakeRight.setPosition(0.35);
-        }
-        if (intakeLeft_extended){
-            intakeLeft.setPosition(1);
-        }
-        else {
-            intakeLeft.setPosition(0.65);
-        }
-
-        if (intakeBack_extended){
-            intakeBack.setPosition(0.9);
-            telemetry.addData("intakeBackPos","0.9");
+            intakeRight.setPosition(0.12);
+            telemetry.addData("intakeRightPos","0.12");
             telemetry.update();
         }
         else {
-            intakeBack.setPosition(0.6);
-            telemetry.addData("intakeBackPos","0.6");
+            intakeRight.setPosition(0.42); //this is the initial position
+            telemetry.addData("intakeRightPos","0.42");
+            telemetry.update();
+        }
+        if (intakeLeft_extended){
+            intakeLeft.setPosition(0.88);
+        }
+        else {
+            intakeLeft.setPosition(0.58);
+        }
+
+        if (intakeBack_extended){
+            intakeBack.setPosition(1);
+            telemetry.addData("intakeBackPos","1");
+            telemetry.update();
+        }
+        else {
+            intakeBack.setPosition(0.7); //this is the initial position
+            telemetry.addData("intakeBackPos","0.7");
             telemetry.update();
         }
 
