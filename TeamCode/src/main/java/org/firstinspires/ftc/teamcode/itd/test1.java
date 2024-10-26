@@ -17,10 +17,18 @@ public class test1 extends LinearOpMode{
     DcMotor backLeft;
     DcMotor frontViper;
     DcMotor backViper;
-
-
+    Servo claw;
+    Boolean claw_open = true;
+    Boolean claw_button_pressed = false;
+    Servo bucket;
+    Boolean bucket_button_pressed = false;
+    Boolean bucket_dumped = false;
+    Servo specimen;
+    Boolean specimen_button_pressed = false;
+    Boolean specimen_closed = false;
     @Override
     public void runOpMode() throws InterruptedException {
+        // drivetrain motors
         frontRight = hardwareMap.dcMotor.get("frontRight");
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
@@ -41,8 +49,16 @@ public class test1 extends LinearOpMode{
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
+        //viper slides motors
         frontViper = hardwareMap.dcMotor.get("frontViper");
         backViper = hardwareMap.dcMotor.get("backViper");
+        frontViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //servos
+        claw = hardwareMap.servo.get("claw");
+        bucket = hardwareMap.servo.get("bucket");
+        specimen = hardwareMap.servo.get("specimen");
 
         waitForStart();
         if (isStopRequested()) return;
@@ -84,16 +100,64 @@ public class test1 extends LinearOpMode{
 
             //viper slides
             if (gamepad1.dpad_up) {
-                frontViper.setPower(-0.3);
-                backViper.setPower(0.3);
+                frontViper.setPower(-0.8);
+                backViper.setPower(0.8);
             } else if (gamepad1.dpad_down) {
-                frontViper.setPower(0.3);
-                backViper.setPower(-0.3);
+                frontViper.setPower(0.6);
+                backViper.setPower(-0.6);
             } else {
                 frontViper.setPower(0);
                 backViper.setPower(0);
             }
 
+            //sticky key presses
+            if (gamepad1.a){
+                if (!claw_button_pressed){
+                    claw_open = !claw_open;
+                }
+                claw_button_pressed= true;
+            } else claw_button_pressed = false;
+
+            if (gamepad1.y) {
+                if (!bucket_button_pressed) {
+                    bucket_dumped = !bucket_dumped;
+                }
+                bucket_button_pressed = true;
+            } else bucket_button_pressed = false;
+
+            if (gamepad1.b) {
+                if (!specimen_button_pressed) {
+                    specimen_closed = !specimen_closed;
+                }
+                specimen_button_pressed = true;
+            } else specimen_button_pressed = false;
+
+            updateBooleans();}
+
+        }
+    public void updateBooleans() {
+        if (claw_open){
+             claw.setPosition(0.4);
+             telemetry.addData("Pos","0.4");
+             telemetry.update();
+         }
+        else{
+             claw.setPosition(1);
+            telemetry.addData("Pos","1");
+            telemetry.update();
+            }
+
+        if (bucket_dumped){
+            bucket.setPosition(0.55);
+        }
+        else {
+            bucket.setPosition(1);
         }
 
-    }}
+        if (specimen_closed){
+            specimen.setPosition(0.7);
+        }
+        else {
+            specimen.setPosition(0.9);
+    }
+}}
