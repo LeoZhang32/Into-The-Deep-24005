@@ -205,8 +205,8 @@ public class test1 extends LinearOpMode{
         }
 
         if (intakeBack_extended){
-            intakeBack.setPosition(0.8);
-            telemetry.addData("intakeBackPos","0.8");
+            intakeBack.setPosition(0.9);
+            telemetry.addData("intakeBackPos","0.9");
             telemetry.update();
         }
         else {
