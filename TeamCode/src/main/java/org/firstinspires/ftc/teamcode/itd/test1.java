@@ -15,6 +15,9 @@ public class test1 extends LinearOpMode{
     DcMotor frontLeft;
     DcMotor backRight;
     DcMotor backLeft;
+    DcMotor frontViper;
+    DcMotor backViper;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,9 +41,12 @@ public class test1 extends LinearOpMode{
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
+        frontViper = hardwareMap.dcMotor.get("frontViper");
+        backViper = hardwareMap.dcMotor.get("backViper");
+
         waitForStart();
         if (isStopRequested()) return;
-        while (!isStopRequested()&&opModeIsActive()){
+        while (!isStopRequested() && opModeIsActive()) {
 
             //drivetrain
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
@@ -50,7 +56,7 @@ public class test1 extends LinearOpMode{
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
-            if (gamepad1.options) {
+            if (gamepad1.start) {
                 imu.resetYaw();
             }
 
@@ -71,11 +77,23 @@ public class test1 extends LinearOpMode{
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            frontLeft.setPower(frontLeftPower*0.75);
-            backLeft.setPower(backLeftPower*0.75);
-            frontRight.setPower(frontRightPower*0.75);
-            backRight.setPower(backRightPower*0.75);
+            frontLeft.setPower(frontLeftPower * 0.75);
+            backLeft.setPower(backLeftPower * 0.75);
+            frontRight.setPower(frontRightPower * 0.75);
+            backRight.setPower(backRightPower * 0.75);
+
+            //viper slides
+            if (gamepad1.dpad_up) {
+                frontViper.setPower(-0.3);
+                backViper.setPower(0.3);
+            } else if (gamepad1.dpad_down) {
+                frontViper.setPower(0.3);
+                backViper.setPower(-0.3);
+            } else {
+                frontViper.setPower(0);
+                backViper.setPower(0);
+            }
+
         }
 
-    }
-}
+    }}
