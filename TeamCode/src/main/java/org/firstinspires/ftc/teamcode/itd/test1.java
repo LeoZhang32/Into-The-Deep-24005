@@ -15,17 +15,34 @@ public class test1 extends LinearOpMode{
     DcMotor frontLeft;
     DcMotor backRight;
     DcMotor backLeft;
+
     DcMotor frontViper;
     DcMotor backViper;
-    Servo claw;
-    Boolean claw_open = true;
-    Boolean claw_button_pressed = false;
+
+    Servo sample;
+    Boolean sample_button_pressed = false;
+    Boolean sample_closed = true;
+
+    Servo intakeRight;
+    Boolean intakeRight_button_pressed = false;
+    Boolean intakeRight_extended = false;
+
+    Servo intakeLeft;
+    Boolean intakeLeft_button_pressed = false;
+    Boolean intakeLeft_extended = false;
+
+    Servo intakeBack;
+    Boolean intakeBack_button_pressed = false;
+    Boolean intakeBack_extended = false;
+
     Servo bucket;
     Boolean bucket_button_pressed = false;
     Boolean bucket_dumped = false;
+
     Servo specimen;
     Boolean specimen_button_pressed = false;
     Boolean specimen_closed = false;
+;
     @Override
     public void runOpMode() throws InterruptedException {
         // drivetrain motors
@@ -56,9 +73,13 @@ public class test1 extends LinearOpMode{
         backViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //servos
-        claw = hardwareMap.servo.get("claw");
+        sample = hardwareMap.servo.get("sample");
+        intakeRight = hardwareMap.servo.get("intakeRight");
+        intakeLeft = hardwareMap.servo.get("intakeLeft");
+        intakeBack = hardwareMap.servo.get("intakeBack");
         bucket = hardwareMap.servo.get("bucket");
         specimen = hardwareMap.servo.get("specimen");
+
 
         waitForStart();
         if (isStopRequested()) return;
@@ -111,13 +132,39 @@ public class test1 extends LinearOpMode{
             }
 
             //sticky key presses
+            //sample
             if (gamepad1.a){
-                if (!claw_button_pressed){
-                    claw_open = !claw_open;
+                if (!sample_button_pressed){
+                    sample_closed = !sample_closed;
                 }
-                claw_button_pressed= true;
-            } else claw_button_pressed = false;
+                sample_button_pressed= true;
+            } else sample_button_pressed = false;
 
+            //intakeRight
+            if (gamepad1.x){
+                if (!intakeRight_button_pressed){
+                    intakeRight_extended = !intakeRight_extended;
+                }
+                intakeRight_button_pressed= true;
+            } else intakeRight_button_pressed = false;
+
+            //intakeLeft
+            if (gamepad1.x){
+                if (!intakeLeft_button_pressed){
+                    intakeLeft_extended = !intakeLeft_extended;
+                }
+                intakeLeft_button_pressed= true;
+            } else intakeLeft_button_pressed = false;
+
+            //intakeBack
+            if (gamepad1.dpad_right){
+                if (!intakeBack_button_pressed){
+                    intakeBack_extended = !intakeBack_extended;
+                }
+                intakeBack_button_pressed = true;
+            } else intakeBack_button_pressed = false;
+
+            //bucket
             if (gamepad1.y) {
                 if (!bucket_button_pressed) {
                     bucket_dumped = !bucket_dumped;
@@ -125,6 +172,7 @@ public class test1 extends LinearOpMode{
                 bucket_button_pressed = true;
             } else bucket_button_pressed = false;
 
+            //specimen
             if (gamepad1.b) {
                 if (!specimen_button_pressed) {
                     specimen_closed = !specimen_closed;
@@ -136,16 +184,36 @@ public class test1 extends LinearOpMode{
 
         }
     public void updateBooleans() {
-        if (claw_open){
-             claw.setPosition(0.4);
-             telemetry.addData("Pos","0.4");
-             telemetry.update();
+        if (sample_closed){
+            sample.setPosition(0.4);
          }
         else{
-             claw.setPosition(1);
-            telemetry.addData("Pos","1");
-            telemetry.update();
+            sample.setPosition(1);
             }
+
+        if (intakeRight_extended){
+            intakeRight.setPosition(0);
+        }
+        else {
+            intakeRight.setPosition(0.35);
+        }
+        if (intakeLeft_extended){
+            intakeLeft.setPosition(1);
+        }
+        else {
+            intakeLeft.setPosition(0.65);
+        }
+
+        if (intakeBack_extended){
+            intakeBack.setPosition(0.8);
+            telemetry.addData("intakeBackPos","0.8");
+            telemetry.update();
+        }
+        else {
+            intakeBack.setPosition(0.6);
+            telemetry.addData("intakeBackPos","0.6");
+            telemetry.update();
+        }
 
         if (bucket_dumped){
             bucket.setPosition(0.55);
@@ -153,6 +221,7 @@ public class test1 extends LinearOpMode{
         else {
             bucket.setPosition(1);
         }
+
 
         if (specimen_closed){
             specimen.setPosition(0.7);
