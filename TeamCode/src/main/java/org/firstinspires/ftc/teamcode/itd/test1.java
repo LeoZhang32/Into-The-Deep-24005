@@ -209,13 +209,13 @@ public class test1 extends LinearOpMode{
         }
 
         if (intakeBack_extended){
-            intakeBack.setPosition(1);
-            telemetry.addData("intakeBackPos","1");
+            intakeBack.setPosition(0.98);
+            telemetry.addData("intakeBackPos","0.98");
             telemetry.update();
         }
         else {
-            intakeBack.setPosition(0.72); //this is the initial position
-            telemetry.addData("intakeBackPos","0.72");
+            intakeBack.setPosition(0.6); //this is the initial position
+            telemetry.addData("intakeBackPos","0.6");
             telemetry.update();
         }
 
