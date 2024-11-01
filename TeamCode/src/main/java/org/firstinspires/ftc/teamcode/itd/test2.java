@@ -56,6 +56,14 @@ public class test2 extends LinearOpMode{
     Boolean specimen_button_pressed = false;
     Boolean specimen_closed = false;
 
+    Servo hangRight;
+    Boolean hangRight_button_pressed = false;
+    Boolean hangRight_activated = false;
+
+    Servo hangLeft;
+    Boolean hangLeft_button_pressed = false;
+    Boolean hangLeft_activated = false;
+
     NormalizedColorSensor colorSensor;
     View relativeLayout;
     Boolean sample_color = false;
@@ -96,6 +104,8 @@ public class test2 extends LinearOpMode{
         intakeBack = hardwareMap.servo.get("intakeBack");
         bucket = hardwareMap.servo.get("bucket");
         specimen = hardwareMap.servo.get("specimen");
+        hangRight = hardwareMap.servo.get("hangRight");
+        hangLeft = hardwareMap.servo.get("hangLeft");
 
         //sensors
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
@@ -238,6 +248,23 @@ public class test2 extends LinearOpMode{
                 specimen_button_pressed = true;
             } else specimen_button_pressed = false;
 
+            //hang
+            if (gamepad1.dpad_left) {
+                if (!hangRight_button_pressed) {
+                    hangRight_activated = !hangRight_activated;
+                }
+                hangRight_button_pressed = true;
+
+            } else hangRight_button_pressed = false;
+
+            if (gamepad1.dpad_left) {
+                if (!hangLeft_button_pressed) {
+                    hangLeft_activated = !hangLeft_activated;
+                }
+                hangLeft_button_pressed = true;
+
+            } else hangLeft_button_pressed = false;
+
             updateBooleans();
 
             // Color Sensor Sample Code:
@@ -358,6 +385,20 @@ public class test2 extends LinearOpMode{
         }
         else {
             specimen.setPosition(0.8); //this is the initial position
+        }
+
+        if (hangRight_activated){
+            hangRight.setPosition(1);
+        }
+        else {
+            hangRight.setPosition(0.7); //this is the initial position
+        }
+        if (hangLeft_activated){
+            hangLeft.setPosition(0.62);
+        }
+        else {
+            hangLeft.setPosition(0.92); //this is the initial position
+        }
 
     }
-}}
+}
