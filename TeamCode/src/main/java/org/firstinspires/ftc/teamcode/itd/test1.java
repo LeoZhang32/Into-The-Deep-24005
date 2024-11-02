@@ -24,16 +24,19 @@ public class test1 extends LinearOpMode{
     Boolean sample_closed = true;
 
     Servo intakeRight;
-    Boolean intakeRight_button_pressed = false;
-    Boolean intakeRight_extended = false;
+//    Boolean intakeRight_button_pressed = false;
+//    Boolean intakeRight_extended = false;
 
     Servo intakeLeft;
-    Boolean intakeLeft_button_pressed = false;
-    Boolean intakeLeft_extended = false;
+//    Boolean intakeLeft_button_pressed = false;
+//    Boolean intakeLeft_extended = false;
+
+    Boolean intake_button_pressed = false;
+    Boolean intake_down;
 
     Servo intakeBack;
-    Boolean intakeBack_button_pressed = false;
-    Boolean intakeBack_extended = false;
+//    Boolean intakeBack_button_pressed = false;
+//    Boolean intakeBack_extended = false;
 
     Servo bucket;
     Boolean bucket_button_pressed = false;
@@ -141,28 +144,36 @@ public class test1 extends LinearOpMode{
             } else sample_button_pressed = false;
 
             //intakeRight
+//            if (gamepad1.x){
+//                if (!intakeRight_button_pressed){
+//                    intakeRight_extended = !intakeRight_extended;
+//                }
+//                intakeRight_button_pressed= true;
+//            } else intakeRight_button_pressed = false;
+//
+//            //intakeLeft
+//            if (gamepad1.x){
+//                if (!intakeLeft_button_pressed){
+//                    intakeLeft_extended = !intakeLeft_extended;
+//                }
+//                intakeLeft_button_pressed= true;
+//            } else intakeLeft_button_pressed = false;
+//
+//            //intakeBack
+//            if (gamepad1.dpad_right){
+//                if (!intakeBack_button_pressed){
+//                    intakeBack_extended = !intakeBack_extended;
+//                }
+//                intakeBack_button_pressed = true;
+//            } else intakeBack_button_pressed = false;
+//
+            //intake
             if (gamepad1.x){
-                if (!intakeRight_button_pressed){
-                    intakeRight_extended = !intakeRight_extended;
+                if (!intake_button_pressed){
+                    intake_down = !intake_down;
                 }
-                intakeRight_button_pressed= true;
-            } else intakeRight_button_pressed = false;
-
-            //intakeLeft
-            if (gamepad1.x){
-                if (!intakeLeft_button_pressed){
-                    intakeLeft_extended = !intakeLeft_extended;
-                }
-                intakeLeft_button_pressed= true;
-            } else intakeLeft_button_pressed = false;
-
-            //intakeBack
-            if (gamepad1.dpad_right){
-                if (!intakeBack_button_pressed){
-                    intakeBack_extended = !intakeBack_extended;
-                }
-                intakeBack_button_pressed = true;
-            } else intakeBack_button_pressed = false;
+                intake_button_pressed = true;
+            }else intake_button_pressed = false;
 
             //bucket
             if (gamepad1.y) {
@@ -191,26 +202,37 @@ public class test1 extends LinearOpMode{
             sample.setPosition(1);
             }
 
-        if (intakeRight_extended){
+//        if (intakeRight_extended){
+//            intakeRight.setPosition(0.16);
+//        }
+//        else {
+//            intakeRight.setPosition(0.43); //this is the initial position
+//             }
+//        if (intakeLeft_extended){
+//            intakeLeft.setPosition(0.84); //this = 1-intakeRight position
+//        }
+//        else {
+//            intakeLeft.setPosition(0.57); //this = 1-intakeRight position
+//        }
+//
+//        if (intakeBack_extended){
+//            intakeBack.setPosition(0.97);
+//                }
+//        else {
+//            intakeBack.setPosition(0.6); //this is the initial position
+//                }
+        if (intake_down){
+            //down position
             intakeRight.setPosition(0.16);
-        }
-        else {
-            intakeRight.setPosition(0.43); //this is the initial position
-             }
-        if (intakeLeft_extended){
-            intakeLeft.setPosition(0.84); //this = 1-intakeRight position
-        }
-        else {
-            intakeLeft.setPosition(0.57); //this = 1-intakeRight position
-        }
-
-        if (intakeBack_extended){
+            intakeLeft.setPosition(0.84);
             intakeBack.setPosition(0.97);
-                }
+        }
         else {
-            intakeBack.setPosition(0.6); //this is the initial position
-                }
-
+            //initial position
+            intakeRight.setPosition(0.43);
+            intakeLeft.setPosition(0.57);
+            intakeBack.setPosition(0.6);
+        }
         if (bucket_dumped){
             bucket.setPosition(0.55);
         }
