@@ -52,14 +52,14 @@ public class ViperSlideByEncoder_test extends LinearOpMode {
 
         // viper slide going up
         // Set the motor's target position to 300 ticks
-        testEncoder.setTargetPosition(2850);
+        frontViper.setTargetPosition(1075);
 
         // Switch to RUN_TO_POSITION mode
-        testEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Start the motor moving by setting the max velocity to 200 ticks per second
 
-        testEncoder.setPower(0.2);
+        frontViper.setPower(0.2);
 
         // While the Op Mode is running, show the motor's status via telemetry
 //        while (opModeIsActive()) {
@@ -70,7 +70,7 @@ public class ViperSlideByEncoder_test extends LinearOpMode {
 //        }
 
         // Loop while the motor is moving to the target
-        while ((testEncoder.isBusy()) && !isStopRequested()) {
+        while ((frontViper.isBusy()) && !isStopRequested()) {
             // Let the drive team see that we're waiting on the motor
             telemetry.addData("Status", "Waiting to reach top");
             telemetry.addData("power", testEncoder.getPower());
@@ -81,7 +81,7 @@ public class ViperSlideByEncoder_test extends LinearOpMode {
 // The motor has reached its target position, and the program will continue
 
         // Stop all motion;
-        testEncoder.setPower(0);
+        frontViper.setPower(0);
 
         telemetry.addData("Status", "position achieved");
         telemetry.update();
@@ -97,20 +97,20 @@ public class ViperSlideByEncoder_test extends LinearOpMode {
         bucket.setPosition(1);
 
         // viper slide going down
-        testEncoder.setTargetPosition(0);
+        frontViper.setTargetPosition(0);
 
         // Switch to RUN_TO_POSITION mode
-        testEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Start the motor moving by setting the max velocity to 200 ticks per second
         //if (gamepad1.dpad_down) {
-        testEncoder.setPower(0.5);
+        frontViper.setPower(0.3);
         //}else {
         //    testEncoder.setPower(0);
         //}
 
         // Loop while the motor is moving to the target
-        while ((testEncoder.isBusy()) && !isStopRequested()) {
+        while ((frontViper.isBusy()) && !isStopRequested()) {
             // Let the drive team see that we're waiting on the motor
             telemetry.addData("Status", "Waiting to reach bottom");
             telemetry.addData("power", testEncoder.getPower());
@@ -121,7 +121,7 @@ public class ViperSlideByEncoder_test extends LinearOpMode {
 // The motor has reached its target position, and the program will continue
 
         // Stop all motion;
-        testEncoder.setPower(0);
+        frontViper.setPower(0);
 
         telemetry.addData("Status", "position achieved");
         telemetry.update();
