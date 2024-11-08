@@ -9,132 +9,117 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ViperSlideByEncoder_test extends LinearOpMode {
     DcMotor frontViper;
     DcMotor backViper;
-    DcMotor testEncoder;
     Servo bucket;
     Boolean activation_button_pressed = false;
     Boolean activation = false;
-
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         frontViper = hardwareMap.dcMotor.get("frontViper");
         backViper = hardwareMap.dcMotor.get("backViper");
-        testEncoder = hardwareMap.dcMotor.get("testEncoder");
         bucket = hardwareMap.servo.get("bucket");
 
         // Reset the encoder during initialization
         frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        testEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontViper.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
 
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
 
-            if (gamepad1.a) {
+            if (gamepad1.dpad_up) {
                 if (!activation_button_pressed) {
                     activation = !activation;
                 }
                 activation_button_pressed = true;
             } else activation_button_pressed = false;
 
-            updateBooleans();
+//    updateBooleans();
+
+//    private void updateBooleans() {
+
+            if (activation) {
+
+                // viper slide going up
+                // Set the motor's target position
+                frontViper.setTargetPosition(4000);
+                backViper.setTargetPosition(4000);
+
+                // Switch to RUN_TO_POSITION mode
+                frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                // Start the motor moving by setting power ratio
+
+                frontViper.setPower(1);
+                backViper.setPower(1);
+
+                // Loop while the motor is moving to the target
+                while ((frontViper.isBusy()) && (backViper.isBusy()) && !isStopRequested()) {
+                    // Let the drive team see that we're waiting on the motor
+                    telemetry.addData("Status", "Waiting to reach top");
+                    telemetry.addData("power", frontViper.getPower());
+                    telemetry.addData("position", frontViper.getCurrentPosition());
+                    telemetry.addData("is at target", !frontViper.isBusy());
+                    telemetry.update();
+                }
+// One of the motor has reached its target position, and the program will continue
+
+                // Stop all motion;
+                frontViper.setPower(0);
+                backViper.setPower(0);
+
+                telemetry.addData("Status", "position achieved");
+                telemetry.update();
+
+//        sleep(1000);   // optional pause after each move.
+
+                //add bucket up here
+                bucket.setPosition(0.55);
+
+                sleep(500);   // optional pause after each move.
+
+                //add bucket down here
+                bucket.setPosition(1);
+
+                // viper slide going down
+                frontViper.setTargetPosition(0);
+                backViper.setTargetPosition(0);
+
+                // Switch to RUN_TO_POSITION mode
+                frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                frontViper.setPower(0.8);
+                backViper.setPower(0.8);
+
+                // Loop while the motor is moving to the target
+                while ((frontViper.isBusy()) && backViper.isBusy() && !isStopRequested()) {
+                    // Let the drive team see that we're waiting on the motor
+                    telemetry.addData("Status", "Waiting to reach bottom");
+                    telemetry.addData("power", frontViper.getPower());
+                    telemetry.addData("position", frontViper.getCurrentPosition());
+                    telemetry.addData("is at target", !frontViper.isBusy());
+                    telemetry.update();
+                }
+// One of the motor has reached its target position, and the program will continue
+
+                // Stop all motion;
+                frontViper.setPower(0);
+                backViper.setPower(0);
+
+                telemetry.addData("Status", "position achieved");
+                telemetry.update();
+
+//        sleep(1000);   // optional pause after each move.
+
+                activation = !activation;
+
+            }
         }
-
-
     }
-
-    private void updateBooleans() {
-
-    if (activation){
-
-        // viper slide going up
-        // Set the motor's target position to 300 ticks
-        frontViper.setTargetPosition(1075);
-
-        // Switch to RUN_TO_POSITION mode
-        frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Start the motor moving by setting the max velocity to 200 ticks per second
-
-        frontViper.setPower(0.2);
-
-        // While the Op Mode is running, show the motor's status via telemetry
-//        while (opModeIsActive()) {
-//            telemetry.addData("power", testEncoder.getPower());
-//            telemetry.addData("position", testEncoder.getCurrentPosition());
-//            telemetry.addData("is at target", !testEncoder.isBusy());
-//            telemetry.update();
-//        }
-
-        // Loop while the motor is moving to the target
-        while ((frontViper.isBusy()) && !isStopRequested()) {
-            // Let the drive team see that we're waiting on the motor
-            telemetry.addData("Status", "Waiting to reach top");
-            telemetry.addData("power", testEncoder.getPower());
-            telemetry.addData("position", testEncoder.getCurrentPosition());
-            telemetry.addData("is at target", !testEncoder.isBusy());
-            telemetry.update();
-        }
-// The motor has reached its target position, and the program will continue
-
-        // Stop all motion;
-        frontViper.setPower(0);
-
-        telemetry.addData("Status", "position achieved");
-        telemetry.update();
-
-        sleep(1000);   // optional pause after each move.
-
-        //add bucket up here
-        bucket.setPosition(0.55);
-
-        sleep(1000);   // optional pause after each move.
-
-        //add bucket down here
-        bucket.setPosition(1);
-
-        // viper slide going down
-        frontViper.setTargetPosition(0);
-
-        // Switch to RUN_TO_POSITION mode
-        frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Start the motor moving by setting the max velocity to 200 ticks per second
-        //if (gamepad1.dpad_down) {
-        frontViper.setPower(0.3);
-        //}else {
-        //    testEncoder.setPower(0);
-        //}
-
-        // Loop while the motor is moving to the target
-        while ((frontViper.isBusy()) && !isStopRequested()) {
-            // Let the drive team see that we're waiting on the motor
-            telemetry.addData("Status", "Waiting to reach bottom");
-            telemetry.addData("power", testEncoder.getPower());
-            telemetry.addData("position", testEncoder.getCurrentPosition());
-            telemetry.addData("is at target", !testEncoder.isBusy());
-            telemetry.update();
-        }
-// The motor has reached its target position, and the program will continue
-
-        // Stop all motion;
-        frontViper.setPower(0);
-
-        telemetry.addData("Status", "position achieved");
-        telemetry.update();
-
-        sleep(1000);   // optional pause after each move.
-
-        activation = !activation;
-
-
-
-    }
-    }
-
-
-
 }
