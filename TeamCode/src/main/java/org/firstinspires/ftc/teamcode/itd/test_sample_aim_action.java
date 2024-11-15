@@ -28,9 +28,9 @@ public class test_sample_aim_action extends LinearOpMode {
         intakeBack = hardwareMap.servo.get("intakeBack");
 
         // Set the initial positions for intakeRight, intakeLeft and intakeBack
-        intakeRight.setPosition(0.43);
-        intakeLeft.setPosition(0.57);
-        intakeBack.setPosition(0.6);
+        intakeRight.setPosition(0.6);
+        intakeLeft.setPosition(0.4);
+        intakeBack.setPosition(0.5);
 
 
         waitForStart();
@@ -47,18 +47,18 @@ public class test_sample_aim_action extends LinearOpMode {
 
                 // Cycle through the positions
                 if (pressCount == 1) {
-                    intakeRight.setPosition(0.16);
-                    intakeLeft.setPosition(0.84);
-                    intakeBack.setPosition(0.9);
+                    intakeRight.setPosition(0.3);
+                    intakeLeft.setPosition(0.7);
+                    intakeBack.setPosition(0.73);
                     // Position 1 (aiming position)
                 } else if (pressCount == 2) {
-                    intakeRight.setPosition(0.16);
-                    intakeLeft.setPosition(0.84);
-                    intakeBack.setPosition(0.96); // Position 2 (taking sample)
+                    intakeRight.setPosition(0.3);
+                    intakeLeft.setPosition(0.7);
+                    intakeBack.setPosition(0.8); // Position 2 (taking sample)
                 } else if (pressCount == 3) {
-                    intakeRight.setPosition(0.43); //this is the initial position
-                    intakeLeft.setPosition(0.57); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.6); //this is the initial position
+                    intakeRight.setPosition(0.6); //this is the initial position
+                    intakeLeft.setPosition(0.4); //this = 1-intakeRight position
+                    intakeBack.setPosition(0.5); //this is the initial position
                     // Position 3 (drop sample into bucket)
                     pressCount = 0; // Reset to cycle back to initial position
                 }
@@ -70,9 +70,9 @@ public class test_sample_aim_action extends LinearOpMode {
                 pressCount = 1;
 
                 if (pressCount == 1){
-                    intakeRight.setPosition(0.16);
-                    intakeLeft.setPosition(0.84);
-                    intakeBack.setPosition(0.9);
+                    intakeRight.setPosition(0.3);
+                    intakeLeft.setPosition(0.7);
+                    intakeBack.setPosition(0.73);
                 }
             }
 
@@ -82,9 +82,9 @@ public class test_sample_aim_action extends LinearOpMode {
                 pressCount = 3;
 
                 if (pressCount == 3){
-                    intakeRight.setPosition(0.43); //this is the initial position
-                    intakeLeft.setPosition(0.57); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.6); //this is the initial position
+                    intakeRight.setPosition(0.6); //this is the initial position
+                    intakeLeft.setPosition(0.4); //this = 1-intakeRight position
+                    intakeBack.setPosition(0.5); //this is the initial position
                     // Position 3 (drop sample into bucket)
                     pressCount = 0; // Reset to cycle back to initial position
                 }
