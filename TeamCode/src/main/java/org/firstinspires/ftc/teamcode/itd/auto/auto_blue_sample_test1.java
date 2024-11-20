@@ -7,7 +7,11 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -34,9 +38,11 @@ public final class auto_blue_sample_test1 extends LinearOpMode {
         public Lift(HardwareMap hardwareMap) {
             frontViper = hardwareMap.get(DcMotorEx.class, "frontViper");
             frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             frontViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontViper.setDirection(DcMotorSimple.Direction.REVERSE);
             backViper = hardwareMap.get(DcMotorEx.class, "backViper");
+            backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             backViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             backViper.setDirection(DcMotorSimple.Direction.FORWARD);
              }
@@ -48,10 +54,14 @@ public final class auto_blue_sample_test1 extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
 
                 if (!initialized) {
+
+                    frontViper.setPower(1);
+                    backViper.setPower(1);
                     telemetry.addData("Position", frontViper.getCurrentPosition());
+                    telemetry.addData("front Power", frontViper.getPower());
+                    telemetry.addData("back Power", backViper.getPower());
                     telemetry.update();
-                    frontViper.setPower(0.8);
-                    backViper.setPower(0.8);
+
                     initialized = true;
                 }
 
@@ -67,12 +77,12 @@ public final class auto_blue_sample_test1 extends LinearOpMode {
                 }
             }
         }
-
-
-
         public Action liftUp() {
             return new Lift.LiftUp();
         }
+
+
+
 
         public class LiftDown implements Action {
             private boolean initialized = false;
@@ -80,14 +90,18 @@ public final class auto_blue_sample_test1 extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    frontViper.setPower(-0.8);
-                    backViper.setPower(-0.8);
+                    frontViper.setPower(-1);
+                    backViper.setPower(-1);
+                    telemetry.addData("Position", frontViper.getCurrentPosition());
+                    telemetry.addData("front Power", frontViper.getPower());
+                    telemetry.addData("back Power", backViper.getPower());
+                    telemetry.update();
                     initialized = true;
                 }
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos > 100.0) {
+                if (pos > 50.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -148,7 +162,7 @@ public final class auto_blue_sample_test1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Pose2d beginPose = new Pose2d(36, 60, Math.toRadians(-90));
+        Pose2d beginPose = new Pose2d(36, 67, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         ScoringSample bucket = new ScoringSample(hardwareMap);
         Lift lift = new Lift(hardwareMap);
@@ -158,10 +172,8 @@ public final class auto_blue_sample_test1 extends LinearOpMode {
         Action trajectoryAction1;
         trajectoryAction1 = drive.actionBuilder(drive.pose)
 
-                .lineToX(60)
-                .waitSeconds(1)
-                //after two seconds, drop the intake to release purple.
-                .turn(Math.toRadians(-45))
+                .lineToY(64)
+                .strafeToLinearHeading(new Vector2d(60, 60), Math.toRadians(-135))
                 .build();
 
 
@@ -169,26 +181,24 @@ public final class auto_blue_sample_test1 extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() <= 1.5) {
 
-            Actions.runBlocking(
-                    trajectoryAction1
+            Actions.runBlocking(new ParallelAction(
+
+                    trajectoryAction1,
+                    new SequentialAction(
+                            new SleepAction(0.5),
+                            lift.liftUp(),
+                            bucket.dumpBucket(),
+                            new SleepAction(0.8),
+                            bucket.restoreBucket(),
+                            lift.liftDown()
+                    )
+            )
             );
 
 
-            Actions.runBlocking(
-                    lift.liftUp()
-            );
 
-            Actions.runBlocking(
-                    bucket.dumpBucket()
-            );
 
-            Actions.runBlocking(
-                    bucket.restoreBucket()
-            );
 
-            Actions.runBlocking(
-                    lift.liftDown()
-            );
 
         }
     }

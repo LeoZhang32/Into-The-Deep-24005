@@ -222,7 +222,7 @@ public class test_1117 extends LinearOpMode{
 
             //viper slides auto action
 
-            if (gamepad2.a) {
+            if (gamepad2.a && gamepad2.start && gamepad2.back && gamepad2.dpad_down) {
                 if (!activation_button_pressed) {
                     activation = !activation;
                 }
