@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.itd;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,10 +19,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import java.util.Random;
-
+@Disabled
 @TeleOp
-public class test3 extends LinearOpMode{
+public class test_1109 extends LinearOpMode {
     DcMotor frontRight;
     DcMotor frontLeft;
     DcMotor backRight;
@@ -37,16 +37,16 @@ public class test3 extends LinearOpMode{
     Boolean sample_closed = false;
 
     Servo intakeRight;
-    Boolean intakeRight_button_pressed = false;
-    Boolean intakeRight_extended = false;
+    //    Boolean intakeRight_button_pressed = false;
+//    Boolean isA1 = true;
 
     Servo intakeLeft;
-    Boolean intakeLeft_button_pressed = false;
-    Boolean intakeLeft_extended = false;
+//    Boolean intakeLeft_button_pressed = false;
+//    Boolean intakeLeft_extended = false;
 
     Servo intakeBack;
-    Boolean intakeBack_button_pressed = false;
-    Boolean intakeBack_extended = false;
+    //    Boolean intakeBack_button_pressed = false;
+//    Boolean isB2 = false;
 
     Servo bucket;
     Boolean bucket_button_pressed = false;
@@ -67,6 +67,17 @@ public class test3 extends LinearOpMode{
     NormalizedColorSensor colorSensor;
     View relativeLayout;
     Boolean sample_color = false;
+
+    Boolean activation_button_pressed = false;
+    Boolean activation = false;
+
+    Boolean previousXState = false;
+    Boolean currentXState;
+    Boolean previousYState = false;
+    Boolean currentYState;
+    Boolean previousBState = false;
+    Boolean currentBState;
+     int pressCount = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -94,8 +105,10 @@ public class test3 extends LinearOpMode{
         //viper slides motors
         frontViper = hardwareMap.dcMotor.get("frontViper");
         backViper = hardwareMap.dcMotor.get("backViper");
-        frontViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontViper.setDirection(DcMotor.Direction.REVERSE);
+        // Reset the encoder during initialization
+        frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //servos
         sample = hardwareMap.servo.get("sample");
@@ -127,6 +140,7 @@ public class test3 extends LinearOpMode{
             });
         }
     }
+
     protected void runSample() {
         // You can give the sensor a gain value, will be multiplied by the sensor's raw value before the
         // normalized color values are calculated. Color sensors (especially the REV Color Sensor V3)
@@ -147,6 +161,12 @@ public class test3 extends LinearOpMode{
         // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
         // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
+
+        // Set the initial positions for intakeRight, intakeLeft and intakeBack
+        intakeRight.setPosition(0.43);
+        intakeLeft.setPosition(0.57);
+        intakeBack.setPosition(0.6);
+
 
 
         waitForStart();
@@ -187,50 +207,38 @@ public class test3 extends LinearOpMode{
             frontRight.setPower(frontRightPower * 0.75);
             backRight.setPower(backRightPower * 0.75);
 
-            //viper slides
-            if (gamepad1.dpad_up) {
-                frontViper.setPower(-0.8);
-                backViper.setPower(0.8);
-            } else if (gamepad1.dpad_down) {
-                frontViper.setPower(0.6);
-                backViper.setPower(-0.6);
-            } else {
-                frontViper.setPower(0);
-                backViper.setPower(0);
-            }
-
             //sticky key presses
             //sample
-            if (gamepad1.a){
-                if (!sample_button_pressed){
+            if (gamepad1.a) {
+                if (!sample_button_pressed) {
                     sample_closed = !sample_closed;
                 }
-                sample_button_pressed= true;
+                sample_button_pressed = true;
             } else sample_button_pressed = false;
 
             //intakeRight
-            if (gamepad1.x){
-                if (!intakeRight_button_pressed){
-                    intakeRight_extended = !intakeRight_extended;
-                }
-                intakeRight_button_pressed= true;
-            } else intakeRight_button_pressed = false;
+//            if (gamepad1.x){
+//                if (!intakeRight_button_pressed){
+//                    intakeRight_extended = !intakeRight_extended;
+//                }
+//                intakeRight_button_pressed= true;
+//            } else intakeRight_button_pressed = false;
 
-            //intakeLeft
-            if (gamepad1.x){
-                if (!intakeLeft_button_pressed){
-                    intakeLeft_extended = !intakeLeft_extended;
-                }
-                intakeLeft_button_pressed= true;
-            } else intakeLeft_button_pressed = false;
-
-            //intakeBack
-            if (gamepad1.dpad_right){
-                if (!intakeBack_button_pressed){
-                    intakeBack_extended = !intakeBack_extended;
-                }
-                intakeBack_button_pressed = true;
-            } else intakeBack_button_pressed = false;
+//            //intakeLeft
+//            if (gamepad1.x){
+//                if (!intakeLeft_button_pressed){
+//                    intakeLeft_extended = !intakeLeft_extended;
+//                }
+//                intakeLeft_button_pressed= true;
+//            } else intakeLeft_button_pressed = false;
+//
+//            //intakeBack
+//            if (gamepad1.dpad_right){
+//                if (!intakeBack_button_pressed){
+//                    intakeBack_extended = !intakeBack_extended;
+//                }
+//                intakeBack_button_pressed = true;
+//            } else intakeBack_button_pressed = false;
 
             //bucket
             if (gamepad1.y) {
@@ -265,7 +273,71 @@ public class test3 extends LinearOpMode{
 
             } else hangLeft_button_pressed = false;
 
+            //viper slides
+            if (gamepad1.dpad_up) {
+                if (!activation_button_pressed) {
+                    activation = !activation;
+                }
+                activation_button_pressed = true;
+            } else activation_button_pressed = false;
+
+            currentXState = gamepad1.x;
+            currentYState = gamepad1.y;
+            currentBState = gamepad1.b;
+
+            if (currentXState && !previousXState) { // Prevent "button held down" behavior
+                // Increment the press count and ensure it loops between 0 and 2
+                pressCount++;
+
+                // Cycle through the positions
+                if (pressCount == 1) {
+                    intakeRight.setPosition(0.16);
+                    intakeLeft.setPosition(0.84);
+                    intakeBack.setPosition(0.9);
+                    // Position 1 (aiming position)
+                } else if (pressCount == 2) {
+                    intakeRight.setPosition(0.16);
+                    intakeLeft.setPosition(0.84);
+                    intakeBack.setPosition(0.96); // Position 2 (taking sample)
+                } else if (pressCount == 3) {
+                    intakeRight.setPosition(0.43); //this is the initial position
+                    intakeLeft.setPosition(0.57); //this = 1-intakeRight position
+                    intakeBack.setPosition(0.6); //this is the initial position
+                    // Position 3 (drop sample into bucket)
+                    pressCount = 0; // Reset to cycle back to initial position
+                }
+            }
+
+            previousXState = currentXState;
+
+            if (currentYState && !previousYState) {
+                pressCount = 1;
+
+                if (pressCount == 1){
+                    intakeRight.setPosition(0.16);
+                    intakeLeft.setPosition(0.84);
+                    intakeBack.setPosition(0.9);
+                }
+            }
+
+            previousYState = currentYState;
+
+            if (currentBState && !previousBState) {
+                pressCount = 3;
+
+                if (pressCount == 3){
+                    intakeRight.setPosition(0.43); //this is the initial position
+                    intakeLeft.setPosition(0.57); //this = 1-intakeRight position
+                    intakeBack.setPosition(0.6); //this is the initial position
+                    // Position 3 (drop sample into bucket)
+                    pressCount = 0; // Reset to cycle back to initial position
+                }
+            }
+
+            previousBState = currentBState;
+
             updateBooleans();
+
 
             // Color Sensor Sample Code:
             // Explain basic gain information via telemetry
@@ -304,17 +376,14 @@ public class test3 extends LinearOpMode{
             if (colorSensor instanceof DistanceSensor) {
                 telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
             }
-            if (hsvValues[0] == 0){
+            if (hsvValues[0] == 0) {
                 continue;
-            }
-            else if (hsvValues[0] >= -10 && hsvValues[0] <= 50) {
+            } else if (hsvValues[0] >= -10 && hsvValues[0] <= 50) {
                 sample_color = true;
-            }
-            else if (hsvValues[0] >= 200 && hsvValues[0] <=280){
+            } else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
                 sample_color = false;
                 telemetry.addData("Color is Blue", "Sample claw doesn't close.");
-            }
-            else {
+            } else {
                 sample_color = false;
                 telemetry.addData("Color Is Not Seen", "Sample claw doesn't close");
             }
@@ -336,69 +405,166 @@ public class test3 extends LinearOpMode{
             });
 
 
+//            if (gamepad1.x) {
+//                isA1 = !isA1;
+//
+//                if (isA1) {
+//                    intakeRight.setPosition(0.43);// Move Servo intakeRight to A1
+//                    intakeLeft.setPosition(0.57);// Move Servo intakeLeft to A1
+//                    intakeBack.setPosition(0.6);// Move Servo intakeBack to B1
+//                } else {
+//                    intakeRight.setPosition(0.16);// Move Servo intakeRight to A2
+//                    intakeLeft.setPosition(0.84);// Move Servo intakeLeft to A2
+//
+//                    // Toggle intakeBack position between B2 and B3
+//                    isB2 = !isB2;
+//                    if (isB2) {
+//                        intakeBack.setPosition(0.9); // Move intakeBack to B2
+//                    } else {
+//                        intakeBack.setPosition(0.96); // Move intakeBack to B3
+//                    }
+//                }
+//                // Small delay to prevent rapid toggling
+//                sleep(200);
+//
+//            }
         }
-
     }
+
     public void updateBooleans() {
         if (sample_closed && sample_color) {
             sample.setPosition(0.4);
-        }
-        else if (sample_closed || sample_color) {
+        } else if (sample_closed || sample_color) {
             sample.setPosition(1);
             telemetry.addData("sample_color", "true");
             telemetry.addData("Color is Red", "Sample claw closes");
-        }
-
-        else{
+        } else {
             sample.setPosition(0.4);//this is the initial position;
         }
 
-        if (intakeRight_extended){
-            intakeRight.setPosition(0.16);
-        }
-        else {
-            intakeRight.setPosition(0.43); //this is the initial position
-        }
-        if (intakeLeft_extended){
-            intakeLeft.setPosition(0.84); //this = 1-intakeRight position
-        }
-        else {
-            intakeLeft.setPosition(0.57); //this = 1-intakeRight position
-        }
+//        if (intakeRight_extended){
+//            intakeRight.setPosition(0.16);
+//        }
+//        else {
+//            intakeRight.setPosition(0.43); //this is the initial position
+//             }
+//        if (intakeLeft_extended){
+//            intakeLeft.setPosition(0.84); //this = 1-intakeRight position
+//        }
+//        else {
+//            intakeLeft.setPosition(0.57); //this = 1-intakeRight position
+//        }
+//
+//        if (intakeBack_extended){
+//            intakeBack.setPosition(0.9);
+//                }
+//        else {
+//            intakeBack.setPosition(0.6); //this is the initial position
+//                }
 
-        if (intakeBack_extended){
-            intakeBack.setPosition(0.97);
-        }
-        else {
-            intakeBack.setPosition(0.6); //this is the initial position
-        }
-
-        if (bucket_dumped){
+        if (bucket_dumped) {
             bucket.setPosition(0.55);
-        }
-        else {
+        } else {
             bucket.setPosition(1);
         }
 
-        if (specimen_closed){
+        if (specimen_closed) {
             specimen.setPosition(0.67);
-        }
-        else {
+        } else {
             specimen.setPosition(0.8); //this is the initial position
         }
 
-        if (hangRight_activated){
+        if (hangRight_activated) {
             hangRight.setPosition(1);
-        }
-        else {
+        } else {
             hangRight.setPosition(0.7); //this is the initial position
         }
-        if (hangLeft_activated){
+        if (hangLeft_activated) {
             hangLeft.setPosition(0.62);
-        }
-        else {
+        } else {
             hangLeft.setPosition(0.92); //this is the initial position
         }
 
+
+        if (activation) {
+            // viper slide going up
+            // Set the motor's target position
+            frontViper.setTargetPosition(4000);
+            backViper.setTargetPosition(4000);
+
+            // Switch to RUN_TO_POSITION mode
+            frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // Start the motor moving by setting power ratio
+
+            frontViper.setPower(1);
+            backViper.setPower(1);
+
+            // Loop while the motor is moving to the target
+            while ((frontViper.isBusy()) && (backViper.isBusy()) && !isStopRequested()) {
+                // Let the drive team see that we're waiting on the motor
+                telemetry.addData("Status", "Waiting to reach top");
+                telemetry.addData("power", frontViper.getPower());
+                telemetry.addData("position", frontViper.getCurrentPosition());
+                telemetry.addData("is at target", !frontViper.isBusy());
+                telemetry.update();
+            }
+// One of the motor has reached its target position, and the program will continue
+
+            // Stop all motion;
+            frontViper.setPower(0);
+            backViper.setPower(0);
+
+            telemetry.addData("Status", "position achieved");
+            telemetry.update();
+
+//        sleep(1000);   // optional pause after each move.
+
+            //add bucket up here
+            bucket.setPosition(0.55);
+
+            //TODO: find a way to not make use of sleep()
+            sleep(500);   // optional pause after each move.
+
+            //add bucket down here
+            bucket.setPosition(1);
+
+            // viper slide going down
+            frontViper.setTargetPosition(0);
+            backViper.setTargetPosition(0);
+
+            // Switch to RUN_TO_POSITION mode
+            frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            frontViper.setPower(0.8);
+            backViper.setPower(0.8);
+
+            // Loop while the motor is moving to the target
+            while ((frontViper.isBusy()) && backViper.isBusy() && !isStopRequested()) {
+                // Let the drive team see that we're waiting on the motor
+                telemetry.addData("Status", "Waiting to reach bottom");
+                telemetry.addData("power", frontViper.getPower());
+                telemetry.addData("position", frontViper.getCurrentPosition());
+                telemetry.addData("is at target", !frontViper.isBusy());
+                telemetry.update();
+            }
+// One of the motor has reached its target position, and the program will continue
+
+            // Stop all motion;
+            frontViper.setPower(0);
+            backViper.setPower(0);
+
+            telemetry.addData("Status", "position achieved");
+            telemetry.update();
+
+//        sleep(1000);   // optional pause after each move.
+
+            activation = !activation;
+
+        }
+
     }
+
 }

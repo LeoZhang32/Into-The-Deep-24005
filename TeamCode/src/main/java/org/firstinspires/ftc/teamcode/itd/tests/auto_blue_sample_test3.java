@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.auto;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 
 import androidx.annotation.NonNull;
@@ -25,9 +25,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Autonomous (name = "auto_blue_sample_test2")
+@Autonomous (name = "auto_blue_sample_test3")
 
-public final class auto_blue_sample_test2 extends LinearOpMode {
+public final class auto_blue_sample_test3 extends LinearOpMode {
+
     private final ElapsedTime runtime = new ElapsedTime();
 
     public class Lift {
@@ -174,13 +175,13 @@ public final class auto_blue_sample_test2 extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 intakeRight.setPosition(0.3);
                 intakeLeft.setPosition(0.7);
-                intakeBack.setPosition(0.8);
+                intakeBack.setPosition(0.77);
                 return false;
             }
         }
 
-        public Action dumpBucket() {
-            return new ExtendArm();
+        public Action extendArm() {
+            return new IntakeSample.ExtendArm();
         }
 
 
@@ -189,18 +190,56 @@ public final class auto_blue_sample_test2 extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 intakeRight.setPosition(0.6);
                 intakeLeft.setPosition(0.4);
-                intakeBack.setPosition(0.5);
+                intakeBack.setPosition(0.46);
                 return false;
             }
         }
 
-        public Action restoreBucket() {
-            return new RetractArm();
+        public Action retractArm() {  return new IntakeSample.RetractArm();
         }
 
     }
 
 
+
+
+
+
+    //sample claw servo class
+    public class PickupSample {
+        private final Servo sample;
+
+        public PickupSample(HardwareMap hardwareMap) {
+            sample = hardwareMap.get(Servo.class, "sample");
+        }
+
+
+        public class CloseSClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                sample.setPosition(1);
+                return false;
+            }
+        }
+
+        public Action closeSClaw() {
+            return new CloseSClaw();
+        }
+
+
+        public class OpenSClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                sample.setPosition(0.4);
+                return false;
+            }
+        }
+
+        public Action openSClaw() {
+            return new OpenSClaw();
+        }
+
+    }
 
 
     @Override
@@ -211,68 +250,158 @@ public final class auto_blue_sample_test2 extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         ScoringSample bucket = new ScoringSample(hardwareMap);
         Lift lift = new Lift(hardwareMap);
+        IntakeSample arm = new IntakeSample(hardwareMap);
+        PickupSample sclaw = new PickupSample(hardwareMap);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        Actions.runBlocking(sclaw.openSClaw());
+        Actions.runBlocking(arm.retractArm());
 
+        //deposit held sample
         Action trajectoryAction1;
         trajectoryAction1 = drive.actionBuilder(drive.pose)
 
                 .lineToY(64)
-                .strafeToLinearHeading(new Vector2d(60, 60), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
                 .build();
 
+        //pick up sample 1
         Action trajectoryAction2;
         trajectoryAction2 = drive.actionBuilder(drive.pose)
 
-                .lineToY(64)
-                .afterDisp(1, lift.liftUp())
-                .strafeToLinearHeading(new Vector2d(60, 60), Math.toRadians(-135))
-                .waitSeconds(3)
-                .afterTime(3, bucket.dumpBucket())
-                //sample 1 location
-                .strafeToLinearHeading(new Vector2d(68, 49), Math.toRadians(-80))
-                .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(60, 60), Math.toRadians(-135))
-                .waitSeconds(1)
-                //sample 2 location
-                .strafeToLinearHeading(new Vector2d(62, 51), Math.toRadians(-90))
-                .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(60, 60), Math.toRadians(-135))
-                .waitSeconds(1)
-                //sample 3 location
-                .strafeToLinearHeading(new Vector2d(52,51), Math.toRadians(-90))
-                .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(60, 60), Math.toRadians(-135))
-                .waitSeconds(1)
+                .strafeToLinearHeading(new Vector2d(65.5, 49.5), Math.toRadians(-69))
+                .build();
+
+        //return to basket
+        Action trajectoryAction3;
+        trajectoryAction3 = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
+                .build();
+
+        //pick up sample 2
+        Action trajectoryAction4;
+        trajectoryAction4 = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(62.5, 50.5), Math.toRadians(-89.5))
+                .build();
+
+        //return to basket
+        Action return_basket_2;
+        return_basket_2 = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
+                .build();
+
+        //pick up sample 3
+        Action trajectoryAction5;
+        trajectoryAction5 = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(52, 50), Math.toRadians(-88.5))
+                .build();
+
+        //return to basket
+        Action return_basket_3;
+         return_basket_3= drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
                 .build();
 
 
         waitForStart();
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() <= 1.5) {
+        while (opModeIsActive() && runtime.seconds() <= 0.1) {
 
             Actions.runBlocking(new SequentialAction(
 
-//                    new ParallelAction(
-//                        trajectoryAction1,
-//                        new SequentialAction(
-//                            new SleepAction(0.5),
-//                            lift.liftUp(),
-//                            bucket.dumpBucket(),
-//                            new SleepAction(0.8),
-//                            bucket.restoreBucket(),
-//                            lift.liftDown()
-//                        )
-//                    ),
+                    new ParallelAction(
 
-                    trajectoryAction2
+                        trajectoryAction1,
+                        new SequentialAction(
+                            new SleepAction(0.5),
+                            lift.liftUp(),
+                            bucket.dumpBucket(),
+                            new SleepAction(0.8),
+                            bucket.restoreBucket(),
+                            lift.liftDown()
+                            )
+                        ),
+
+
+                    trajectoryAction2,
+                    arm.extendArm(),
+                    new SleepAction(0.2),
+                    sclaw.closeSClaw(),
+                    new SleepAction(0.5),
+                    arm.retractArm(),
+                    new SleepAction(0.8),
+                    sclaw.openSClaw(),
+                    new SleepAction(0.5),
+                    new ParallelAction(
+
+
+                            trajectoryAction3,
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    lift.liftUp(),
+                                    bucket.dumpBucket(),
+                                    new SleepAction(0.8),
+                                    bucket.restoreBucket(),
+                                    lift.liftDown()
+                            )
+
+                    ),
+
+                    trajectoryAction4,
+                    arm.extendArm(),
+                    new SleepAction(0.2),
+                    sclaw.closeSClaw(),
+                    new SleepAction(0.5),
+                    arm.retractArm(),
+                    new SleepAction(0.8),
+                    sclaw.openSClaw(),
+                    new SleepAction(0.5),
+                    new ParallelAction(
+
+                            return_basket_2,
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    lift.liftUp(),
+                                    bucket.dumpBucket(),
+                                    new SleepAction(0.8),
+                                    bucket.restoreBucket(),
+                                    lift.liftDown()
+                            )
+
+                    ),
+
+                    trajectoryAction5,
+                    arm.extendArm(),
+                    new SleepAction(0.2),
+                    sclaw.closeSClaw(),
+                    new SleepAction(0.5),
+                    arm.retractArm(),
+                    new SleepAction(0.8),
+                    sclaw.openSClaw(),
+                    new SleepAction(0.5),
+                    new ParallelAction(
+
+                            return_basket_3,
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    lift.liftUp(),
+                                    bucket.dumpBucket(),
+                                    new SleepAction(0.8),
+                                    bucket.restoreBucket(),
+                                    lift.liftDown()
+                            )
 
                     )
+
+
+                    )
+
             );
-
-
-
-
 
 
         }

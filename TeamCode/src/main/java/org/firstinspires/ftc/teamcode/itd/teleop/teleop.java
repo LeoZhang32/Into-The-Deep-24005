@@ -120,8 +120,8 @@ public class teleop extends LinearOpMode{
 
 
         // Set the initial positions for intakeRight, intakeLeft and intakeBack
-        intakeRight.setPosition(0.6);
-        intakeLeft.setPosition(0.4);
+        intakeRight.setPosition(0.57);
+        intakeLeft.setPosition(0.43);
         intakeBack.setPosition(0.46);
 
         //sensors
@@ -340,14 +340,14 @@ public class teleop extends LinearOpMode{
                 } else if (pressCount == 2) {
                     intakeRight.setPosition(0.3);
                     intakeLeft.setPosition(0.7);
-                    intakeBack.setPosition(0.77); // Position 2 (taking sample)
+                    intakeBack.setPosition(0.8); // Position 2 (taking sample)
                 } else if (pressCount == 3) {
                     intakeRight.setPosition(0.35); //this is the initial position
                     intakeLeft.setPosition(0.65); //this = 1-intakeRight position
                     intakeBack.setPosition(0.65); //holding sample position
                 }else if (pressCount == 4) {
-                    intakeRight.setPosition(0.6); //this is the initial position
-                    intakeLeft.setPosition(0.4); //this = 1-intakeRight position
+                    intakeRight.setPosition(0.57); //this is the initial position
+                    intakeLeft.setPosition(0.43); //this = 1-intakeRight position
                     intakeBack.setPosition(0.46); //this is the initial position
                     // Position 3 (drop sample into bucket)
                     pressCount = 0; // Reset to cycle back to initial position
@@ -372,8 +372,8 @@ public class teleop extends LinearOpMode{
                 pressCount = 4;
 
                 if (pressCount == 4){
-                    intakeRight.setPosition(0.6); //this is the initial position
-                    intakeLeft.setPosition(0.4); //this = 1-intakeRight position
+                    intakeRight.setPosition(0.57); //this is the initial position
+                    intakeLeft.setPosition(0.43); //this = 1-intakeRight position
                     intakeBack.setPosition(0.46); //this is the initial position
                     // Position 3 (drop sample into bucket)
                     pressCount = 0; // Reset to cycle back to initial position

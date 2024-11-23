@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -20,9 +20,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Disabled
-
 @TeleOp
-public class test2_backup_20241102_5pm extends LinearOpMode{
+public class test_working extends LinearOpMode{
     DcMotor frontRight;
     DcMotor frontLeft;
     DcMotor backRight;
@@ -368,7 +367,7 @@ public class test2_backup_20241102_5pm extends LinearOpMode{
         }
 
         if (intakeBack_extended){
-            intakeBack.setPosition(0.97);
+            intakeBack.setPosition(0.9);
                 }
         else {
             intakeBack.setPosition(0.6); //this is the initial position
@@ -402,4 +401,7 @@ public class test2_backup_20241102_5pm extends LinearOpMode{
         }
 
     }
-}
+
+
+    }
+

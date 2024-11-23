@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.itd;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,9 +19,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.Random;
+
+@Disabled
 @TeleOp
-public class test_1117 extends LinearOpMode{
-    //drivetrain
+public class test2 extends LinearOpMode{
     DcMotor frontRight;
     DcMotor frontLeft;
     DcMotor backRight;
@@ -28,29 +31,24 @@ public class test_1117 extends LinearOpMode{
 
     IMU imu;
 
-    //viper slides
     DcMotor frontViper;
     DcMotor backViper;
-    Boolean activation_button_pressed = false;
-    Boolean activation = false;
 
-    //servos
     Servo sample;
     Boolean sample_button_pressed = false;
     Boolean sample_closed = false;
 
-
     Servo intakeRight;
-    Servo intakeLeft;
-    Servo intakeBack;
-    int pressCount = 0;
+    Boolean intakeRight_button_pressed = false;
+    Boolean intakeRight_extended = false;
 
-    Boolean previousXState = false;
-    Boolean currentXState;
-    Boolean previousYState = false;
-    Boolean currentYState;
-    Boolean previousBState = false;
-    Boolean currentBState;
+    Servo intakeLeft;
+    Boolean intakeLeft_button_pressed = false;
+    Boolean intakeLeft_extended = false;
+
+    Servo intakeBack;
+    Boolean intakeBack_button_pressed = false;
+    Boolean intakeBack_extended = false;
 
     Servo bucket;
     Boolean bucket_button_pressed = false;
@@ -98,15 +96,8 @@ public class test_1117 extends LinearOpMode{
         //viper slides motors
         frontViper = hardwareMap.dcMotor.get("frontViper");
         backViper = hardwareMap.dcMotor.get("backViper");
-//        frontViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        backViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-        // Reset the encoder during initialization
-
-
-        frontViper.setDirection(DcMotor.Direction.REVERSE);
-
+        frontViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //servos
         sample = hardwareMap.servo.get("sample");
@@ -117,12 +108,6 @@ public class test_1117 extends LinearOpMode{
         specimen = hardwareMap.servo.get("specimen");
         hangRight = hardwareMap.servo.get("hangRight");
         hangLeft = hardwareMap.servo.get("hangLeft");
-
-
-        // Set the initial positions for intakeRight, intakeLeft and intakeBack
-        intakeRight.setPosition(0.6);
-        intakeLeft.setPosition(0.4);
-        intakeBack.setPosition(0.5);
 
         //sensors
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
@@ -199,120 +184,22 @@ public class test_1117 extends LinearOpMode{
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            frontLeft.setPower(frontLeftPower * 1);
-            backLeft.setPower(backLeftPower * 1);
-            frontRight.setPower(frontRightPower * 1);
-            backRight.setPower(backRightPower * 1);
+            frontLeft.setPower(frontLeftPower * 0.75);
+            backLeft.setPower(backLeftPower * 0.75);
+            frontRight.setPower(frontRightPower * 0.75);
+            backRight.setPower(backRightPower * 0.75);
 
             //viper slides
-            if (gamepad2.dpad_up) {
-                frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                frontViper.setPower(0.8);
+            if (gamepad1.dpad_up) {
+                frontViper.setPower(-0.8);
                 backViper.setPower(0.8);
-            } else if (gamepad2.dpad_down) {
-                frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                frontViper.setPower(-0.6);
+            } else if (gamepad1.dpad_down) {
+                frontViper.setPower(0.6);
                 backViper.setPower(-0.6);
             } else {
                 frontViper.setPower(0);
                 backViper.setPower(0);
             }
-
-            //viper slides auto action
-
-            if (gamepad2.a && gamepad2.start && gamepad2.back && gamepad2.dpad_down) {
-                if (!activation_button_pressed) {
-                    activation = !activation;
-                }
-                activation_button_pressed = true;
-            } else activation_button_pressed = false;
-
-            if (activation) {
-
-                //reset encoder
-                frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                backViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                // viper slide going up
-                // Set the motor's target position
-                frontViper.setTargetPosition(4000);
-                backViper.setTargetPosition(4000);
-
-                // Switch to RUN_TO_POSITION mode
-                frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                // Start the motor moving by setting power ratio
-
-                frontViper.setPower(1);
-                backViper.setPower(1);
-
-                // Loop while the motor is moving to the target
-                while ((frontViper.isBusy()) && (backViper.isBusy())&& !isStopRequested()) {
-
-                // Let the drive team see that we're waiting on the motor
-                    telemetry.addData("Status", "Waiting to reach top");
-                    telemetry.addData("power", frontViper.getPower());
-                    telemetry.addData("position", frontViper.getCurrentPosition());
-                    telemetry.addData("is at target", !frontViper.isBusy());
-                    telemetry.update();
-                }
-// One of the motor has reached its target position, and the program will continue
-
-                // Stop all motion;
-                frontViper.setPower(0);
-                backViper.setPower(0);
-
-                telemetry.addData("Status", "position achieved");
-                telemetry.update();
-
-//        sleep(1000);   // optional pause after each move.
-
-                //add bucket up here
-                bucket.setPosition(0.55);
-
-                sleep(500);   // optional pause after each move.
-
-                //add bucket down here
-                bucket.setPosition(1);
-
-                // viper slide going down
-                frontViper.setTargetPosition(0);
-                backViper.setTargetPosition(0);
-
-                // Switch to RUN_TO_POSITION mode
-                frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                frontViper.setPower(0.8);
-                backViper.setPower(0.8);
-
-                // Loop while the motor is moving to the target
-                while ((frontViper.isBusy()) && backViper.isBusy() && !isStopRequested()) {
-
-                    // Let the drive team see that we're waiting on the motor
-                    telemetry.addData("Status", "Waiting to reach bottom");
-                    telemetry.addData("power", frontViper.getPower());
-                    telemetry.addData("position", frontViper.getCurrentPosition());
-                    telemetry.addData("is at target", !frontViper.isBusy());
-                    telemetry.update();
-                }
-
-                // One of the motor has reached its target position, and the program will continue
-                // Stop all motion;
-                frontViper.setPower(0);
-                backViper.setPower(0);
-
-                telemetry.addData("Status", "position achieved");
-                telemetry.update();
-
-//        sleep(1000);   // optional pause after each move.
-
-                activation = !activation;
-
-            }
-
 
             //sticky key presses
             //sample
@@ -323,64 +210,32 @@ public class test_1117 extends LinearOpMode{
                 sample_button_pressed= true;
             } else sample_button_pressed = false;
 
-            //intakeActions
-            currentXState = gamepad1.x;
-            currentYState = gamepad1.y;
-            currentBState = gamepad1.b;
-
-            if (currentXState && !previousXState) { // Prevent "button held down" behavior
-                // Increment the press count and ensure it loops between 0 and 2
-                pressCount++;
-
-                // Cycle through the positions
-                if (pressCount == 1) {
-                    intakeRight.setPosition(0.3);
-                    intakeLeft.setPosition(0.7);
-                    intakeBack.setPosition(0.73);
-                    // Position 1 (aiming position)
-                } else if (pressCount == 2) {
-                    intakeRight.setPosition(0.3);
-                    intakeLeft.setPosition(0.7);
-                    intakeBack.setPosition(0.8); // Position 2 (taking sample)
-                } else if (pressCount == 3) {
-                    intakeRight.setPosition(0.6); //this is the initial position
-                    intakeLeft.setPosition(0.4); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.5); //this is the initial position
-                    // Position 3 (drop sample into bucket)
-                    pressCount = 0; // Reset to cycle back to initial position
+            //intakeRight
+            if (gamepad1.x){
+                if (!intakeRight_button_pressed){
+                    intakeRight_extended = !intakeRight_extended;
                 }
-            }
+                intakeRight_button_pressed= true;
+            } else intakeRight_button_pressed = false;
 
-            previousXState = currentXState;
-
-            if (currentYState && !previousYState) {
-                pressCount = 1;
-
-                if (pressCount == 1){
-                    intakeRight.setPosition(0.3);
-                    intakeLeft.setPosition(0.7);
-                    intakeBack.setPosition(0.73);
+            //intakeLeft
+            if (gamepad1.x){
+                if (!intakeLeft_button_pressed){
+                    intakeLeft_extended = !intakeLeft_extended;
                 }
-            }
+                intakeLeft_button_pressed= true;
+            } else intakeLeft_button_pressed = false;
 
-            previousYState = currentYState;
-
-            if (currentBState && !previousBState) {
-                pressCount = 3;
-
-                if (pressCount == 3){
-                    intakeRight.setPosition(0.6); //this is the initial position
-                    intakeLeft.setPosition(0.4); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.5); //this is the initial position
-                    // Position 3 (drop sample into bucket)
-                    pressCount = 0; // Reset to cycle back to initial position
+            //intakeBack
+            if (gamepad1.dpad_right){
+                if (!intakeBack_button_pressed){
+                    intakeBack_extended = !intakeBack_extended;
                 }
-            }
-
-            previousBState = currentBState;
+                intakeBack_button_pressed = true;
+            } else intakeBack_button_pressed = false;
 
             //bucket
-            if (gamepad2.y) {
+            if (gamepad1.y) {
                 if (!bucket_button_pressed) {
                     bucket_dumped = !bucket_dumped;
                 }
@@ -388,7 +243,7 @@ public class test_1117 extends LinearOpMode{
             } else bucket_button_pressed = false;
 
             //specimen
-            if (gamepad2.x) {
+            if (gamepad1.b) {
                 if (!specimen_button_pressed) {
                     specimen_closed = !specimen_closed;
                 }
@@ -396,7 +251,7 @@ public class test_1117 extends LinearOpMode{
             } else specimen_button_pressed = false;
 
             //hang
-            if (gamepad2.b) {
+            if (gamepad1.dpad_left) {
                 if (!hangRight_button_pressed) {
                     hangRight_activated = !hangRight_activated;
                 }
@@ -404,7 +259,7 @@ public class test_1117 extends LinearOpMode{
 
             } else hangRight_button_pressed = false;
 
-            if (gamepad2.b) {
+            if (gamepad1.dpad_left) {
                 if (!hangLeft_button_pressed) {
                     hangLeft_activated = !hangLeft_activated;
                 }
@@ -485,7 +340,7 @@ public class test_1117 extends LinearOpMode{
 
         }
 
-    }
+        }
     public void updateBooleans() {
         if (sample_closed && sample_color) {
             sample.setPosition(0.4);
@@ -499,6 +354,26 @@ public class test_1117 extends LinearOpMode{
         else{
             sample.setPosition(0.4);//this is the initial position;
             }
+
+        if (intakeRight_extended){
+            intakeRight.setPosition(0.16);
+        }
+        else {
+            intakeRight.setPosition(0.43); //this is the initial position
+             }
+        if (intakeLeft_extended){
+            intakeLeft.setPosition(0.84); //this = 1-intakeRight position
+        }
+        else {
+            intakeLeft.setPosition(0.57); //this = 1-intakeRight position
+        }
+
+        if (intakeBack_extended){
+            intakeBack.setPosition(0.97);
+                }
+        else {
+            intakeBack.setPosition(0.6); //this is the initial position
+                }
 
         if (bucket_dumped){
             bucket.setPosition(0.55);
@@ -515,20 +390,17 @@ public class test_1117 extends LinearOpMode{
         }
 
         if (hangRight_activated){
-            hangRight.setPosition(0.7);
+            hangRight.setPosition(1);
         }
         else {
-            hangRight.setPosition(1); //this is the initial position
+            hangRight.setPosition(0.7); //this is the initial position
         }
         if (hangLeft_activated){
-            hangLeft.setPosition(0.92);
+            hangLeft.setPosition(0.62);
         }
         else {
-            hangLeft.setPosition(0.62); //this is the initial position
+            hangLeft.setPosition(0.92); //this is the initial position
         }
 
     }
-
-
 }
-

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -20,8 +20,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Disabled
+
 @TeleOp
-public class test_20241106 extends LinearOpMode{
+public class test2_backup_20241102_5pm extends LinearOpMode{
     DcMotor frontRight;
     DcMotor frontLeft;
     DcMotor backRight;
@@ -67,9 +68,6 @@ public class test_20241106 extends LinearOpMode{
     NormalizedColorSensor colorSensor;
     View relativeLayout;
     Boolean sample_color = false;
-
-    private int pressCount = 0;
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -211,51 +209,29 @@ public class test_20241106 extends LinearOpMode{
                 sample_button_pressed= true;
             } else sample_button_pressed = false;
 
-            if (gamepad1.dpad_right && !gamepad1.dpad_right) { // Prevent "button held down" behavior
-                // Increment the press count and ensure it loops between 0 and 2
-                pressCount++;
-
-                // Cycle through the positions
-                if (pressCount == 1) {
-                    intakeRight.setPosition(0.16);
-                    intakeLeft.setPosition(0.84);
-                    intakeBack.setPosition(0.9);
-                    // Position 1 (middle position)
-                } else if (pressCount == 2) {
-                    intakeRight.setPosition(0.16);
-                    intakeLeft.setPosition(0.84);
-                    intakeBack.setPosition(0.96); // Position 2 (taking sample)
-                } else if (pressCount == 3) {
-                    intakeRight.setPosition(0.43); //this is the initial position
-                    intakeLeft.setPosition(0.57); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.6); //this is the initial position
-                    // Position 3 (drop sample into bucket)
-                    pressCount = 0; // Reset to cycle back to initial position
+            //intakeRight
+            if (gamepad1.x){
+                if (!intakeRight_button_pressed){
+                    intakeRight_extended = !intakeRight_extended;
                 }
-
-                //intakeRight
-//            if (gamepad1.x){
-//                if (!intakeRight_button_pressed){
-//                    intakeRight_extended = !intakeRight_extended;
-//                }
-//                intakeRight_button_pressed= true;
-//            } else intakeRight_button_pressed = false;
+                intakeRight_button_pressed= true;
+            } else intakeRight_button_pressed = false;
 
             //intakeLeft
-//            if (gamepad1.x){
-//                if (!intakeLeft_button_pressed){
-//                    intakeLeft_extended = !intakeLeft_extended;
-//                }
-//                intakeLeft_button_pressed= true;
-//            } else intakeLeft_button_pressed = false;
+            if (gamepad1.x){
+                if (!intakeLeft_button_pressed){
+                    intakeLeft_extended = !intakeLeft_extended;
+                }
+                intakeLeft_button_pressed= true;
+            } else intakeLeft_button_pressed = false;
 
             //intakeBack
-//            if (gamepad1.dpad_right){
-//                if (!intakeBack_button_pressed){
-//                    intakeBack_extended = !intakeBack_extended;
-//                }
-//                intakeBack_button_pressed = true;
-//            } else intakeBack_button_pressed = false;
+            if (gamepad1.dpad_right){
+                if (!intakeBack_button_pressed){
+                    intakeBack_extended = !intakeBack_extended;
+                }
+                intakeBack_button_pressed = true;
+            } else intakeBack_button_pressed = false;
 
             //bucket
             if (gamepad1.y) {
@@ -290,7 +266,7 @@ public class test_20241106 extends LinearOpMode{
 
             } else hangLeft_button_pressed = false;
 
-//            updateBooleans();
+            updateBooleans();
 
             // Color Sensor Sample Code:
             // Explain basic gain information via telemetry
@@ -364,8 +340,7 @@ public class test_20241106 extends LinearOpMode{
         }
 
         }
-    /*
-        public void updateBooleans() {
+    public void updateBooleans() {
         if (sample_closed && sample_color) {
             sample.setPosition(0.4);
         }
@@ -393,7 +368,7 @@ public class test_20241106 extends LinearOpMode{
         }
 
         if (intakeBack_extended){
-            intakeBack.setPosition(0.9);
+            intakeBack.setPosition(0.97);
                 }
         else {
             intakeBack.setPosition(0.6); //this is the initial position
@@ -425,11 +400,6 @@ public class test_20241106 extends LinearOpMode{
         else {
             hangLeft.setPosition(0.92); //this is the initial position
         }
-*/
-    }
-
-
-
 
     }
-
+}

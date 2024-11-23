@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Disabled
 @TeleOp
-public class test_working extends LinearOpMode{
+public class test_1107 extends LinearOpMode {
     DcMotor frontRight;
     DcMotor frontLeft;
     DcMotor backRight;
@@ -37,16 +37,16 @@ public class test_working extends LinearOpMode{
     Boolean sample_closed = false;
 
     Servo intakeRight;
-    Boolean intakeRight_button_pressed = false;
-    Boolean intakeRight_extended = false;
+    //    Boolean intakeRight_button_pressed = false;
+    Boolean isA1 = true;
 
     Servo intakeLeft;
-    Boolean intakeLeft_button_pressed = false;
-    Boolean intakeLeft_extended = false;
+//    Boolean intakeLeft_button_pressed = false;
+//    Boolean intakeLeft_extended = false;
 
     Servo intakeBack;
-    Boolean intakeBack_button_pressed = false;
-    Boolean intakeBack_extended = false;
+    //    Boolean intakeBack_button_pressed = false;
+    Boolean isB2 = false;
 
     Servo bucket;
     Boolean bucket_button_pressed = false;
@@ -127,6 +127,7 @@ public class test_working extends LinearOpMode{
             });
         }
     }
+
     protected void runSample() {
         // You can give the sensor a gain value, will be multiplied by the sensor's raw value before the
         // normalized color values are calculated. Color sensors (especially the REV Color Sensor V3)
@@ -147,6 +148,11 @@ public class test_working extends LinearOpMode{
         // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
         // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
+
+        // Set the initial positions for intakeRight, intakeLeft and intakeBack
+        intakeRight.setPosition(0.43); // A1 position
+        intakeLeft.setPosition(0.57); // A1 position
+        intakeBack.setPosition(0.6); // B1 position
 
 
         waitForStart();
@@ -201,36 +207,36 @@ public class test_working extends LinearOpMode{
 
             //sticky key presses
             //sample
-            if (gamepad1.a){
-                if (!sample_button_pressed){
+            if (gamepad1.a) {
+                if (!sample_button_pressed) {
                     sample_closed = !sample_closed;
                 }
-                sample_button_pressed= true;
+                sample_button_pressed = true;
             } else sample_button_pressed = false;
 
             //intakeRight
-            if (gamepad1.x){
-                if (!intakeRight_button_pressed){
-                    intakeRight_extended = !intakeRight_extended;
-                }
-                intakeRight_button_pressed= true;
-            } else intakeRight_button_pressed = false;
+//            if (gamepad1.x){
+//                if (!intakeRight_button_pressed){
+//                    intakeRight_extended = !intakeRight_extended;
+//                }
+//                intakeRight_button_pressed= true;
+//            } else intakeRight_button_pressed = false;
 
-            //intakeLeft
-            if (gamepad1.x){
-                if (!intakeLeft_button_pressed){
-                    intakeLeft_extended = !intakeLeft_extended;
-                }
-                intakeLeft_button_pressed= true;
-            } else intakeLeft_button_pressed = false;
-
-            //intakeBack
-            if (gamepad1.dpad_right){
-                if (!intakeBack_button_pressed){
-                    intakeBack_extended = !intakeBack_extended;
-                }
-                intakeBack_button_pressed = true;
-            } else intakeBack_button_pressed = false;
+//            //intakeLeft
+//            if (gamepad1.x){
+//                if (!intakeLeft_button_pressed){
+//                    intakeLeft_extended = !intakeLeft_extended;
+//                }
+//                intakeLeft_button_pressed= true;
+//            } else intakeLeft_button_pressed = false;
+//
+//            //intakeBack
+//            if (gamepad1.dpad_right){
+//                if (!intakeBack_button_pressed){
+//                    intakeBack_extended = !intakeBack_extended;
+//                }
+//                intakeBack_button_pressed = true;
+//            } else intakeBack_button_pressed = false;
 
             //bucket
             if (gamepad1.y) {
@@ -266,6 +272,7 @@ public class test_working extends LinearOpMode{
             } else hangLeft_button_pressed = false;
 
             updateBooleans();
+
 
             // Color Sensor Sample Code:
             // Explain basic gain information via telemetry
@@ -304,17 +311,14 @@ public class test_working extends LinearOpMode{
             if (colorSensor instanceof DistanceSensor) {
                 telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
             }
-            if (hsvValues[0] == 0){
+            if (hsvValues[0] == 0) {
                 continue;
-            }
-            else if (hsvValues[0] >= -10 && hsvValues[0] <= 50) {
+            } else if (hsvValues[0] >= -10 && hsvValues[0] <= 50) {
                 sample_color = true;
-            }
-            else if (hsvValues[0] >= 200 && hsvValues[0] <=280){
+            } else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
                 sample_color = false;
                 telemetry.addData("Color is Blue", "Sample claw doesn't close.");
-            }
-            else {
+            } else {
                 sample_color = false;
                 telemetry.addData("Color Is Not Seen", "Sample claw doesn't close");
             }
@@ -336,72 +340,89 @@ public class test_working extends LinearOpMode{
             });
 
 
-        }
+            if (gamepad1.x) {
+                isA1 = !isA1;
 
+                if (isA1) {
+                    intakeRight.setPosition(0.43);// Move Servo intakeRight to A1
+                    intakeLeft.setPosition(0.57);// Move Servo intakeLeft to A1
+                    intakeBack.setPosition(0.6);// Move Servo intakeBack to B1
+                } else {
+                    intakeRight.setPosition(0.16);// Move Servo intakeRight to A2
+                    intakeLeft.setPosition(0.84);// Move Servo intakeLeft to A2
+
+                    // Toggle intakeBack position between B2 and B3
+                    isB2 = !isB2;
+                    if (isB2) {
+                        intakeBack.setPosition(0.9); // Move intakeBack to B2
+                    } else {
+                        intakeBack.setPosition(0.96); // Move intakeBack to B3
+                    }
+                }
+                // Small delay to prevent rapid toggling
+                sleep(200);
+
+            }
         }
+    }
+
     public void updateBooleans() {
         if (sample_closed && sample_color) {
             sample.setPosition(0.4);
-        }
-        else if (sample_closed || sample_color) {
+        } else if (sample_closed || sample_color) {
             sample.setPosition(1);
             telemetry.addData("sample_color", "true");
             telemetry.addData("Color is Red", "Sample claw closes");
-         }
-
-        else{
+        } else {
             sample.setPosition(0.4);//this is the initial position;
-            }
-
-        if (intakeRight_extended){
-            intakeRight.setPosition(0.16);
-        }
-        else {
-            intakeRight.setPosition(0.43); //this is the initial position
-             }
-        if (intakeLeft_extended){
-            intakeLeft.setPosition(0.84); //this = 1-intakeRight position
-        }
-        else {
-            intakeLeft.setPosition(0.57); //this = 1-intakeRight position
         }
 
-        if (intakeBack_extended){
-            intakeBack.setPosition(0.9);
-                }
-        else {
-            intakeBack.setPosition(0.6); //this is the initial position
-                }
+//        if (intakeRight_extended){
+//            intakeRight.setPosition(0.16);
+//        }
+//        else {
+//            intakeRight.setPosition(0.43); //this is the initial position
+//             }
+//        if (intakeLeft_extended){
+//            intakeLeft.setPosition(0.84); //this = 1-intakeRight position
+//        }
+//        else {
+//            intakeLeft.setPosition(0.57); //this = 1-intakeRight position
+//        }
+//
+//        if (intakeBack_extended){
+//            intakeBack.setPosition(0.9);
+//                }
+//        else {
+//            intakeBack.setPosition(0.6); //this is the initial position
+//                }
 
-        if (bucket_dumped){
+        if (bucket_dumped) {
             bucket.setPosition(0.55);
-        }
-        else {
+        } else {
             bucket.setPosition(1);
         }
 
-        if (specimen_closed){
+        if (specimen_closed) {
             specimen.setPosition(0.67);
-        }
-        else {
+        } else {
             specimen.setPosition(0.8); //this is the initial position
         }
 
-        if (hangRight_activated){
+        if (hangRight_activated) {
             hangRight.setPosition(1);
-        }
-        else {
+        } else {
             hangRight.setPosition(0.7); //this is the initial position
         }
-        if (hangLeft_activated){
+        if (hangLeft_activated) {
             hangLeft.setPosition(0.62);
-        }
-        else {
+        } else {
             hangLeft.setPosition(0.92); //this is the initial position
         }
 
-    }
-
 
     }
+
+}
+
 
