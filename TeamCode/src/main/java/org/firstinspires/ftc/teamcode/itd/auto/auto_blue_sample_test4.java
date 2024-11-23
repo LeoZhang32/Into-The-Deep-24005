@@ -25,9 +25,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Autonomous (name = "auto_blue_sample_test3")
+@Autonomous (name = "auto_blue_sample_test4")
 
-public final class auto_blue_sample_test3 extends LinearOpMode {
+public final class auto_blue_sample_test4 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -181,7 +181,7 @@ public final class auto_blue_sample_test3 extends LinearOpMode {
         }
 
         public Action extendArm() {
-            return new IntakeSample.ExtendArm();
+            return new ExtendArm();
         }
 
 
@@ -195,7 +195,7 @@ public final class auto_blue_sample_test3 extends LinearOpMode {
             }
         }
 
-        public Action retractArm() {  return new IntakeSample.RetractArm();
+        public Action retractArm() {  return new RetractArm();
         }
 
     }
@@ -246,7 +246,7 @@ public final class auto_blue_sample_test3 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Pose2d beginPose = new Pose2d(36, 67, Math.toRadians(-90));
+        Pose2d beginPose = new Pose2d(36, 66, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         ScoringSample bucket = new ScoringSample(hardwareMap);
         Lift lift = new Lift(hardwareMap);
@@ -265,25 +265,25 @@ public final class auto_blue_sample_test3 extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
                 .build();
 
-        //pick up sample 1
-        Action trajectoryAction2;
-        trajectoryAction2 = drive.actionBuilder(drive.pose)
+        //go to sample 1
+        Action go_to_sample_1;
+        go_to_sample_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(65.5, 49.5), Math.toRadians(-69))
+                .strafeToLinearHeading(new Vector2d(64, 49.5), Math.toRadians(-69))
                 .build();
 
-        //return to basket
-        Action trajectoryAction3;
-        trajectoryAction3 = drive.actionBuilder(drive.pose)
+        //return to basket 1
+        Action return_basket_1;
+        return_basket_1 = drive.actionBuilder(drive.pose)
 
                 .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
                 .build();
 
-        //pick up sample 2
-        Action trajectoryAction4;
-        trajectoryAction4 = drive.actionBuilder(drive.pose)
+        //go to  sample 2
+        Action go_to_sample_2;
+        go_to_sample_2 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(62.5, 50.5), Math.toRadians(-89.5))
+                .strafeToLinearHeading(new Vector2d(61.5, 49.5), Math.toRadians(-89.5))
                 .build();
 
         //return to basket
@@ -293,11 +293,11 @@ public final class auto_blue_sample_test3 extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
                 .build();
 
-        //pick up sample 3
-        Action trajectoryAction5;
-        trajectoryAction5 = drive.actionBuilder(drive.pose)
+        //go to sample 3
+        Action go_to_sample_3;
+        go_to_sample_3 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(52, 50), Math.toRadians(-88.5))
+                .strafeToLinearHeading(new Vector2d(50.5, 49.5), Math.toRadians(-88.5))
                 .build();
 
         //return to basket
@@ -328,7 +328,7 @@ public final class auto_blue_sample_test3 extends LinearOpMode {
                         ),
 
 
-                    trajectoryAction2,
+                    go_to_sample_3,
                     arm.extendArm(),
                     new SleepAction(0.2),
                     sclaw.closeSClaw(),
@@ -340,7 +340,7 @@ public final class auto_blue_sample_test3 extends LinearOpMode {
                     new ParallelAction(
 
 
-                            trajectoryAction3,
+                            return_basket_1,
                             new SequentialAction(
                                     new SleepAction(0.5),
                                     lift.liftUp(),
@@ -352,7 +352,7 @@ public final class auto_blue_sample_test3 extends LinearOpMode {
 
                     ),
 
-                    trajectoryAction4,
+                    go_to_sample_2,
                     arm.extendArm(),
                     new SleepAction(0.2),
                     sclaw.closeSClaw(),
@@ -375,7 +375,7 @@ public final class auto_blue_sample_test3 extends LinearOpMode {
 
                     ),
 
-                    trajectoryAction5,
+                    go_to_sample_1,
                     arm.extendArm(),
                     new SleepAction(0.2),
                     sclaw.closeSClaw(),
