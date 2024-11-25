@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -72,6 +73,10 @@ public class teleop extends LinearOpMode{
     View relativeLayout;
     Boolean sample_color = false;
 
+//    DigitalChannel limitSwitch;
+//    Boolean limitSwitchPressed = !limitSwitch.getState();
+//    Boolean gamepad2_dpad_down_isPressed = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         // drivetrain motors
@@ -122,10 +127,12 @@ public class teleop extends LinearOpMode{
         // Set the initial positions for intakeRight, intakeLeft and intakeBack
         intakeRight.setPosition(0.57);
         intakeLeft.setPosition(0.43);
-        intakeBack.setPosition(0.46);
+        intakeBack.setPosition(0.45);
 
         //sensors
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+//        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+//        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
@@ -220,7 +227,15 @@ public class teleop extends LinearOpMode{
                 backViper.setPower(0);
             }
 
-            //viper slides auto action
+            //viper slides limit switch
+//            if (limitSwitchPressed && gamepad2.dpad_down){
+//                frontViper.setPower(0);
+//                backViper.setPower(0);
+//                telemetry.addData("Viper Slides", "Stopped");
+//            }
+
+
+            // viper slides auto action
 
             if (gamepad2.a && gamepad2.start && gamepad2.back && gamepad2.dpad_down) {
                 if (!activation_button_pressed) {
@@ -340,16 +355,15 @@ public class teleop extends LinearOpMode{
                 } else if (pressCount == 2) {
                     intakeRight.setPosition(0.3);
                     intakeLeft.setPosition(0.7);
-                    intakeBack.setPosition(0.8); // Position 2 (taking sample)
+                    intakeBack.setPosition(0.8); // Position 2 (taking sample position)
                 } else if (pressCount == 3) {
                     intakeRight.setPosition(0.35); //this is the initial position
-                    intakeLeft.setPosition(0.65); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.65); //holding sample position
+                    intakeLeft.setPosition(0.65); // this = 1-intakeRight position
+                    intakeBack.setPosition(0.65); // Position 3 (holding sample position)
                 }else if (pressCount == 4) {
                     intakeRight.setPosition(0.57); //this is the initial position
                     intakeLeft.setPosition(0.43); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.46); //this is the initial position
-                    // Position 3 (drop sample into bucket)
+                    intakeBack.setPosition(0.45); //this is the initial position - Position 3 (drop sample into bucket)
                     pressCount = 0; // Reset to cycle back to initial position
                 }
             }
@@ -374,7 +388,7 @@ public class teleop extends LinearOpMode{
                 if (pressCount == 4){
                     intakeRight.setPosition(0.57); //this is the initial position
                     intakeLeft.setPosition(0.43); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.46); //this is the initial position
+                    intakeBack.setPosition(0.45); //this is the initial position
                     // Position 3 (drop sample into bucket)
                     pressCount = 0; // Reset to cycle back to initial position
                 }
@@ -504,7 +518,7 @@ public class teleop extends LinearOpMode{
             }
 
         if (bucket_dumped){
-            bucket.setPosition(0.55);
+            bucket.setPosition(0.6);
         }
         else {
             bucket.setPosition(1);
@@ -514,7 +528,7 @@ public class teleop extends LinearOpMode{
             specimen.setPosition(0.67);
         }
         else {
-            specimen.setPosition(0.8); //this is the initial position
+            specimen.setPosition(0.76); //this is the initial position
         }
 
         if (hangRight_activated){

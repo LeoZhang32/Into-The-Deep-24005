@@ -46,8 +46,8 @@ public class ViperSlideByEncoder_test extends LinearOpMode {
 
                 // viper slide going up
                 // Set the motor's target position
-                frontViper.setTargetPosition(4000);
-                backViper.setTargetPosition(4000);
+                frontViper.setTargetPosition(2000);
+                backViper.setTargetPosition(2000);
 
                 // Switch to RUN_TO_POSITION mode
                 frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);

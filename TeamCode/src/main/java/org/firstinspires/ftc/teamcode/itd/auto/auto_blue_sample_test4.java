@@ -175,7 +175,7 @@ public final class auto_blue_sample_test4 extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 intakeRight.setPosition(0.3);
                 intakeLeft.setPosition(0.7);
-                intakeBack.setPosition(0.77);
+                intakeBack.setPosition(0.75);
                 return false;
             }
         }
@@ -188,9 +188,9 @@ public final class auto_blue_sample_test4 extends LinearOpMode {
         public class RetractArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                intakeRight.setPosition(0.6);
-                intakeLeft.setPosition(0.4);
-                intakeBack.setPosition(0.46);
+                intakeRight.setPosition(0.57);
+                intakeLeft.setPosition(0.43);
+                intakeBack.setPosition(0.5);
                 return false;
             }
         }
@@ -262,49 +262,49 @@ public final class auto_blue_sample_test4 extends LinearOpMode {
         trajectoryAction1 = drive.actionBuilder(drive.pose)
 
                 .lineToY(64)
-                .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(58, 58), Math.toRadians(-135))
                 .build();
 
         //go to sample 1
         Action go_to_sample_1;
         go_to_sample_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(64, 49.5), Math.toRadians(-69))
+                .strafeToLinearHeading(new Vector2d(64, 48.5), Math.toRadians(-69))
                 .build();
 
         //return to basket 1
         Action return_basket_1;
         return_basket_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(58, 58), Math.toRadians(-135))
                 .build();
 
         //go to  sample 2
         Action go_to_sample_2;
         go_to_sample_2 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(61.5, 49.5), Math.toRadians(-89.5))
+                .strafeToLinearHeading(new Vector2d(60.5, 49), Math.toRadians(-89.5))
                 .build();
 
         //return to basket
         Action return_basket_2;
         return_basket_2 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(58, 58), Math.toRadians(-135))
                 .build();
 
         //go to sample 3
         Action go_to_sample_3;
         go_to_sample_3 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(50.5, 49.5), Math.toRadians(-88.5))
+                .strafeToLinearHeading(new Vector2d(50.5, 49), Math.toRadians(-89))
                 .build();
 
         //return to basket
         Action return_basket_3;
          return_basket_3= drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(58.5, 58.5), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(58, 58), Math.toRadians(-135))
                 .build();
 
 
@@ -330,19 +330,18 @@ public final class auto_blue_sample_test4 extends LinearOpMode {
 
                     go_to_sample_3,
                     arm.extendArm(),
-                    new SleepAction(0.2),
+                    new SleepAction(1),
                     sclaw.closeSClaw(),
                     new SleepAction(0.5),
                     arm.retractArm(),
                     new SleepAction(0.8),
                     sclaw.openSClaw(),
-                    new SleepAction(0.5),
                     new ParallelAction(
 
 
                             return_basket_1,
                             new SequentialAction(
-                                    new SleepAction(0.5),
+//                                    new SleepAction(0.5),
                                     lift.liftUp(),
                                     bucket.dumpBucket(),
                                     new SleepAction(0.8),
@@ -354,18 +353,17 @@ public final class auto_blue_sample_test4 extends LinearOpMode {
 
                     go_to_sample_2,
                     arm.extendArm(),
-                    new SleepAction(0.2),
+                    new SleepAction(1),
                     sclaw.closeSClaw(),
                     new SleepAction(0.5),
                     arm.retractArm(),
                     new SleepAction(0.8),
                     sclaw.openSClaw(),
-                    new SleepAction(0.5),
                     new ParallelAction(
 
                             return_basket_2,
                             new SequentialAction(
-                                    new SleepAction(0.5),
+//                                    new SleepAction(0.5),
                                     lift.liftUp(),
                                     bucket.dumpBucket(),
                                     new SleepAction(0.8),
@@ -377,18 +375,17 @@ public final class auto_blue_sample_test4 extends LinearOpMode {
 
                     go_to_sample_1,
                     arm.extendArm(),
-                    new SleepAction(0.2),
+                    new SleepAction(1),
                     sclaw.closeSClaw(),
                     new SleepAction(0.5),
                     arm.retractArm(),
                     new SleepAction(0.8),
                     sclaw.openSClaw(),
-                    new SleepAction(0.5),
                     new ParallelAction(
 
                             return_basket_3,
                             new SequentialAction(
-                                    new SleepAction(0.5),
+//                                    new SleepAction(0.5),
                                     lift.liftUp(),
                                     bucket.dumpBucket(),
                                     new SleepAction(0.8),
