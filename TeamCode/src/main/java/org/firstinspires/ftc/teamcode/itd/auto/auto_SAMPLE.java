@@ -25,9 +25,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Autonomous (name = "auto_blue_sample_test5")
+@Autonomous (name = "auto_SAMPLE")
 
-public final class auto_blue_sample_test5 extends LinearOpMode {
+public final class auto_SAMPLE extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
