@@ -35,8 +35,12 @@ public class teleop extends LinearOpMode{
     //viper slides
     DcMotor frontViper;
     DcMotor backViper;
-    Boolean activation_button_pressed = false;
-    Boolean activation = false;
+    Boolean VS_auto_up_button_pressed = false;
+    Boolean VS_auto_up = false;
+    Boolean VS_auto_down_button_pressed = false;
+    Boolean VS_auto_down = false;
+    Boolean VS_stop_button_pressed = false;
+    Boolean VS_stop = false;
 
     //servos
     Servo sample;
@@ -94,6 +98,8 @@ public class teleop extends LinearOpMode{
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+
+
         // Retrieve the IMU from the hardware map
         imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -106,15 +112,14 @@ public class teleop extends LinearOpMode{
         //viper slides motors
         frontViper = hardwareMap.dcMotor.get("frontViper");
         backViper = hardwareMap.dcMotor.get("backViper");
-        frontViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-        // Reset the encoder during initialization
-
 
         frontViper.setDirection(DcMotor.Direction.REVERSE);
 
+        // Reset the encoder during initialization
+        frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //servos
         sample = hardwareMap.servo.get("sample");
@@ -180,6 +185,8 @@ public class teleop extends LinearOpMode{
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
 
+
+
             //drivetrain
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
@@ -240,21 +247,26 @@ public class teleop extends LinearOpMode{
 
             // viper slides auto action
 
-            if (gamepad2.a) {
-                if (!activation_button_pressed) {
-                    activation = !activation;
+
+//            if (gamepad2.start){
+//                if (!VS_stop_button_pressed){
+//                    VS_stop = !VS_stop;
+//                }
+//                VS_stop_button_pressed = true;
+//            } else VS_stop_button_pressed = false;
+
+
+
+
+            if (gamepad2.x) {
+                if (!VS_auto_up_button_pressed) {
+                    VS_auto_up = !VS_auto_up;
                 }
-                activation_button_pressed = true;
-            } else activation_button_pressed = false;
+                VS_auto_up_button_pressed = true;
+            } else VS_auto_up_button_pressed = false;
 
+            if (VS_auto_up) {
 
-
-            if (activation) {
-
-
-                //reset encoder
-                frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                backViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 // viper slide going up
                 // Set the motor's target position
                 frontViper.setTargetPosition(4000);
@@ -270,7 +282,7 @@ public class teleop extends LinearOpMode{
                 backViper.setPower(1);
 
                 // Loop while the motor is moving to the target
-                while ((frontViper.isBusy()) && (backViper.isBusy())&& !isStopRequested()) {
+                while ((frontViper.isBusy()) && (backViper.isBusy()) && !isStopRequested()) {
 
                 // Let the drive team see that we're waiting on the motor
                     telemetry.addData("Status", "Waiting to reach top");
@@ -288,15 +300,34 @@ public class teleop extends LinearOpMode{
                 telemetry.addData("Status", "position achieved");
                 telemetry.update();
 
-//        sleep(1000);   // optional pause after each move.
+                // Loop while the motor is moving to the target
 
-                //add bucket up here
-                bucket.setPosition(0.57);
+                VS_auto_up = !VS_auto_up;
+            }
 
-                sleep(700);   // optional pause after each move.
+            if (gamepad2.start) {
+                // Stop all motion;
+                frontViper.setPower(0);
+                frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backViper.setPower(0);
+                backViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                telemetry.addData("Button Pressed", gamepad2.start);
+                telemetry.update();
+            }
 
-                //add bucket down here
-                bucket.setPosition(1);
+
+
+
+
+            if (gamepad2.b) {
+                if (!VS_auto_down_button_pressed) {
+                    VS_auto_down = !VS_auto_down;
+                }
+                VS_auto_down_button_pressed = true;
+            } else VS_auto_down_button_pressed = false;
+
+
+            if (VS_auto_down) {
 
                 // viper slide going down
                 frontViper.setTargetPosition(0);
@@ -328,11 +359,13 @@ public class teleop extends LinearOpMode{
                 telemetry.addData("Status", "position achieved");
                 telemetry.update();
 
-//        sleep(1000);   // optional pause after each move.
+                // Loop while the motor is moving to the target
 
-                activation = !activation;
+                VS_auto_down = !VS_auto_down;
 
             }
+
+
 
 
             //sticky key presses
@@ -411,7 +444,7 @@ public class teleop extends LinearOpMode{
             } else bucket_button_pressed = false;
 
             //specimen
-            if (gamepad2.x) {
+            if (gamepad2.a) {
                 if (!specimen_button_pressed) {
                     specimen_closed = !specimen_closed;
                 }
@@ -419,7 +452,7 @@ public class teleop extends LinearOpMode{
             } else specimen_button_pressed = false;
 
             //hang
-            if (gamepad2.b) {
+            if (gamepad2.dpad_right) {
                 if (!hangRight_button_pressed) {
                     hangRight_activated = !hangRight_activated;
                 }
@@ -427,7 +460,7 @@ public class teleop extends LinearOpMode{
 
             } else hangRight_button_pressed = false;
 
-            if (gamepad2.b) {
+            if (gamepad2.dpad_right) {
                 if (!hangLeft_button_pressed) {
                     hangLeft_activated = !hangLeft_activated;
                 }

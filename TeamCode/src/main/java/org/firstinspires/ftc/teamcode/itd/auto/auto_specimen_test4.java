@@ -7,13 +7,13 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -25,10 +25,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Disabled
-@Autonomous (name = "auto_specimen_test1")
+@Autonomous (name = "auto_specimen_test4")
 
-public final class auto_specimen_test1 extends LinearOpMode {
+public final class auto_specimen_test4 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -68,7 +67,7 @@ public final class auto_specimen_test1 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < 4000.0) {
+                if (pos < 2300.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -79,7 +78,7 @@ public final class auto_specimen_test1 extends LinearOpMode {
             }
         }
         public Action liftUp() {
-            return new LiftUp();
+            return new Lift.LiftUp();
         }
 
 
@@ -112,12 +111,52 @@ public final class auto_specimen_test1 extends LinearOpMode {
             }
         }
         public Action liftDown(){
-            return new LiftDown();
+            return new Lift.LiftDown();
         }
 
 
 
-        public class LifttoHang implements Action {
+
+
+        public class LiftuptoMiddle implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                if (!initialized) {
+
+                    frontViper.setPower(1);
+                    backViper.setPower(1);
+                    telemetry.addData("Position", frontViper.getCurrentPosition());
+                    telemetry.addData("front Power", frontViper.getPower());
+                    telemetry.addData("back Power", backViper.getPower());
+                    telemetry.update();
+
+                    initialized = true;
+                }
+
+                double pos = frontViper.getCurrentPosition();
+                packet.put("liftPos", pos);
+                if (pos < 710.0) {
+                    return true;
+                } else {
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+
+                    return false;
+                }
+            }
+        }
+        public Action liftuptoMiddle () {
+            return new Lift.LiftuptoMiddle();
+        }
+
+
+
+
+
+        public class LiftdowntoMiddle implements Action {
             private boolean initialized = false;
 
             @Override
@@ -134,7 +173,7 @@ public final class auto_specimen_test1 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos > 650.0) {
+                if (pos > 690.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -143,11 +182,41 @@ public final class auto_specimen_test1 extends LinearOpMode {
                 }
             }
         }
-        public Action lifttoHang(){
-            return new LifttoHang();
+        public Action liftdowntoMiddle(){
+            return new Lift.LiftdowntoMiddle();
         }
 
 
+
+        public class LiftuptoHang implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    frontViper.setPower(0.4);
+                    backViper.setPower(0.4);
+                    telemetry.addData("Position", frontViper.getCurrentPosition());
+                    telemetry.addData("front Power", frontViper.getPower());
+                    telemetry.addData("back Power", backViper.getPower());
+                    telemetry.update();
+                    initialized = true;
+                }
+
+                double pos = frontViper.getCurrentPosition();
+                packet.put("liftPos", pos);
+                if (pos < 2650.0) {
+                    return true;
+                } else {
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+                    return false;
+                }
+            }
+        }
+        public Action liftuptoHang (){
+            return new Lift.LiftuptoHang();
+        }
 
 
     }
@@ -276,6 +345,45 @@ public final class auto_specimen_test1 extends LinearOpMode {
     }
 
 
+
+
+
+    public class PickupSpecimen {
+        private final Servo specimen;
+
+        public PickupSpecimen(HardwareMap hardwareMap) {
+            specimen = hardwareMap.get(Servo.class, "specimen");
+        }
+
+
+        public class CloseMClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                specimen.setPosition(0.67);
+                return false;
+            }
+        }
+
+        public Action closeMClaw() {
+            return new CloseMClaw();
+        }
+
+
+        public class OpenMClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                specimen.setPosition(0.8);
+                return false;
+            }
+        }
+
+        public Action openMClaw() {
+            return new OpenMClaw();
+        }
+
+    }
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -286,48 +394,35 @@ public final class auto_specimen_test1 extends LinearOpMode {
         Lift lift = new Lift(hardwareMap);
         IntakeSample arm = new IntakeSample(hardwareMap);
         PickupSample sclaw = new PickupSample(hardwareMap);
+        PickupSpecimen mclaw = new PickupSpecimen(hardwareMap);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         Actions.runBlocking(sclaw.openSClaw());
         Actions.runBlocking(arm.retractArm());
+        Actions.runBlocking(mclaw.closeMClaw());
 
         //deposit held specimen
-        Action trajectoryAction1;
-        trajectoryAction1 = drive.actionBuilder(drive.pose)
+        Action go_hang_specimen_0;
+        go_hang_specimen_0 = drive.actionBuilder(drive.pose)
 
-                .strafeTo(new Vector2d(-8, 35))
+                .strafeTo(new Vector2d(-8, 34))
                 .build();
 
-        //go to sample 1
-        Action go_to_sample_1;
-        go_to_sample_1 = drive.actionBuilder(drive.pose)
+        //push_3_samples
+        Action push_3_samples;
+        push_3_samples = drive.actionBuilder(drive.pose)
 
-//                .strafeTo(new Vector2d(-23,38))
                 .strafeTo(new Vector2d(-38, 36))
-//                .strafeTo(new Vector2d(-36, 24))
-                .strafeTo(new Vector2d(-44, 12))
-                .strafeTo(new Vector2d(-48, 14))
+                .strafeTo(new Vector2d(-40, 14.5))
+                .strafeTo(new Vector2d(-48, 14.5))
                 .strafeTo(new Vector2d(-48, 54))
-                .build();
-
-        //go to sample 2
-        Action go_to_sample_2;
-        go_to_sample_2 = drive.actionBuilder(drive.pose)
-
-                .strafeTo(new Vector2d(-52, 12))
-                .strafeTo(new Vector2d(-56, 12))
-//                .strafeTo(new Vector2d(-58, 14))
+                .strafeTo(new Vector2d(-48, 14.5))
+                .strafeTo(new Vector2d(-56, 14.5))
                 .strafeTo(new Vector2d(-56, 54))
-                .build();
-
-        //go to sample 3
-        Action go_to_sample_3;
-        go_to_sample_3 = drive.actionBuilder(drive.pose)
-
-                .strafeTo(new Vector2d(-56, 12))
-                .strafeTo(new Vector2d(-64, 12))
-//                .strafeTo(new Vector2d(-68, 14))
-                .strafeTo(new Vector2d(-64, 54))
+                .strafeTo(new Vector2d(-56, 14.5))
+                .strafeTo(new Vector2d(-62, 14.5))
+                .strafeTo(new Vector2d(-62, 33))
+                .strafeTo(new Vector2d(-62, 54))
                 .build();
 
 
@@ -338,11 +433,24 @@ public final class auto_specimen_test1 extends LinearOpMode {
 
             Actions.runBlocking(new SequentialAction(
 
-                    trajectoryAction1,
-                    new SleepAction(3),
-                    go_to_sample_1,
-                    go_to_sample_2,
-                    go_to_sample_3
+                    new ParallelAction(
+
+                            go_hang_specimen_0,
+                            lift.liftUp()
+                    ),
+                    new SleepAction(1),
+                    lift.liftuptoHang(),
+                    mclaw.openMClaw(),
+
+                    new SleepAction(1),
+                    new ParallelAction(
+                            push_3_samples,
+                            new SequentialAction(
+                                    new SleepAction(1),
+                                    lift.liftdowntoMiddle()
+                            )
+
+                    )
                     )
             );
 
