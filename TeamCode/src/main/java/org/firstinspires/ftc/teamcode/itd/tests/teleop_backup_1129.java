@@ -1,18 +1,14 @@
-package org.firstinspires.ftc.teamcode.itd.teleop;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -23,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
-public class teleop extends LinearOpMode{
+public class teleop_backup_1129 extends LinearOpMode{
     //drivetrain
     DcMotor frontRight;
     DcMotor frontLeft;
@@ -240,14 +236,12 @@ public class teleop extends LinearOpMode{
 
             // viper slides auto action
 
-            if (gamepad2.a) {
+            if (gamepad2.a && gamepad2.start && gamepad2.back && gamepad2.dpad_down) {
                 if (!activation_button_pressed) {
                     activation = !activation;
                 }
                 activation_button_pressed = true;
             } else activation_button_pressed = false;
-
-
 
             if (activation) {
 
@@ -293,7 +287,7 @@ public class teleop extends LinearOpMode{
                 //add bucket up here
                 bucket.setPosition(0.57);
 
-                sleep(700);   // optional pause after each move.
+                sleep(500);   // optional pause after each move.
 
                 //add bucket down here
                 bucket.setPosition(1);

@@ -204,7 +204,7 @@ public final class auto_specimen_test3 extends LinearOpMode {
         public class DumpBucket implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                bucket.setPosition(0.55);
+                bucket.setPosition(0.57);
                 return false;
             }
         }
