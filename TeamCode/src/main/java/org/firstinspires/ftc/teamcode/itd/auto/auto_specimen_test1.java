@@ -7,7 +7,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -25,9 +24,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Autonomous (name = "auto_blue_specimen_test1")
+@Autonomous (name = "auto_specimen_test1")
 
-public final class auto_blue_specimen_test1 extends LinearOpMode {
+public final class auto_specimen_test1 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
