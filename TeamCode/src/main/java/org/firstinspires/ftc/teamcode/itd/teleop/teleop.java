@@ -192,6 +192,12 @@ public class teleop extends LinearOpMode{
         waitForStart();
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
+
+
+            telemetry.addData("frontViper position", frontViper.getCurrentPosition());
+            telemetry.addData("backViper position", backViper.getCurrentPosition());
+            telemetry.update();
+
             //drivetrain
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
