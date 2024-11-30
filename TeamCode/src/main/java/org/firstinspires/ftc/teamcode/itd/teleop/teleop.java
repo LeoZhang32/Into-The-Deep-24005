@@ -48,7 +48,7 @@ public class teleop extends LinearOpMode{
     Servo sample;
     Boolean sample_button_pressed = false;
     Boolean sample_closed = false;
-    private ElapsedTime claw_time = new ElapsedTime();
+//    private ElapsedTime claw_time = new ElapsedTime();
 
 
     Servo intakeRight;
@@ -344,7 +344,7 @@ public class teleop extends LinearOpMode{
                     VS_auto_up = !VS_auto_up;
                 }
                 else if (VS_auto_down) {
-                    bucket_dumped = false;
+                    bucket.setPosition(1);
                     // viper slide going down
                     frontViper.setTargetPosition(0);
                     backViper.setTargetPosition(0);
@@ -420,8 +420,8 @@ public class teleop extends LinearOpMode{
                 else if (VS_auto_up) {
                     // viper slide going up
                     // Set the motor's target position
-                    frontViper.setTargetPosition(2300);
-                    backViper.setTargetPosition(2300);
+                    frontViper.setTargetPosition(2450);
+                    backViper.setTargetPosition(2450);
 
                     // Switch to RUN_TO_POSITION mode
                     frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -465,8 +465,8 @@ public class teleop extends LinearOpMode{
                 else if (VS_auto_down) {
 
                     // viper slide going down
-                    frontViper.setTargetPosition(660);
-                    backViper.setTargetPosition(660);
+                    frontViper.setTargetPosition(260);
+                    backViper.setTargetPosition(260);
 
                     // Switch to RUN_TO_POSITION mode
                     frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -508,8 +508,8 @@ public class teleop extends LinearOpMode{
                 else if (VS_specscore){
 
                     // viper slide going down
-                    frontViper.setTargetPosition(2650);
-                    backViper.setTargetPosition(2650);
+                    frontViper.setTargetPosition(1600);
+                    backViper.setTargetPosition(1600);
 
                     // Switch to RUN_TO_POSITION mode
                     frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -672,9 +672,9 @@ public class teleop extends LinearOpMode{
                 intakeLeft.setPosition(0.65); // this = 1-intakeRight position
                 intakeBack.setPosition(0.65); // Position 3 (holding sample position)
             }else if (pressCount == 4) {
-                if (claw_time.seconds() >= 0.75){
-                    sample_closed = false;
-                }
+//                if (claw_time.seconds() >= 2){
+//                    sample_closed = false;
+//                }
                 intakeRight.setPosition(0.57); //this is the initial position
                 intakeLeft.setPosition(0.43); //this = 1-intakeRight position
                 intakeBack.setPosition(0.45); //this is the initial position - Position 3 (drop sample into bucket)
@@ -698,12 +698,12 @@ public class teleop extends LinearOpMode{
 
         if (currentBState && !previousBState) {
             pressCount = 4;
-            claw_time.reset();
+//            claw_time.reset();
 
             if (pressCount == 4){
-                if (claw_time.seconds() >= 0.75){
-                    sample_closed = false;
-                }
+//                if (claw_time.seconds() >= 2){
+//                    sample_closed = false;
+//                }
                 intakeRight.setPosition(0.57); //this is the initial position
                 intakeLeft.setPosition(0.43); //this = 1-intakeRight position
                 intakeBack.setPosition(0.45); //this is the initial position
@@ -778,10 +778,10 @@ public class teleop extends LinearOpMode{
         }
 
         if (specimen_closed){
-            specimen.setPosition(0.67);
+            specimen.setPosition(0.68);
         }
         else {
-            specimen.setPosition(0.76); //this is the initial position
+            specimen.setPosition(0.8); //this is the initial position
         }
 
         if (hangRight_activated){
