@@ -80,6 +80,9 @@ public class teleop extends LinearOpMode{
     View relativeLayout;
     Boolean sample_color = false;
 
+    Boolean slowModeOn = false;
+    Boolean slowModeButtonPressed = false;
+
 //    DigitalChannel limitSwitch;
 //    Boolean limitSwitchPressed = !limitSwitch.getState();
 //    Boolean gamepad2_dpad_down_isPressed = false;
@@ -190,7 +193,7 @@ public class teleop extends LinearOpMode{
             //drivetrain
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
+            double rx = gamepad1.right_stick_x * 0.7;
 
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
@@ -220,6 +223,12 @@ public class teleop extends LinearOpMode{
             backLeft.setPower(backLeftPower * 1);
             frontRight.setPower(frontRightPower * 1);
             backRight.setPower(backRightPower * 1);
+            if (slowModeOn){
+                frontLeft.setPower(frontLeftPower * 0.7);
+                backLeft.setPower(backLeftPower * 0.7);
+                frontRight.setPower(frontRightPower * 0.7);
+                backRight.setPower(backRightPower * 0.7);
+            }
 
             //viper slides
             if (gamepad2.dpad_up) {
@@ -369,6 +378,13 @@ public class teleop extends LinearOpMode{
 
 
             //sticky key presses
+            //slow mode
+            if (gamepad1.left_bumper){
+                if (!slowModeButtonPressed){
+                    slowModeOn = !slowModeOn;
+                }
+                slowModeButtonPressed= true;
+            } else slowModeButtonPressed = false;
             //sample
             if (gamepad1.a){
                 if (!sample_button_pressed){
