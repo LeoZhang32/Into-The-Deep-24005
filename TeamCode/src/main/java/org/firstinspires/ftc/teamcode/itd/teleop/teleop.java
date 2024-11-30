@@ -35,12 +35,13 @@ public class teleop extends LinearOpMode{
     //viper slides
     DcMotor frontViper;
     DcMotor backViper;
+    Boolean VS_manual_running = false;
     Boolean VS_auto_up_button_pressed = false;
     Boolean VS_auto_up = false;
     Boolean VS_auto_down_button_pressed = false;
     Boolean VS_auto_down = false;
-    Boolean VS_stop_button_pressed = false;
-    Boolean VS_stop = false;
+    Boolean VS_specscore_button_pressed = false;
+    Boolean VS_specscore = false;
 
     //servos
     Servo sample;
@@ -82,6 +83,9 @@ public class teleop extends LinearOpMode{
 
     Boolean slowModeOn = false;
     Boolean slowModeButtonPressed = false;
+
+    Boolean specimenModeOn = false;
+    Boolean specimenModeButtonPressed = false;
 
     DigitalChannel limitSwitch;
 //    Boolean gamepad2_dpad_down_isPressed = false;
@@ -228,13 +232,15 @@ public class teleop extends LinearOpMode{
                 backRight.setPower(backRightPower * 1);
             }
 
-            //viper slides
+            //viper slides manual
             viper_slides: if (gamepad2.dpad_up) {
+                VS_manual_running = true;
                 frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 frontViper.setPower(1);
                 backViper.setPower(1);
             } else if (gamepad2.dpad_down) {
+                VS_manual_running = true;
                 if (!limitSwitch.getState()){
                     //if limit switch is pressed and dpad down
                     frontViper.setPower(0);
@@ -248,242 +254,291 @@ public class teleop extends LinearOpMode{
                 frontViper.setPower(-1);
                 backViper.setPower(-1);
             } else {
+                VS_manual_running = false;
                 frontViper.setPower(0);
                 backViper.setPower(0);
             }
 
-
-
-            // viper slides auto action
-
-
-
-
-            if (gamepad2.x) {
-                if (!VS_auto_up_button_pressed) {
-                    VS_auto_up = !VS_auto_up;
-                }
-                VS_auto_up_button_pressed = true;
-            } else VS_auto_up_button_pressed = false;
-
-            if (VS_auto_up) {
-
-                // viper slide going up
-                // Set the motor's target position
-                frontViper.setTargetPosition(4000);
-                backViper.setTargetPosition(4000);
-
-                // Switch to RUN_TO_POSITION mode
-                frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                // Start the motor moving by setting power ratio
-
-                frontViper.setPower(1);
-                backViper.setPower(1);
-
-                // Loop while the motor is moving to the target
-                while ((frontViper.isBusy()) && (backViper.isBusy()) && !isStopRequested()) {
-
-                    // Check for an emergency stop condition
-                    if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
-                        // **ADDED: Stop the motors immediately**
-                        stopVipers();
-                        break; // **ADDED: Exit the loop on emergency stop**
+            //viper slides auto action
+            //sample
+            if (!specimenModeOn){
+                telemetry.addData("mode","sample");
+                telemetry.update();
+                // viper slides auto action sample
+                if (gamepad2.x) {
+                    if (!VS_auto_up_button_pressed) {
+                        VS_auto_up = !VS_auto_up;
                     }
+                    VS_auto_up_button_pressed = true;
+                } else VS_auto_up_button_pressed = false;
+                if (gamepad2.b) {
+                    if (!VS_auto_down_button_pressed) {
+                        VS_auto_down = !VS_auto_down;
+                    }
+                    VS_auto_down_button_pressed = true;
+                } else VS_auto_down_button_pressed = false;
 
-                // Let the drive team see that we're waiting on the motor
-                    telemetry.addData("Status", "Waiting to reach top");
-                    telemetry.addData("power", frontViper.getPower());
-                    telemetry.addData("position", frontViper.getCurrentPosition());
-                    telemetry.addData("is at target", !frontViper.isBusy());
-                    telemetry.update();
+                if (!limitSwitch.getState()&&!VS_auto_up&&!VS_auto_down&&!VS_manual_running) {
+                    //if pressed
+                    frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    backViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
+                else if (VS_auto_up) {
+                    // viper slide going up
+                    // Set the motor's target position
+                    frontViper.setTargetPosition(4000);
+                    backViper.setTargetPosition(4000);
+
+                    // Switch to RUN_TO_POSITION mode
+                    frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    // Start the motor moving by setting power ratio
+
+                    frontViper.setPower(1);
+                    backViper.setPower(1);
+
+                    // Loop while the motor is moving to the target
+                    while ((frontViper.isBusy()) && (backViper.isBusy()) && !isStopRequested()) {
+
+                        // Check for an emergency stop condition
+                        if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
+                            // **ADDED: Stop the motors immediately**
+                            stopVipers();
+                            break; // **ADDED: Exit the loop on emergency stop**
+                        }
+
+                        // Let the drive team see that we're waiting on the motor
+                        telemetry.addData("Status", "Waiting to reach top");
+                        telemetry.addData("power", frontViper.getPower());
+                        telemetry.addData("position", frontViper.getCurrentPosition());
+                        telemetry.addData("is at target", !frontViper.isBusy());
+                        telemetry.update();
+                    }
 // One of the motor has reached its target position, and the program will continue
 
-                // Stop all motion;
-                frontViper.setPower(0);
-                backViper.setPower(0);
+                    // Stop all motion;
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
 
-                telemetry.addData("Status", "position achieved");
-                telemetry.update();
+                    telemetry.addData("Status", "position achieved");
+                    telemetry.update();
 
-                // Loop while the motor is moving to the target
+                    // Loop while the motor is moving to the target
 
-                VS_auto_up = !VS_auto_up;
-            }
-
-
-
-
-            if (gamepad2.b) {
-                if (!VS_auto_down_button_pressed) {
-                    VS_auto_down = !VS_auto_down;
+                    VS_auto_up = !VS_auto_up;
                 }
-                VS_auto_down_button_pressed = true;
-            } else VS_auto_down_button_pressed = false;
+                else if (VS_auto_down) {
 
+                    // viper slide going down
+                    frontViper.setTargetPosition(0);
+                    backViper.setTargetPosition(0);
 
-            if (VS_auto_down) {
+                    // Switch to RUN_TO_POSITION mode
+                    frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                // viper slide going down
-                frontViper.setTargetPosition(0);
-                backViper.setTargetPosition(0);
+                    frontViper.setPower(1);
+                    backViper.setPower(1);
 
-                // Switch to RUN_TO_POSITION mode
-                frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    // Loop while the motor is moving to the target
+                    while ((frontViper.isBusy()) && backViper.isBusy() && !isStopRequested()) {
 
-                frontViper.setPower(1);
-                backViper.setPower(1);
+                        // Check for an emergency stop condition
+                        if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
+                            // **ADDED: Stop the motors immediately**
+                            stopVipers();
+                            break; // **ADDED: Exit the loop on emergency stop**
+                        }
 
-                // Loop while the motor is moving to the target
-                while ((frontViper.isBusy()) && backViper.isBusy() && !isStopRequested()) {
-
-                    // Check for an emergency stop condition
-                    if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
-                        // **ADDED: Stop the motors immediately**
-                        stopVipers();
-                        break; // **ADDED: Exit the loop on emergency stop**
+                        // Let the drive team see that we're waiting on the motor
+                        telemetry.addData("Status", "Waiting to reach bottom");
+                        telemetry.addData("power", frontViper.getPower());
+                        telemetry.addData("position", frontViper.getCurrentPosition());
+                        telemetry.addData("is at target", !frontViper.isBusy());
+                        telemetry.update();
                     }
 
-                    // Let the drive team see that we're waiting on the motor
-                    telemetry.addData("Status", "Waiting to reach bottom");
-                    telemetry.addData("power", frontViper.getPower());
-                    telemetry.addData("position", frontViper.getCurrentPosition());
-                    telemetry.addData("is at target", !frontViper.isBusy());
+                    // One of the motor has reached its target position, and the program will continue
+                    // Stop all motion;
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+
+                    telemetry.addData("Status", "position achieved");
                     telemetry.update();
-                }
 
-                // One of the motor has reached its target position, and the program will continue
-                // Stop all motion;
-                frontViper.setPower(0);
-                backViper.setPower(0);
+                    // Loop while the motor is moving to the target
 
-                telemetry.addData("Status", "position achieved");
-                telemetry.update();
+                    VS_auto_down = !VS_auto_down;
 
-                // Loop while the motor is moving to the target
-
-                VS_auto_down = !VS_auto_down;
-
-            }
-
-
-
-
-            //sticky key presses
-            //slow mode
-            if (gamepad1.left_bumper){
-                if (!slowModeButtonPressed){
-                    slowModeOn = !slowModeOn;
-                }
-                slowModeButtonPressed= true;
-            } else slowModeButtonPressed = false;
-            //sample
-            if (gamepad1.a){
-                if (!sample_button_pressed){
-                    sample_closed = !sample_closed;
-                }
-                sample_button_pressed= true;
-            } else sample_button_pressed = false;
-
-            //intakeActions
-            currentXState = gamepad1.x;
-            currentYState = gamepad1.y;
-            currentBState = gamepad1.b;
-
-            if (currentXState && !previousXState) { // Prevent "button held down" behavior
-                // Increment the press count and ensure it loops between 0 and 2
-                pressCount++;
-
-                // Cycle through the positions
-                if (pressCount == 1) {
-                    intakeRight.setPosition(0.35);
-                    intakeLeft.setPosition(0.65);
-                    intakeBack.setPosition(0.72); // Position 1 (aiming position)
-                } else if (pressCount == 2) {
-                    intakeRight.setPosition(0.3);
-                    intakeLeft.setPosition(0.7);
-                    intakeBack.setPosition(0.8); // Position 2 (taking sample position)
-                } else if (pressCount == 3) {
-                    intakeRight.setPosition(0.35); //this is the initial position
-                    intakeLeft.setPosition(0.65); // this = 1-intakeRight position
-                    intakeBack.setPosition(0.65); // Position 3 (holding sample position)
-                }else if (pressCount == 4) {
-                    intakeRight.setPosition(0.57); //this is the initial position
-                    intakeLeft.setPosition(0.43); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.45); //this is the initial position - Position 3 (drop sample into bucket)
-                    pressCount = 0; // Reset to cycle back to initial position
                 }
             }
-
-            previousXState = currentXState;
-
-            if (currentYState && !previousYState) {
-                pressCount = 1;
-
-                if (pressCount == 1){
-                    intakeRight.setPosition(0.3);
-                    intakeLeft.setPosition(0.7);
-                    intakeBack.setPosition(0.72);
-                }
-            }
-
-            previousYState = currentYState;
-
-            if (currentBState && !previousBState) {
-                pressCount = 4;
-
-                if (pressCount == 4){
-                    intakeRight.setPosition(0.57); //this is the initial position
-                    intakeLeft.setPosition(0.43); //this = 1-intakeRight position
-                    intakeBack.setPosition(0.45); //this is the initial position
-                    // Position 3 (drop sample into bucket)
-                    pressCount = 0; // Reset to cycle back to initial position
-                }
-            }
-
-            previousBState = currentBState;
-
-            //bucket
-            if (gamepad2.y) {
-                if (!bucket_button_pressed) {
-                    bucket_dumped = !bucket_dumped;
-                }
-                bucket_button_pressed = true;
-            } else bucket_button_pressed = false;
-
             //specimen
-            if (gamepad2.a) {
-                if (!specimen_button_pressed) {
-                    specimen_closed = !specimen_closed;
+            else {
+                telemetry.addData("mode","specimen");
+                telemetry.update();
+                // viper slides auto action specimen
+                if (gamepad2.left_bumper||gamepad2.right_bumper){
+                    if (!VS_specscore_button_pressed) {
+                        VS_specscore = !VS_specscore;
+                    }
+                    VS_specscore_button_pressed = true;
+                } else VS_specscore_button_pressed = false;
+                if (gamepad2.x) {
+                    if (!VS_auto_up_button_pressed) {
+                        VS_auto_up = !VS_auto_up;
+                    }
+                    VS_auto_up_button_pressed = true;
+                } else VS_auto_up_button_pressed = false;
+                if (gamepad2.b) {
+                    if (!VS_auto_down_button_pressed) {
+                        VS_auto_down = !VS_auto_down;
+                    }
+                    VS_auto_down_button_pressed = true;
+                } else VS_auto_down_button_pressed = false;
+
+                if (!limitSwitch.getState()&&!VS_auto_up&&!VS_auto_down&&!VS_manual_running) {
+                    //if pressed
+                    frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    backViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
-                specimen_button_pressed = true;
-            } else specimen_button_pressed = false;
+                else if (VS_auto_up) {
+                    // viper slide going up
+                    // Set the motor's target position
+                    frontViper.setTargetPosition(2300);
+                    backViper.setTargetPosition(2300);
 
-            //hang
-            if (gamepad2.dpad_right) {
-                if (!hangRight_button_pressed) {
-                    hangRight_activated = !hangRight_activated;
+                    // Switch to RUN_TO_POSITION mode
+                    frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    // Start the motor moving by setting power ratio
+
+                    frontViper.setPower(1);
+                    backViper.setPower(1);
+
+                    // Loop while the motor is moving to the target
+                    while ((frontViper.isBusy()) && (backViper.isBusy()) && !isStopRequested()) {
+
+                        // Check for an emergency stop condition
+                        if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
+                            // **ADDED: Stop the motors immediately**
+                            stopVipers();
+                            break; // **ADDED: Exit the loop on emergency stop**
+                        }
+
+                        // Let the drive team see that we're waiting on the motor
+                        telemetry.addData("Status", "Waiting to reach top");
+                        telemetry.addData("power", frontViper.getPower());
+                        telemetry.addData("position", frontViper.getCurrentPosition());
+                        telemetry.addData("is at target", !frontViper.isBusy());
+                        telemetry.update();
+                    }
+                    // One of the motor has reached its target position, and the program will continue
+
+                    // Stop all motion;
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+
+                    telemetry.addData("Status", "position achieved");
+                    telemetry.update();
+
+                    // Loop while the motor is moving to the target
+
+                    VS_auto_up = !VS_auto_up;
                 }
-                hangRight_button_pressed = true;
+                else if (VS_auto_down) {
 
-            } else hangRight_button_pressed = false;
+                    // viper slide going down
+                    frontViper.setTargetPosition(700);
+                    backViper.setTargetPosition(700);
 
-            if (gamepad2.dpad_right) {
-                if (!hangLeft_button_pressed) {
-                    hangLeft_activated = !hangLeft_activated;
+                    // Switch to RUN_TO_POSITION mode
+                    frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    frontViper.setPower(1);
+                    backViper.setPower(1);
+
+                    // Loop while the motor is moving to the target
+                    while ((frontViper.isBusy()) && backViper.isBusy() && !isStopRequested()) {
+
+                        // Check for an emergency stop condition
+                        if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
+                            // **ADDED: Stop the motors immediately**
+                            stopVipers();
+                            break; // **ADDED: Exit the loop on emergency stop**
+                        }
+
+                        // Let the drive team see that we're waiting on the motor
+                        telemetry.addData("Status", "Waiting to reach bottom");
+                        telemetry.addData("power", frontViper.getPower());
+                        telemetry.addData("position", frontViper.getCurrentPosition());
+                        telemetry.addData("is at target", !frontViper.isBusy());
+                        telemetry.update();
+                    }
+
+                    // One of the motor has reached its target position, and the program will continue
+                    // Stop all motion;
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+
+                    telemetry.addData("Status", "position achieved");
+                    telemetry.update();
+
+                    // Loop while the motor is moving to the target
+
+                    VS_auto_down = !VS_auto_down;
                 }
-                hangLeft_button_pressed = true;
+                else if (VS_specscore){
 
-            } else hangLeft_button_pressed = false;
+                    // viper slide going down
+                    frontViper.setTargetPosition(2650);
+                    backViper.setTargetPosition(2650);
 
+                    // Switch to RUN_TO_POSITION mode
+                    frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    frontViper.setPower(1);
+                    backViper.setPower(1);
+
+                    // Loop while the motor is moving to the target
+                    while ((frontViper.isBusy()) && backViper.isBusy() && !isStopRequested()) {
+
+                        // Check for an emergency stop condition
+                        if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
+                            // **ADDED: Stop the motors immediately**
+                            stopVipers();
+                            break; // **ADDED: Exit the loop on emergency stop**
+                        }
+
+                        // Let the drive team see that we're waiting on the motor
+                        telemetry.addData("Status", "Waiting to reach bottom");
+                        telemetry.addData("power", frontViper.getPower());
+                        telemetry.addData("position", frontViper.getCurrentPosition());
+                        telemetry.addData("is at target", !frontViper.isBusy());
+                        telemetry.update();
+                    }
+
+                    // One of the motor has reached its target position, and the program will continue
+                    // Stop all motion;
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+
+                    telemetry.addData("Status", "position achieved");
+                    telemetry.update();
+
+                    // Loop while the motor is moving to the target
+
+                    VS_specscore = !VS_specscore;
+                }
+            }
+
+            sticky_keys();
             updateBooleans();
 
-            // Color Sensor Sample Code:
             // Explain basic gain information via telemetry
-
             // Show the gain value via telemetry
             telemetry.addData("Gain", gain);
 
@@ -554,7 +609,121 @@ public class teleop extends LinearOpMode{
 
     }
 
+    public void sticky_keys() {
+    //sticky key presses
+        //specimen mode
+        if (gamepad2.start&& gamepad2.back){
+            if (!specimenModeButtonPressed){
+                specimenModeOn = !specimenModeOn;
+            }
+            specimenModeButtonPressed= true;
+        } else specimenModeButtonPressed = false;
+        //slow mode
+        if (gamepad1.left_bumper){
+            if (!slowModeButtonPressed){
+                slowModeOn = !slowModeOn;
+            }
+            slowModeButtonPressed= true;
+        } else slowModeButtonPressed = false;
+        //sample
+        if (gamepad1.a){
+            if (!sample_button_pressed){
+                sample_closed = !sample_closed;
+            }
+            sample_button_pressed= true;
+        } else sample_button_pressed = false;
 
+        //intakeActions
+        currentXState = gamepad1.x;
+        currentYState = gamepad1.y;
+        currentBState = gamepad1.b;
+
+        if (currentXState && !previousXState) { // Prevent "button held down" behavior
+            // Increment the press count and ensure it loops between 0 and 2
+            pressCount++;
+
+            // Cycle through the positions
+            if (pressCount == 1) {
+                intakeRight.setPosition(0.35);
+                intakeLeft.setPosition(0.65);
+                intakeBack.setPosition(0.72); // Position 1 (aiming position)
+            } else if (pressCount == 2) {
+                intakeRight.setPosition(0.3);
+                intakeLeft.setPosition(0.7);
+                intakeBack.setPosition(0.8); // Position 2 (taking sample position)
+            } else if (pressCount == 3) {
+                intakeRight.setPosition(0.35); //this is the initial position
+                intakeLeft.setPosition(0.65); // this = 1-intakeRight position
+                intakeBack.setPosition(0.65); // Position 3 (holding sample position)
+            }else if (pressCount == 4) {
+                intakeRight.setPosition(0.57); //this is the initial position
+                intakeLeft.setPosition(0.43); //this = 1-intakeRight position
+                intakeBack.setPosition(0.45); //this is the initial position - Position 3 (drop sample into bucket)
+                pressCount = 0; // Reset to cycle back to initial position
+            }
+        }
+
+        previousXState = currentXState;
+
+        if (currentYState && !previousYState) {
+            pressCount = 1;
+
+            if (pressCount == 1){
+                intakeRight.setPosition(0.3);
+                intakeLeft.setPosition(0.7);
+                intakeBack.setPosition(0.72);
+            }
+        }
+
+        previousYState = currentYState;
+
+        if (currentBState && !previousBState) {
+            pressCount = 4;
+
+            if (pressCount == 4){
+                intakeRight.setPosition(0.57); //this is the initial position
+                intakeLeft.setPosition(0.43); //this = 1-intakeRight position
+                intakeBack.setPosition(0.45); //this is the initial position
+                pressCount = 0; // Reset to cycle back to initial position
+            }
+        }
+
+        previousBState = currentBState;
+
+        //bucket
+        if (gamepad2.y) {
+            if (!bucket_button_pressed) {
+                bucket_dumped = !bucket_dumped;
+            }
+            bucket_button_pressed = true;
+        } else bucket_button_pressed = false;
+
+        //specimen
+        if (gamepad2.a) {
+            if (!specimen_button_pressed) {
+                specimen_closed = !specimen_closed;
+            }
+            specimen_button_pressed = true;
+        } else specimen_button_pressed = false;
+
+        //hang
+        if (gamepad2.dpad_right) {
+            if (!hangRight_button_pressed) {
+                hangRight_activated = !hangRight_activated;
+            }
+            hangRight_button_pressed = true;
+
+        } else hangRight_button_pressed = false;
+
+        if (gamepad2.dpad_right) {
+            if (!hangLeft_button_pressed) {
+                hangLeft_activated = !hangLeft_activated;
+            }
+            hangLeft_button_pressed = true;
+
+        } else hangLeft_button_pressed = false;
+
+    }
     public void stopVipers() {
         // Override RUN_TO_POSITION mode and stop the motors
         frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -607,6 +776,4 @@ public class teleop extends LinearOpMode{
 
     }
 
-
 }
-
