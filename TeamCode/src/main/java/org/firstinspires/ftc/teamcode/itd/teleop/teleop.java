@@ -229,12 +229,20 @@ public class teleop extends LinearOpMode{
             }
 
             //viper slides
-            if (gamepad2.dpad_up) {
+            viper_slides: if (gamepad2.dpad_up) {
                 frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 frontViper.setPower(1);
                 backViper.setPower(1);
             } else if (gamepad2.dpad_down) {
+                if (!limitSwitch.getState()){
+                    //if limit switch is pressed and dpad down
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+                    telemetry.addData("viper slides","stopped");
+                    telemetry.update();
+                    break viper_slides;
+                }
                 frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 frontViper.setPower(-1);
@@ -244,13 +252,7 @@ public class teleop extends LinearOpMode{
                 backViper.setPower(0);
             }
             //limit switch viper slide stop
-            if (!limitSwitch.getState()&&gamepad2.dpad_down){
-                //if limit switch is pressed and dpad down
-                frontViper.setPower(0);
-                backViper.setPower(0);
-                telemetry.addData("viper slides","stopped");
-                telemetry.update();
-            }
+
 
 
             // viper slides auto action
