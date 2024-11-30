@@ -22,21 +22,36 @@ public class MeepMeepTesting {
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-8, 66, Math.toRadians(90)))
 //                .lineToX(50)
 //                .turn(Math.toRadians(90))
-                .strafeTo(new Vector2d(-8, 35))
-                .strafeTo(new Vector2d(-23,38))
+                .strafeTo(new Vector2d(-8, 34))
                 .strafeTo(new Vector2d(-38, 36))
-                .strafeTo(new Vector2d(-46, 12))
-                .strafeTo(new Vector2d(-48, 14))
+
+                .strafeTo(new Vector2d(-40, 14.5))
+
+                .strafeTo(new Vector2d(-48, 14.5))
                 .strafeTo(new Vector2d(-48, 54))
-                .strafeTo(new Vector2d(-48, 12))
-                .strafeTo(new Vector2d(-56, 12))
+                .strafeTo(new Vector2d(-48, 14.5))
+                .strafeTo(new Vector2d(-56, 14.5))
                 .strafeTo(new Vector2d(-56, 54))
-//                .lineToY(30)
-//                .turn(Math.toRadians(90))
-//                .lineToX(0)
-//                .turn(Math.toRadians(90))
-//                .lineToY(0)
-//                .turn(Math.toRadians(90))
+
+                .strafeTo(new Vector2d(-56, 46))
+                .strafeToLinearHeading(new Vector2d(-48,46), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-48,66), Math.toRadians(-90))
+
+                .strafeTo(new Vector2d(-48, 58))
+                .strafeToLinearHeading(new Vector2d(-10,42), Math.toRadians(90))
+                .strafeTo(new Vector2d(-10, 34))
+
+                .strafeTo(new Vector2d(-10, 42))
+                .strafeToLinearHeading(new Vector2d(-48,58), Math.toRadians(-90))
+                .strafeTo(new Vector2d(-48, 66))
+
+                .strafeTo(new Vector2d(-48, 58))
+                .strafeToLinearHeading(new Vector2d(-6,42), Math.toRadians(90))
+                .strafeTo(new Vector2d(-6, 34))
+
+                .strafeTo(new Vector2d(-6, 42))
+                .strafeToLinearHeading(new Vector2d(-48,60), Math.toRadians(-90))
+
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_OFFICIAL)
