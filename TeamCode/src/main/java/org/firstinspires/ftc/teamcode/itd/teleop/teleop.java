@@ -243,15 +243,16 @@ public class teleop extends LinearOpMode{
             //viper slides manual
             viper_slides: if (gamepad2.dpad_up) {
                 VS_manual_running = true;
-                if (frontViper.getCurrentPosition() >= 4100){
+
+                if (frontViper.getCurrentPosition() >= 4050){
                     frontViper.setPower(0);
                     backViper.setPower(0);
-                    telemetry.addData("viper slides","stopped");
+                    telemetry.addData("viper slides","over limit");
                     telemetry.update();
                     break viper_slides;
                 }
-                frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 frontViper.setPower(1);
                 backViper.setPower(1);
             } else if (gamepad2.dpad_down) {
@@ -264,8 +265,8 @@ public class teleop extends LinearOpMode{
                     telemetry.update();
                     break viper_slides;
                 }
-                frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 frontViper.setPower(-1);
                 backViper.setPower(-1);
             } else {
@@ -343,6 +344,7 @@ public class teleop extends LinearOpMode{
 
                     VS_auto_up = !VS_auto_up;
                 }
+                /*
                 else if (VS_auto_down) {
                     bucket.setPosition(1);
                     // viper slide going down
@@ -387,6 +389,8 @@ public class teleop extends LinearOpMode{
                     VS_auto_down = !VS_auto_down;
 
                 }
+                */
+
             }
             //specimen
             else {
@@ -420,8 +424,8 @@ public class teleop extends LinearOpMode{
                 else if (VS_auto_up) {
                     // viper slide going up
                     // Set the motor's target position
-                    frontViper.setTargetPosition(2450);
-                    backViper.setTargetPosition(2450);
+                    frontViper.setTargetPosition(2150);
+                    backViper.setTargetPosition(2150);
 
                     // Switch to RUN_TO_POSITION mode
                     frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
