@@ -27,8 +27,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp
 public class slides_pidf_test extends LinearOpMode {
 
-    DcMotorEx frontViper;
-    DcMotorEx backViper;
+    DcMotorEx motor;
 
     ElapsedTime pidfTimer = new ElapsedTime();
 
@@ -36,7 +35,7 @@ public class slides_pidf_test extends LinearOpMode {
     private double integralSum = 0;
 
     public static double p = 0, i = 0, d = 0;
-    public static double targetPosition = 5000;
+    public static double targetPosition = 3000;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -45,28 +44,22 @@ public class slides_pidf_test extends LinearOpMode {
         TelemetryPacket packet = new TelemetryPacket();
 
         dashboard.setTelemetryTransmissionInterval(25);
-        frontViper = hardwareMap.get(DcMotorEx.class, "frontViper");
-        backViper = hardwareMap.get(DcMotorEx.class, "backViper");
+        motor = hardwareMap.get(DcMotorEx.class, "motor");
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        frontViper.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
-        int targetPosition = 5000;
+        int targetPosition = 3000;
         while (opModeIsActive()){
-            double power = returnPower(targetPosition, backViper.getCurrentPosition());
+            double power = returnPower(targetPosition, motor.getCurrentPosition());
             packet.put("power", power);
-            packet.put("position", backViper.getCurrentPosition());
+            packet.put("position", motor.getCurrentPosition());
             packet.put("error", lastError);
-            frontViper.setPower(power);
-            backViper.setPower(power);
+            motor.setPower(power);
 
             dashboard.sendTelemetryPacket(packet);
 

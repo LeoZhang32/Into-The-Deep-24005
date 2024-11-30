@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -47,6 +48,7 @@ public class teleop extends LinearOpMode{
     Servo sample;
     Boolean sample_button_pressed = false;
     Boolean sample_closed = false;
+    private ElapsedTime claw_time = new ElapsedTime();
 
 
     Servo intakeRight;
@@ -235,6 +237,13 @@ public class teleop extends LinearOpMode{
             //viper slides manual
             viper_slides: if (gamepad2.dpad_up) {
                 VS_manual_running = true;
+                if (frontViper.getCurrentPosition() >= 4100){
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+                    telemetry.addData("viper slides","stopped");
+                    telemetry.update();
+                    break viper_slides;
+                }
                 frontViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 backViper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 frontViper.setPower(1);
@@ -329,7 +338,7 @@ public class teleop extends LinearOpMode{
                     VS_auto_up = !VS_auto_up;
                 }
                 else if (VS_auto_down) {
-
+                    bucket_dumped = false;
                     // viper slide going down
                     frontViper.setTargetPosition(0);
                     backViper.setTargetPosition(0);
@@ -450,8 +459,8 @@ public class teleop extends LinearOpMode{
                 else if (VS_auto_down) {
 
                     // viper slide going down
-                    frontViper.setTargetPosition(700);
-                    backViper.setTargetPosition(700);
+                    frontViper.setTargetPosition(660);
+                    backViper.setTargetPosition(660);
 
                     // Switch to RUN_TO_POSITION mode
                     frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -525,6 +534,7 @@ public class teleop extends LinearOpMode{
                     // Stop all motion;
                     frontViper.setPower(0);
                     backViper.setPower(0);
+                    specimen_closed = false;
 
                     telemetry.addData("Status", "position achieved");
                     telemetry.update();
@@ -656,6 +666,9 @@ public class teleop extends LinearOpMode{
                 intakeLeft.setPosition(0.65); // this = 1-intakeRight position
                 intakeBack.setPosition(0.65); // Position 3 (holding sample position)
             }else if (pressCount == 4) {
+                if (claw_time.seconds() >= 0.75){
+                    sample_closed = false;
+                }
                 intakeRight.setPosition(0.57); //this is the initial position
                 intakeLeft.setPosition(0.43); //this = 1-intakeRight position
                 intakeBack.setPosition(0.45); //this is the initial position - Position 3 (drop sample into bucket)
@@ -679,8 +692,12 @@ public class teleop extends LinearOpMode{
 
         if (currentBState && !previousBState) {
             pressCount = 4;
+            claw_time.reset();
 
             if (pressCount == 4){
+                if (claw_time.seconds() >= 0.75){
+                    sample_closed = false;
+                }
                 intakeRight.setPosition(0.57); //this is the initial position
                 intakeLeft.setPosition(0.43); //this = 1-intakeRight position
                 intakeBack.setPosition(0.45); //this is the initial position
