@@ -83,8 +83,7 @@ public class teleop extends LinearOpMode{
     Boolean slowModeOn = false;
     Boolean slowModeButtonPressed = false;
 
-//    DigitalChannel limitSwitch;
-//    Boolean limitSwitchPressed = !limitSwitch.getState();
+    DigitalChannel limitSwitch;
 //    Boolean gamepad2_dpad_down_isPressed = false;
 
     @Override
@@ -142,8 +141,8 @@ public class teleop extends LinearOpMode{
 
         //sensors
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
-//        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
-//        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
@@ -187,9 +186,6 @@ public class teleop extends LinearOpMode{
         waitForStart();
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
-
-
-
             //drivetrain
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
@@ -219,15 +215,17 @@ public class teleop extends LinearOpMode{
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            frontLeft.setPower(frontLeftPower * 1);
-            backLeft.setPower(backLeftPower * 1);
-            frontRight.setPower(frontRightPower * 1);
-            backRight.setPower(backRightPower * 1);
             if (slowModeOn){
-                frontLeft.setPower(frontLeftPower * 0.7);
-                backLeft.setPower(backLeftPower * 0.7);
-                frontRight.setPower(frontRightPower * 0.7);
-                backRight.setPower(backRightPower * 0.7);
+                frontLeft.setPower(frontLeftPower * 0.3);
+                backLeft.setPower(backLeftPower * 0.3);
+                frontRight.setPower(frontRightPower * 0.3);
+                backRight.setPower(backRightPower * 0.3);
+            }
+            else{
+                frontLeft.setPower(frontLeftPower * 1);
+                backLeft.setPower(backLeftPower * 1);
+                frontRight.setPower(frontRightPower * 1);
+                backRight.setPower(backRightPower * 1);
             }
 
             //viper slides
@@ -245,13 +243,14 @@ public class teleop extends LinearOpMode{
                 frontViper.setPower(0);
                 backViper.setPower(0);
             }
-
-            //viper slides limit switch
-//            if (limitSwitchPressed && gamepad2.dpad_down){
-//                frontViper.setPower(0);
-//                backViper.setPower(0);
-//                telemetry.addData("Viper Slides", "Stopped");
-//            }
+            //limit switch viper slide stop
+            if (!limitSwitch.getState()&&gamepad2.dpad_down){
+                //if limit switch is pressed and dpad down
+                frontViper.setPower(0);
+                backViper.setPower(0);
+                telemetry.addData("viper slides","stopped");
+                telemetry.update();
+            }
 
 
             // viper slides auto action
