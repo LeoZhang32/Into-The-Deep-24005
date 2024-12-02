@@ -62,6 +62,8 @@ public class teleop extends LinearOpMode{
     Boolean currentYState;
     Boolean previousBState = false;
     Boolean currentBState;
+    Boolean previousRBState = false;
+    Boolean currentRBState;
 
     Servo bucket;
     Boolean bucket_button_pressed = false;
@@ -657,6 +659,7 @@ public class teleop extends LinearOpMode{
         currentXState = gamepad1.x;
         currentYState = gamepad1.y;
         currentBState = gamepad1.b;
+        currentRBState = gamepad1.right_bumper;
 
         if (currentXState && !previousXState) { // Prevent "button held down" behavior
             // Increment the press count and ensure it loops between 0 and 2
@@ -674,7 +677,7 @@ public class teleop extends LinearOpMode{
             } else if (pressCount == 3) {
                 intakeRight.setPosition(0.35); //this is the initial position
                 intakeLeft.setPosition(0.65); // this = 1-intakeRight position
-                intakeBack.setPosition(0.65); // Position 3 (holding sample position)
+                intakeBack.setPosition(0.72); // Position 3 (holding sample position)
             }else if (pressCount == 4) {
 //                if (claw_time.seconds() >= 2){
 //                    sample_closed = false;
@@ -692,8 +695,8 @@ public class teleop extends LinearOpMode{
             pressCount = 1;
 
             if (pressCount == 1){
-                intakeRight.setPosition(0.3);
-                intakeLeft.setPosition(0.7);
+                intakeRight.setPosition(0.35);
+                intakeLeft.setPosition(0.65);
                 intakeBack.setPosition(0.72);
             }
         }
@@ -716,6 +719,27 @@ public class teleop extends LinearOpMode{
         }
 
         previousBState = currentBState;
+
+
+        if (currentRBState && !previousRBState) {
+            pressCount = 5;
+//            position to take close samples;
+
+            if (pressCount == 5){
+//                if (claw_time.seconds() >= 2){
+//                    sample_closed = false;
+//                }
+                intakeRight.setPosition(0.4);
+                intakeLeft.setPosition(0.6);
+                intakeBack.setPosition(0.95);
+
+            }
+        }
+
+        previousRBState = currentRBState;
+
+
+
 
         //bucket
         if (gamepad2.y) {
@@ -785,7 +809,7 @@ public class teleop extends LinearOpMode{
             specimen.setPosition(0.68);
         }
         else {
-            specimen.setPosition(0.8); //this is the initial position
+            specimen.setPosition(0.83); //this is the initial position
         }
 
         if (hangRight_activated){
