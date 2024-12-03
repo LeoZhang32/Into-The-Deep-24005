@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.auto;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 
 import androidx.annotation.NonNull;
@@ -14,6 +14,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -25,9 +26,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Autonomous (name = "auto_SAMPLE")
 
-public final class auto_SAMPLE extends LinearOpMode {
+@Autonomous (name = "auto_SAMPLE_back1203")
+
+public final class auto_SAMPLE_backup1203 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -302,8 +304,8 @@ public final class auto_SAMPLE extends LinearOpMode {
         Action go_to_sample_1;
         go_to_sample_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(59, 50), Math.toRadians(-65))
-                .strafeToLinearHeading(new Vector2d(60, 45), Math.toRadians(-67))
+                .strafeToLinearHeading(new Vector2d(62, 49), Math.toRadians(-65))
+                .strafeToLinearHeading(new Vector2d(62.5,45), Math.toRadians(-67))
                 .build();
 
         //return to basket 1
@@ -317,8 +319,8 @@ public final class auto_SAMPLE extends LinearOpMode {
         Action go_to_sample_2;
         go_to_sample_2 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(58, 52), Math.toRadians(-90))
-                .strafeTo(new Vector2d(58,47))
+                .strafeToLinearHeading(new Vector2d(60, 51), Math.toRadians(-90))
+                .strafeTo(new Vector2d(60,47))
                 .build();
 
         //return to basket
@@ -332,8 +334,8 @@ public final class auto_SAMPLE extends LinearOpMode {
         Action go_to_sample_3;
         go_to_sample_3 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(48, 52), Math.toRadians(-90))
-                .strafeTo(new Vector2d(48,47))
+                .strafeToLinearHeading(new Vector2d(50, 51), Math.toRadians(-90))
+                .strafeTo(new Vector2d(50,47))
                 .build();
 
         //return to basket
