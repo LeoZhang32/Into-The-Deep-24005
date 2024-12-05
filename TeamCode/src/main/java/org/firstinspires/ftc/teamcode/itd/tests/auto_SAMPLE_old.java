@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.auto;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 
 import androidx.annotation.NonNull;
@@ -25,9 +25,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Autonomous (name = "auto_SAMPLE")
+@Autonomous (name = "auto_SAMPLE_old")
 
-public final class auto_SAMPLE extends LinearOpMode {
+public final class auto_SAMPLE_old extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -208,7 +208,7 @@ public final class auto_SAMPLE extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 intakeRight.setPosition(0.3);
                 intakeLeft.setPosition(0.7);
-                intakeBack.setPosition(0.82);
+                intakeBack.setPosition(0.8);
                 return false;
             }
         }
@@ -295,59 +295,54 @@ public final class auto_SAMPLE extends LinearOpMode {
         trajectoryAction1 = drive.actionBuilder(drive.pose)
 
                 .strafeTo(new Vector2d(36, 64))
-                .strafeToLinearHeading(new Vector2d(61, 59), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(57, 57), Math.toRadians(-135))
                 .build();
-
-        //go to sample 3
-        Action go_to_sample_3;
-        go_to_sample_3 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(46, 51), Math.toRadians(-90))
-                .strafeTo(new Vector2d(46,47))
-                .build();
-
-        //return to basket
-        Action return_basket_3;
-        return_basket_3= drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(50, 53), Math.toRadians(-112))
-                .strafeToLinearHeading(new Vector2d(58, 58), Math.toRadians(-135))
-                .build();
-
-
-
-        //go to  sample 2
-        Action go_to_sample_2;
-        go_to_sample_2 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(61, 51), Math.toRadians(-90))
-                .strafeTo(new Vector2d(61,47))
-                .build();
-
-        //return to basket
-        Action return_basket_2;
-        return_basket_2 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(58, 53), Math.toRadians(-112))
-                .strafeToLinearHeading(new Vector2d(58, 58), Math.toRadians(-135))
-                .build();
-
 
         //go to sample 1
         Action go_to_sample_1;
         go_to_sample_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(61, 49), Math.toRadians(-62))
-                .strafeToLinearHeading(new Vector2d(61, 45), Math.toRadians(-65))
+                .strafeToLinearHeading(new Vector2d(59, 50), Math.toRadians(-65))
+                .strafeToLinearHeading(new Vector2d(60, 45), Math.toRadians(-67))
                 .build();
 
         //return to basket 1
         Action return_basket_1;
         return_basket_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(57, 58), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(57, 57), Math.toRadians(-135))
                 .build();
 
+        //go to  sample 2
+        Action go_to_sample_2;
+        go_to_sample_2 = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(58, 52), Math.toRadians(-90))
+                .strafeTo(new Vector2d(58,47))
+                .build();
+
+        //return to basket
+        Action return_basket_2;
+        return_basket_2 = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(57, 57), Math.toRadians(-135))
+                .build();
+
+        //go to sample 3
+        Action go_to_sample_3;
+        go_to_sample_3 = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(48, 52), Math.toRadians(-90))
+                .strafeTo(new Vector2d(48,47))
+                .build();
+
+        //return to basket
+        Action return_basket_3;
+         return_basket_3= drive.actionBuilder(drive.pose)
+
+                 .strafeToLinearHeading(new Vector2d(50, 53), Math.toRadians(-112))
+                 .strafeToLinearHeading(new Vector2d(57, 57), Math.toRadians(-135))
+                .build();
 
         //go to hang
         Action go_to_hang;
@@ -358,6 +353,11 @@ public final class auto_SAMPLE extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(40,12), Math.toRadians(0))
                 .strafeTo(new Vector2d(25,12))
                 .build();
+//                .strafeTo(new Vector2d(48,48))
+//                .turnTo(Math.toRadians(0))
+//                .strafeTo(new Vector2d(48, 12))
+//                .strafeTo(new Vector2d(26, 12))
+//                .build();
 
 
 

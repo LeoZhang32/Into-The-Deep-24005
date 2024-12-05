@@ -295,7 +295,7 @@ public final class auto_SAMPLE_1205 extends LinearOpMode {
         trajectoryAction1 = drive.actionBuilder(drive.pose)
 
                 .strafeTo(new Vector2d(36, 64))
-                .strafeToLinearHeading(new Vector2d(60, 57), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(61, 59), Math.toRadians(-135))
                 .build();
 
         //go to sample 3
@@ -320,8 +320,8 @@ public final class auto_SAMPLE_1205 extends LinearOpMode {
         Action go_to_sample_2;
         go_to_sample_2 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(59, 51), Math.toRadians(-90))
-                .strafeTo(new Vector2d(59,47))
+                .strafeToLinearHeading(new Vector2d(61, 51), Math.toRadians(-90))
+                .strafeTo(new Vector2d(61,47))
                 .build();
 
         //return to basket
@@ -337,8 +337,8 @@ public final class auto_SAMPLE_1205 extends LinearOpMode {
         Action go_to_sample_1;
         go_to_sample_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(62, 49), Math.toRadians(-65))
-                .strafeToLinearHeading(new Vector2d(62, 46), Math.toRadians(-68))
+                .strafeToLinearHeading(new Vector2d(61, 49), Math.toRadians(-62))
+                .strafeToLinearHeading(new Vector2d(61, 45), Math.toRadians(-65))
                 .build();
 
         //return to basket 1
