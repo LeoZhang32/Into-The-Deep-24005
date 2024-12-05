@@ -19,38 +19,16 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-8, 66, Math.toRadians(90)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 66, Math.toRadians(90)))
 //                .lineToX(50)
 //                .turn(Math.toRadians(90))
-                .strafeTo(new Vector2d(-8, 34))
-                .strafeTo(new Vector2d(-38, 36))
+                .strafeTo(new Vector2d(0, 35))
+                .strafeTo(new Vector2d(-40, 50))
+                .turn(Math.toRadians(180))
+                .strafeTo(new Vector2d(-40, 67))
+                .strafeToLinearHeading(new Vector2d(-40, 50), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-9,35), Math.toRadians(90))
 
-                .strafeTo(new Vector2d(-40, 14.5))
-
-                .strafeTo(new Vector2d(-48, 14.5))
-                .strafeTo(new Vector2d(-48, 54))
-                .strafeTo(new Vector2d(-48, 14.5))
-                .strafeTo(new Vector2d(-56, 14.5))
-                .strafeTo(new Vector2d(-56, 54))
-
-                .strafeTo(new Vector2d(-56, 46))
-                .strafeToLinearHeading(new Vector2d(-48,46), Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(-48,66), Math.toRadians(-90))
-
-                .strafeTo(new Vector2d(-48, 58))
-                .strafeToLinearHeading(new Vector2d(-10,42), Math.toRadians(90))
-                .strafeTo(new Vector2d(-10, 34))
-
-                .strafeTo(new Vector2d(-10, 42))
-                .strafeToLinearHeading(new Vector2d(-48,58), Math.toRadians(-90))
-                .strafeTo(new Vector2d(-48, 66))
-
-                .strafeTo(new Vector2d(-48, 58))
-                .strafeToLinearHeading(new Vector2d(-6,42), Math.toRadians(90))
-                .strafeTo(new Vector2d(-6, 34))
-
-                .strafeTo(new Vector2d(-6, 42))
-                .strafeToLinearHeading(new Vector2d(-48,60), Math.toRadians(-90))
 
                 .build());
 

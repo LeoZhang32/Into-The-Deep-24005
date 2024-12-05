@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
 
+@Disabled
 @Autonomous (name = "auto_SAMPLE_back1203")
 
 public final class auto_SAMPLE_backup1203 extends LinearOpMode {

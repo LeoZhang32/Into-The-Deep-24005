@@ -14,7 +14,6 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -26,10 +25,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Disabled
-@Autonomous (name = "auto_specimen_test4")
+@Autonomous (name = "auto_specimen_test8")
 
-public final class auto_specimen_test4 extends LinearOpMode {
+public final class auto_specimen_test8 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -80,7 +78,7 @@ public final class auto_specimen_test4 extends LinearOpMode {
             }
         }
         public Action liftUp() {
-            return new Lift.LiftUp();
+            return new LiftUp();
         }
 
 
@@ -113,7 +111,7 @@ public final class auto_specimen_test4 extends LinearOpMode {
             }
         }
         public Action liftDown(){
-            return new Lift.LiftDown();
+            return new LiftDown();
         }
 
 
@@ -151,7 +149,7 @@ public final class auto_specimen_test4 extends LinearOpMode {
             }
         }
         public Action liftuptoMiddle () {
-            return new Lift.LiftuptoMiddle();
+            return new LiftuptoMiddle();
         }
 
 
@@ -175,7 +173,7 @@ public final class auto_specimen_test4 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos > 290.0) {
+                if (pos > 360.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -185,7 +183,7 @@ public final class auto_specimen_test4 extends LinearOpMode {
             }
         }
         public Action liftdowntoMiddle(){
-            return new Lift.LiftdowntoMiddle();
+            return new LiftdowntoMiddle();
         }
 
 
@@ -216,10 +214,78 @@ public final class auto_specimen_test4 extends LinearOpMode {
                 }
             }
         }
-        public Action liftdowntoScore (){  return new Lift.LiftdowntoScore();   }
+        public Action liftdowntoScore (){
+            return new LiftdowntoScore();
+        }
 
 
 
+
+
+        public class Liftspecimen0Up implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                if (!initialized) {
+
+                    frontViper.setPower(1);
+                    backViper.setPower(1);
+                    telemetry.addData("Position", frontViper.getCurrentPosition());
+                    telemetry.addData("front Power", frontViper.getPower());
+                    telemetry.addData("back Power", backViper.getPower());
+                    telemetry.update();
+
+                    initialized = true;
+                }
+
+                double pos = frontViper.getCurrentPosition();
+                packet.put("liftPos", pos);
+                if (pos < 2200.0) {
+                    return true;
+                } else {
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+
+                    return false;
+                }
+            }
+        }
+        public Action Liftspecimen0Up() {
+            return new Liftspecimen0Up();
+        }
+
+
+        public class LiftuptoScore implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    frontViper.setPower(0.5);
+                    backViper.setPower(0.5);
+                    telemetry.addData("Position", frontViper.getCurrentPosition());
+                    telemetry.addData("front Power", frontViper.getPower());
+                    telemetry.addData("back Power", backViper.getPower());
+                    telemetry.update();
+                    initialized = true;
+                }
+
+                double pos = frontViper.getCurrentPosition();
+                packet.put("liftPos", pos);
+                if (pos < 2800.0) {
+                    return true;
+                } else {
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+                    return false;
+                }
+            }
+        }
+        public Action liftuptoScore (){
+            return new LiftuptoScore();
+        }
 
 
     }
@@ -408,67 +474,54 @@ public final class auto_specimen_test4 extends LinearOpMode {
         Action go_score_specimen_0;
         go_score_specimen_0 = drive.actionBuilder(drive.pose)
 
-                .strafeTo(new Vector2d(0, 34))
+                .strafeTo(new Vector2d(0, 35.5))
                 .build();
 
-        //push 2 samples and get specimen 1
-        Action push_2_samples_and_get_specimen_1;
-        push_2_samples_and_get_specimen_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(-38, 36), Math.toRadians(90))
-//                .strafeTo(new Vector2d(-38, 36))
-                .strafeTo(new Vector2d(-40, 14.5))
-                .strafeTo(new Vector2d(-48, 14.5))
-                .strafeTo(new Vector2d(-48, 54))
-                .strafeTo(new Vector2d(-48, 14.5))
-                .strafeTo(new Vector2d(-56, 14.5))
-                .strafeTo(new Vector2d(-56, 54))
 
-                .strafeTo(new Vector2d(-56, 46))
-                .strafeTo(new Vector2d(-48, 46))
-                .turn(Math.toRadians(182))
-                .strafeTo(new Vector2d(-48, 65))
-//                .strafeToLinearHeading(new Vector2d(-48,46), Math.toRadians(-90))
-//                .strafeToLinearHeading(new Vector2d(-48,67), Math.toRadians(-90))
+        //go get specimen 1
+        Action go_get_specimen_1;
+        go_get_specimen_1 = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(-40, 50), Math.toRadians(-90))
+//                .turn(Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-40, 66), Math.toRadians(-90))
                 .build();
+
 
         //go score specimen 1
         Action go_score_specimen_1;
         go_score_specimen_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(-48, 58), Math.toRadians(-90))
-                .turn(Math.toRadians(180))
-                .strafeTo(new Vector2d(-4, 42))
-//                .strafeToLinearHeading(new Vector2d(-4,42), Math.toRadians(90))
-                .strafeTo(new Vector2d(-4, 34))
+
+
+                .strafeToLinearHeading(new Vector2d(-40, 52), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-6, 45), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-6, 35), Math.toRadians(90))
                 .build();
 
-        //go get specimen 2
-        Action go_get_specimen_2;
-        go_get_specimen_2 = drive.actionBuilder(drive.pose)
 
-                .strafeTo(new Vector2d(-4, 42))
-                .strafeToLinearHeading(new Vector2d(-48,58), Math.toRadians(-90))
-                .strafeTo(new Vector2d(-48, 67))
+
+        //push 2 samples and get specimen 1
+        Action push_2_samples_and_get_specimen_1;
+        push_2_samples_and_get_specimen_1 = drive.actionBuilder(drive.pose)
+
+                .strafeTo(new Vector2d(-38, 36))
+//                .strafeTo(new Vector2d(-38, 36))
+                .strafeTo(new Vector2d(-40, 14.5))
+                .strafeTo(new Vector2d(-48, 14.5))
+                .strafeTo(new Vector2d(-48, 56))
+                .strafeTo(new Vector2d(-48, 14.5))
+                .strafeTo(new Vector2d(-56, 14.5))
+                .strafeTo(new Vector2d(-56, 62))
+
+//                .strafeTo(new Vector2d(-56, 46))
+//                .strafeTo(new Vector2d(-48, 46))
+//                .turn(Math.toRadians(182))
+//                .strafeTo(new Vector2d(-48, 65))
+//                .strafeToLinearHeading(new Vector2d(-48,46), Math.toRadians(-90))
+//                .strafeToLinearHeading(new Vector2d(-48,67), Math.toRadians(-90))
                 .build();
-
-        //go score specimen 2
-        Action go_score_specimen_2;
-        go_score_specimen_2 = drive.actionBuilder(drive.pose)
-
-                .strafeTo(new Vector2d(-48, 58))
-                .strafeToLinearHeading(new Vector2d(-8,42), Math.toRadians(90))
-                .strafeTo(new Vector2d(-8, 34))
-                .build();
-
-        //go get specimen 3
-        Action go_get_specimen_3;
-        go_get_specimen_3 = drive.actionBuilder(drive.pose)
-
-                .strafeTo(new Vector2d(-8, 42))
-                .strafeToLinearHeading(new Vector2d(-48,60), Math.toRadians(-90))
-                .build();
-
 
 
         waitForStart();
@@ -480,21 +533,52 @@ public final class auto_specimen_test4 extends LinearOpMode {
                     //go score specimen 0
                     new ParallelAction(
                             go_score_specimen_0,
-                            lift.liftUp()
+                            lift.Liftspecimen0Up()
+                    ),
+                    new SleepAction(0.5),
+                    lift.liftuptoScore(),
+                    mclaw.openMClaw(),
+                    new SleepAction(0.5),
+
+                    //go get specimen 1
+                    new ParallelAction(
+                            go_get_specimen_1,
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    lift.liftdowntoMiddle()
+                            )
+                    ),
+                    mclaw.closeMClaw(),
+                    new SleepAction(0.5),
+
+                    //go score specimen 1
+                    new ParallelAction(
+                                    lift.liftUp(),
+                                    new SequentialAction(
+                                            new SleepAction(0.5),
+                                            go_score_specimen_1
+                                    )
                     ),
                     new SleepAction(0.5),
                     lift.liftdowntoScore(),
                     mclaw.openMClaw(),
                     new SleepAction(0.5),
 
+
+
+
                     //push_2_samples_and_get_specimen_1
                     new ParallelAction(
                             push_2_samples_and_get_specimen_1,
                             new SequentialAction(
-                                    new SleepAction(1),
+                                    new SleepAction(0.5),
                                     lift.liftdowntoMiddle()
                             )
-                    ),
+                    )
+
+
+
+                            /*,
 
 
                     new SleepAction(1),
@@ -506,18 +590,7 @@ public final class auto_specimen_test4 extends LinearOpMode {
                     new SleepAction(0.5),
 
 
-                    //go score specimen 1
-                    new ParallelAction(
-                            lift.liftUp(),
-                            new SequentialAction(
-                                    new SleepAction(0.5),
-                                    go_score_specimen_1
-                            )
-                    ),
-                    new SleepAction(0.5),
-                    lift.liftdowntoScore(),
-                    mclaw.openMClaw(),
-                    new SleepAction(0.5),
+
 
                     //go get specimen 2
                     new ParallelAction(
@@ -552,6 +625,8 @@ public final class auto_specimen_test4 extends LinearOpMode {
                             )
 
                     )
+                    */
+
                     )
             );
 
