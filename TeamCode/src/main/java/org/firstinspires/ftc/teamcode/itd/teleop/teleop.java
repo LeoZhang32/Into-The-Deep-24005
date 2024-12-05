@@ -59,6 +59,7 @@ public class teleop extends LinearOpMode{
     Boolean previousXState = false;
     Boolean currentXState;
     Boolean previousYState = false;
+    
     Boolean currentYState;
     Boolean previousBState = false;
     Boolean currentBState;
@@ -246,7 +247,7 @@ public class teleop extends LinearOpMode{
             viper_slides: if (gamepad2.dpad_up) {
                 VS_manual_running = true;
 
-                if (frontViper.getCurrentPosition() >= 4050){
+                if (frontViper.getCurrentPosition() >= 4200){
                     frontViper.setPower(0);
                     backViper.setPower(0);
                     telemetry.addData("viper slides","over limit");
