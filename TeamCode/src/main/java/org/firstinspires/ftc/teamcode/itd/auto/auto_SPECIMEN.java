@@ -14,7 +14,6 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -26,10 +25,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Disabled
-@Autonomous (name = "auto_specimen_test3")
+@Autonomous (name = "auto_SPECIMEN")
 
-public final class auto_specimen_test3 extends LinearOpMode {
+public final class auto_SPECIMEN extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -69,7 +67,7 @@ public final class auto_specimen_test3 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < 2000.0) {
+                if (pos < 2250.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -140,7 +138,7 @@ public final class auto_specimen_test3 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < 710.0) {
+                if (pos < 310.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -175,7 +173,7 @@ public final class auto_specimen_test3 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos > 690.0) {
+                if (pos > 360.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -189,6 +187,105 @@ public final class auto_specimen_test3 extends LinearOpMode {
         }
 
 
+
+        public class LiftdowntoScore implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    frontViper.setPower(-0.5);
+                    backViper.setPower(-0.5);
+                    telemetry.addData("Position", frontViper.getCurrentPosition());
+                    telemetry.addData("front Power", frontViper.getPower());
+                    telemetry.addData("back Power", backViper.getPower());
+                    telemetry.update();
+                    initialized = true;
+                }
+
+                double pos = frontViper.getCurrentPosition();
+                packet.put("liftPos", pos);
+                if (pos > 1700.0) {
+                    return true;
+                } else {
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+                    return false;
+                }
+            }
+        }
+        public Action liftdowntoScore (){
+            return new LiftdowntoScore();
+        }
+
+
+
+
+
+        public class Liftspecimen0Up implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                if (!initialized) {
+
+                    frontViper.setPower(1);
+                    backViper.setPower(1);
+                    telemetry.addData("Position", frontViper.getCurrentPosition());
+                    telemetry.addData("front Power", frontViper.getPower());
+                    telemetry.addData("back Power", backViper.getPower());
+                    telemetry.update();
+
+                    initialized = true;
+                }
+
+                double pos = frontViper.getCurrentPosition();
+                packet.put("liftPos", pos);
+                if (pos < 2200.0) {
+                    return true;
+                } else {
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+
+                    return false;
+                }
+            }
+        }
+        public Action Liftspecimen0Up() {
+            return new Liftspecimen0Up();
+        }
+
+
+        public class LiftuptoScore implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    frontViper.setPower(0.5);
+                    backViper.setPower(0.5);
+                    telemetry.addData("Position", frontViper.getCurrentPosition());
+                    telemetry.addData("front Power", frontViper.getPower());
+                    telemetry.addData("back Power", backViper.getPower());
+                    telemetry.update();
+                    initialized = true;
+                }
+
+                double pos = frontViper.getCurrentPosition();
+                packet.put("liftPos", pos);
+                if (pos < 2800.0) {
+                    return true;
+                } else {
+                    frontViper.setPower(0);
+                    backViper.setPower(0);
+                    return false;
+                }
+            }
+        }
+        public Action liftuptoScore (){
+            return new LiftuptoScore();
+        }
 
 
     }
@@ -317,364 +414,224 @@ public final class auto_specimen_test3 extends LinearOpMode {
     }
 
 
+
+
+
+    public class PickupSpecimen {
+        private final Servo specimen;
+
+        public PickupSpecimen(HardwareMap hardwareMap) {
+            specimen = hardwareMap.get(Servo.class, "specimen");
+        }
+
+
+        public class CloseMClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                specimen.setPosition(0.68);
+                return false;
+            }
+        }
+
+        public Action closeMClaw() {
+            return new CloseMClaw();
+        }
+
+
+        public class OpenMClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                specimen.setPosition(0.8);
+                return false;
+            }
+        }
+
+        public Action openMClaw() {
+            return new OpenMClaw();
+        }
+
+    }
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
 
-        Pose2d beginPose = new Pose2d(-9, 66, Math.toRadians(90));
+        Pose2d beginPose = new Pose2d(0, 66, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         ScoringSample bucket = new ScoringSample(hardwareMap);
         Lift lift = new Lift(hardwareMap);
         IntakeSample arm = new IntakeSample(hardwareMap);
         PickupSample sclaw = new PickupSample(hardwareMap);
+        PickupSpecimen mclaw = new PickupSpecimen(hardwareMap);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         Actions.runBlocking(sclaw.openSClaw());
         Actions.runBlocking(arm.retractArm());
+        Actions.runBlocking(mclaw.closeMClaw());
 
-        //go hang specimen 0
-        Action go_hang_specimen_0;
-        go_hang_specimen_0 = drive.actionBuilder(drive.pose)
-                
-                .strafeTo(new Vector2d(-9, 35))
-                .build();
+        //deposit held specimen
+        Action go_score_specimen_0;
+        go_score_specimen_0 = drive.actionBuilder(drive.pose)
 
-
-        //go to sample 1 middle point
-        Action go_to_sample_1_mp;
-        go_to_sample_1_mp = drive.actionBuilder(drive.pose)
-
-
-                .splineTo(new Vector2d(-27.5,55), Math.toRadians(180))
-                .splineTo(new Vector2d(-46,50), Math.toRadians(-90))
-                .strafeTo(new Vector2d(-46,46))
-                .build();
-
-
-        //go to sample 1
-        Action go_to_sample_1;
-        go_to_sample_1 = drive.actionBuilder(drive.pose)
-
-//                .setReversed(true)
-//                .strafeToLinearHeading(new Vector2d(-50, 51), Math.toRadians(-90))
-                .waitSeconds(1)
-                .build();
-
-
-        //return to observation zone 1
-        Action return_observation_1;
-        return_observation_1 = drive.actionBuilder(drive.pose)
-
-                .strafeToSplineHeading(new Vector2d(-47,47),Math.toRadians(110))
+                .strafeTo(new Vector2d(0, 35.5))
                 .build();
 
 
 
-        //get sample 2
-        Action go_to_sample_2;
-        go_to_sample_2 = drive.actionBuilder(drive.pose)
+        //go get specimen 1
+        Action go_get_specimen_1;
+        go_get_specimen_1 = drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(-56, 50), Math.toRadians(-90))
-                .strafeTo(new Vector2d(-56,46))
-                .build();
-
-        //return to observation zone 2
-        Action return_observation_2;
-        return_observation_2= drive.actionBuilder(drive.pose)
-
-                .strafeToSplineHeading(new Vector2d(-50,47),Math.toRadians(110))
+                .strafeToLinearHeading(new Vector2d(-40, 50), Math.toRadians(-90))
+//                .turn(Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-40, 66), Math.toRadians(-90))
                 .build();
 
 
-        //get sample 3
-        Action go_to_sample_3;
-        go_to_sample_3 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(-62, 47.5), Math.toRadians(-115))
-                .strafeToLinearHeading(new Vector2d(-62.5,45), Math.toRadians(-113))
-                .build();
+        //go score specimen 1
+        Action go_score_specimen_1;
+        go_score_specimen_1 = drive.actionBuilder(drive.pose)
 
 
-        //return to observation zone 3
-        Action return_observation_3;
-        return_observation_3= drive.actionBuilder(drive.pose)
 
-                .strafeToLinearHeading(new Vector2d(-50,47), Math.toRadians(110))
-                .build();
-
-
-        //go to specimen 1
-        Action go_to_specimen_1;
-        go_to_specimen_1 = drive.actionBuilder(drive.pose)
-
-                .strafeTo(new Vector2d(-40,63))
-                .strafeTo(new Vector2d(-40,66))
-                .build();
-
-
-        //go hang specimen 1
-        Action go_hang_specimen_1;
-        go_hang_specimen_1 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(-12,54), Math.toRadians(135))
-                .strafeToLinearHeading(new Vector2d(0,38), Math.toRadians(90))
-                .strafeTo(new Vector2d(0,35))
-                .build();
-
-
-        //go to specimen 2
-        Action go_to_specimen_2;
-        go_to_specimen_2 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(-30,42), Math.toRadians(-45))
-                .strafeToLinearHeading(new Vector2d(-40,63), Math.toRadians(-90))
-                .strafeTo(new Vector2d(-40,66))
-                .build();
-
-        //go hang specimen 2
-        Action go_hang_specimen_2;
-        go_hang_specimen_2 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(-12,54), Math.toRadians(135))
-                .strafeToLinearHeading(new Vector2d(0,38), Math.toRadians(90))
-                .strafeTo(new Vector2d(0,35))
-                .build();
-
-        //go to specimen 3
-        Action go_to_specimen_3;
-        go_to_specimen_3 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(-30,42), Math.toRadians(-45))
-                .strafeToLinearHeading(new Vector2d(-40,63), Math.toRadians(-90))
-                .strafeTo(new Vector2d(-40,66))
-                .build();
-
-        //go hang specimen 3
-        Action go_hang_specimen_3;
-        go_hang_specimen_3 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(-12,54), Math.toRadians(135))
-                .strafeToLinearHeading(new Vector2d(0,38), Math.toRadians(90))
-                .strafeTo(new Vector2d(0,35))
-                .build();
-
-
-        //park
-        Action go_park;
-        go_park = drive.actionBuilder(drive.pose)
-
-                .strafeTo(new Vector2d(-40,65))
+                .strafeToLinearHeading(new Vector2d(-40, 52), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-6, 45), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-6, 35), Math.toRadians(90))
                 .build();
 
 
 
+        //push 2 samples and get specimen 1
+        Action push_2_samples_and_get_specimen_1;
+        push_2_samples_and_get_specimen_1 = drive.actionBuilder(drive.pose)
+
+                .strafeTo(new Vector2d(-38, 36))
+//                .strafeTo(new Vector2d(-38, 36))
+                .strafeTo(new Vector2d(-40, 14.5))
+                .strafeTo(new Vector2d(-48, 14.5))
+                .strafeTo(new Vector2d(-48, 56))
+                .strafeTo(new Vector2d(-48, 14.5))
+                .strafeTo(new Vector2d(-56, 14.5))
+                .strafeTo(new Vector2d(-56, 62))
+
+//                .strafeTo(new Vector2d(-56, 46))
+//                .strafeTo(new Vector2d(-48, 46))
+//                .turn(Math.toRadians(182))
+//                .strafeTo(new Vector2d(-48, 65))
+//                .strafeToLinearHeading(new Vector2d(-48,46), Math.toRadians(-90))
+//                .strafeToLinearHeading(new Vector2d(-48,67), Math.toRadians(-90))
+                .build();
 
 
         waitForStart();
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() <= 0.1) {
 
-
-
             Actions.runBlocking(new SequentialAction(
 
+                    //go score specimen 0
                     new ParallelAction(
-
-                        go_hang_specimen_0,
-                        lift.liftUp()
-                        ),
-
-                    //MClaw actions to hang specimen 0
-
-                    new SleepAction(0.7),
-
-
-                    // specimen 0 cycle completes by now. sample 1 cycle starts below
-
-                    new ParallelAction(
-                        go_to_sample_1_mp,
-                        lift.liftDown(),
-                        new SequentialAction(
-                                new SleepAction(2.2),
-                                arm.extendArm()
-                        )
+                            go_score_specimen_0,
+                            lift.Liftspecimen0Up()
                     ),
-
-
-                    sclaw.closeSClaw(),
-                    new SleepAction(0.7),
-
-                    return_observation_1,
-//                        new SequentialAction(
-//                                arm.retractArm(),
-//                                new SleepAction(0.8),
-//                                sclaw.openSClaw(),
-//                                new SleepAction(0.5),
-//                                lift.liftuptoMiddle()
-
-                    sclaw.openSClaw(),
+                    new SleepAction(0.5),
+                    lift.liftuptoScore(),
+                    mclaw.openMClaw(),
                     new SleepAction(0.5),
 
-//                    bucket.dumpBucket(),
-//                    new SleepAction(0.7),
-//                    bucket.restoreBucket()
-
-                    go_to_sample_2,
-                    sclaw.closeSClaw(),
-                    new SleepAction(0.7),
-                    return_observation_2,
-                    sclaw.openSClaw(),
-                    new SleepAction(0.5),
-
-                    go_to_sample_3,
-                    sclaw.closeSClaw(),
-                    new SleepAction(0.7),
-                    return_observation_3,
-                    sclaw.openSClaw(),
-                    new SleepAction(0.5),
-                    arm.retractArm()
-
-
-
-
-                    /*,
-                    // sample 1 cycle completes by now. sample 2 cycle starts below
-
-
+                    //go get specimen 1
                     new ParallelAction(
-
-                               go_to_sample_2,
-                               lift.liftDown(),
-                               arm.extendArm()
+                            go_get_specimen_1,
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    lift.liftdowntoMiddle()
+                            )
                     ),
+                    mclaw.closeMClaw(),
+                    new SleepAction(0.5),
 
-                    sclaw.closeSClaw(),
-                    new SleepAction(0.7),
-
+                    //go score specimen 1
                     new ParallelAction(
-                                    return_observation_2,
+                                    lift.liftUp(),
                                     new SequentialAction(
-                                            arm.retractArm(),
-                                            new SleepAction(0.8),
-                                            sclaw.openSClaw(),
                                             new SleepAction(0.5),
-                                            lift.liftuptoMiddle()
+                                            go_score_specimen_1
                                     )
                     ),
-
-                    bucket.dumpBucket(),
-                    new SleepAction(0.7),
-                    bucket.restoreBucket(),
-                    // sample 2 cycle completes by now. sample 3 cycle starts below
-
-
-                            new ParallelAction(
-
-                                    go_to_sample_3,
-                                    lift.liftDown(),
-                                    arm.extendArm()
-                            ),
+                    new SleepAction(0.5),
+                    lift.liftdowntoScore(),
+                    mclaw.openMClaw(),
+                    new SleepAction(0.5),
 
 
-                    sclaw.closeSClaw(),
-                    new SleepAction(0.7),
 
+
+                    //push_2_samples_and_get_specimen_1
                     new ParallelAction(
-                                    return_observation_3,
-                                    new SequentialAction(
-                                            arm.retractArm(),
-                                            new SleepAction(0.8),
-                                            sclaw.openSClaw(),
-                                            new SleepAction(0.5),
-                                            lift.liftuptoMiddle()
-                                    )
-                            ),
-
-                    bucket.dumpBucket(),
-                    new SleepAction(0.7),
-                    bucket.restoreBucket(),
+                            push_2_samples_and_get_specimen_1,
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    lift.liftdowntoMiddle()
+                            )
+                    )
 
 
-                    // sample 3 cycle completes by now. Specimen 1 cycle starts below.
 
-                    go_to_specimen_1,
+                            /*,
 
 
-                    //MClaw actions to pick up specimen 1
                     new SleepAction(1),
 
 
+                    mclaw.closeMClaw(),
+
+
+                    new SleepAction(0.5),
+
+
+
+
+                    //go get specimen 2
                     new ParallelAction(
-
-                            go_hang_specimen_1,
-                            lift.liftUp()
-
+                            go_get_specimen_2,
+                            new SequentialAction(
+                                     new SleepAction(1),
+                                     lift.liftdowntoMiddle()
+                            )
                     ),
+                    mclaw.closeMClaw(),
 
 
-                    //MClaw actions to hang specimen 1
-                    new SleepAction(1),
-
+                    //go score specimen 2
                     new ParallelAction(
-
-                            go_to_specimen_2,
-                            lift.liftdowntoMiddle()
-
+                            lift.liftUp(),
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    go_score_specimen_2
+                            )
                     ),
-                    // Specimen 1 cycle completes by now. Specimen 2 cycle starts below.
+                    new SleepAction(0.5),
+                    lift.liftdowntoScore(),
+                    mclaw.openMClaw(),
+                    new SleepAction(0.5),
 
-                    //MClaw actions to pick up specimen 2
-                    new SleepAction(1),
-
+                    //go get specimen 3
                     new ParallelAction(
+                            go_get_specimen_3,
+                            new SequentialAction(
+                                    new SleepAction(1),
+                                    lift.liftdowntoMiddle()
+                            )
 
-                            go_hang_specimen_2,
-                            lift.liftUp()
-
-                    ),
-
-
-                    //MClaw actions to hang specimen 2
-                    new SleepAction(1),
-
-                    new ParallelAction(
-
-                            go_to_specimen_3,
-                            lift.liftdowntoMiddle()
-                    ),
-                    // Specimen 2 cycle completes by now. Specimen 3 cycle starts below.
-
-                    //MClaw actions to pick up specimen 3
-                    new SleepAction(1),
-
-                    new ParallelAction(
-
-                            go_hang_specimen_3,
-                            lift.liftUp()
-                    ),
-
-
-                    //MClaw actions to hang specimen 3
-                    new SleepAction(1),
-
-                    new ParallelAction(
-
-                            go_park,
-                            lift.liftDown()
                     )
                     */
 
-
-
                     )
-
             );
 
 
         }
-
-
-
     }
 
 }

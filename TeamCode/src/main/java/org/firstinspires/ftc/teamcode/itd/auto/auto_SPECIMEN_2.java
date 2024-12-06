@@ -26,10 +26,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Disabled
-@Autonomous (name = "auto_specimen_test7")
 
-public final class auto_specimen_test7 extends LinearOpMode {
+// hang specimen 0 from top down
+@Autonomous (name = "auto_SPECIMEN_2")
+
+public final class auto_SPECIMEN_2 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -175,7 +176,7 @@ public final class auto_specimen_test7 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos > 290.0) {
+                if (pos > 360.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -476,7 +477,7 @@ public final class auto_specimen_test7 extends LinearOpMode {
         Action go_score_specimen_0;
         go_score_specimen_0 = drive.actionBuilder(drive.pose)
 
-                .strafeTo(new Vector2d(0, 35.5))
+                .strafeTo(new Vector2d(0, 35))
                 .build();
 
 
@@ -485,9 +486,9 @@ public final class auto_specimen_test7 extends LinearOpMode {
         Action go_get_specimen_1;
         go_get_specimen_1 = drive.actionBuilder(drive.pose)
 
-                .strafeTo(new Vector2d(-40, 50))
-                .turn(Math.toRadians(180))
-                .strafeTo(new Vector2d(-40, 67))
+                .strafeToLinearHeading(new Vector2d(-40, 50), Math.toRadians(-90))
+//                .turn(Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-40, 66), Math.toRadians(-90))
                 .build();
 
 
@@ -495,13 +496,11 @@ public final class auto_specimen_test7 extends LinearOpMode {
         Action go_score_specimen_1;
         go_score_specimen_1 = drive.actionBuilder(drive.pose)
 
-                .strafeTo(new Vector2d(-40, 50))
-                .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(-6, 42), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-9, 35), Math.toRadians(90))
-//                .turn(Math.toRadians(180))
-//                .strafeTo(new Vector2d(-9, 50))
-//                .strafeTo(new Vector2d(-9, 35))
+
+
+                .strafeToLinearHeading(new Vector2d(-40, 52), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-6, 45), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-6, 35), Math.toRadians(90))
                 .build();
 
 
@@ -514,10 +513,10 @@ public final class auto_specimen_test7 extends LinearOpMode {
 //                .strafeTo(new Vector2d(-38, 36))
                 .strafeTo(new Vector2d(-40, 14.5))
                 .strafeTo(new Vector2d(-48, 14.5))
-                .strafeTo(new Vector2d(-48, 54))
+                .strafeTo(new Vector2d(-48, 56))
                 .strafeTo(new Vector2d(-48, 14.5))
                 .strafeTo(new Vector2d(-56, 14.5))
-                .strafeTo(new Vector2d(-56, 58))
+                .strafeTo(new Vector2d(-56, 62))
 
 //                .strafeTo(new Vector2d(-56, 46))
 //                .strafeTo(new Vector2d(-48, 46))
@@ -537,10 +536,10 @@ public final class auto_specimen_test7 extends LinearOpMode {
                     //go score specimen 0
                     new ParallelAction(
                             go_score_specimen_0,
-                            lift.Liftspecimen0Up()
+                            lift.liftUp()
                     ),
                     new SleepAction(0.5),
-                    lift.liftuptoScore(),
+                    lift.liftdowntoScore(),
                     mclaw.openMClaw(),
                     new SleepAction(0.5),
 
@@ -548,7 +547,7 @@ public final class auto_specimen_test7 extends LinearOpMode {
                     new ParallelAction(
                             go_get_specimen_1,
                             new SequentialAction(
-                                    new SleepAction(1),
+                                    new SleepAction(0.5),
                                     lift.liftdowntoMiddle()
                             )
                     ),
@@ -563,7 +562,7 @@ public final class auto_specimen_test7 extends LinearOpMode {
                                             go_score_specimen_1
                                     )
                     ),
-                    new SleepAction(1.5),
+                    new SleepAction(0.5),
                     lift.liftdowntoScore(),
                     mclaw.openMClaw(),
                     new SleepAction(0.5),
@@ -575,7 +574,7 @@ public final class auto_specimen_test7 extends LinearOpMode {
                     new ParallelAction(
                             push_2_samples_and_get_specimen_1,
                             new SequentialAction(
-                                    new SleepAction(1),
+                                    new SleepAction(0.5),
                                     lift.liftdowntoMiddle()
                             )
                     )

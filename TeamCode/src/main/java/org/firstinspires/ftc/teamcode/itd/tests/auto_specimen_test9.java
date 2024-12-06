@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.auto;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 
 import androidx.annotation.NonNull;
@@ -14,6 +14,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -25,9 +26,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Autonomous (name = "auto_specimen_test8")
+@Disabled
+@Autonomous (name = "auto_specimen_test9")
 
-public final class auto_specimen_test8 extends LinearOpMode {
+public final class auto_specimen_test9 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -173,7 +175,7 @@ public final class auto_specimen_test8 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos > 360.0) {
+                if (pos > 290.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -485,7 +487,7 @@ public final class auto_specimen_test8 extends LinearOpMode {
 
                 .strafeToLinearHeading(new Vector2d(-40, 50), Math.toRadians(-90))
 //                .turn(Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(-40, 66), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(-40, 66.5), Math.toRadians(-90))
                 .build();
 
 
@@ -495,9 +497,9 @@ public final class auto_specimen_test8 extends LinearOpMode {
 
 
 
-                .strafeToLinearHeading(new Vector2d(-40, 52), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-40, 55), Math.toRadians(180))
                 .strafeToLinearHeading(new Vector2d(-6, 45), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-6, 35), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-6, 36.5), Math.toRadians(90))
                 .build();
 
 
@@ -510,10 +512,12 @@ public final class auto_specimen_test8 extends LinearOpMode {
 //                .strafeTo(new Vector2d(-38, 36))
                 .strafeTo(new Vector2d(-40, 14.5))
                 .strafeTo(new Vector2d(-48, 14.5))
-                .strafeTo(new Vector2d(-48, 56))
-                .strafeTo(new Vector2d(-48, 14.5))
-                .strafeTo(new Vector2d(-56, 14.5))
-                .strafeTo(new Vector2d(-56, 62))
+                .strafeTo(new Vector2d(-48, 54))
+//                .strafeTo(new Vector2d(-48, 14.5))
+//                .strafeTo(new Vector2d(-56, 14.5))
+//                .strafeTo(new Vector2d(-56, 62))
+
+
 
 //                .strafeTo(new Vector2d(-56, 46))
 //                .strafeTo(new Vector2d(-48, 46))
@@ -521,6 +525,40 @@ public final class auto_specimen_test8 extends LinearOpMode {
 //                .strafeTo(new Vector2d(-48, 65))
 //                .strafeToLinearHeading(new Vector2d(-48,46), Math.toRadians(-90))
 //                .strafeToLinearHeading(new Vector2d(-48,67), Math.toRadians(-90))
+                .build();
+
+
+
+
+        //go get specimen 2
+        Action go_get_specimen_2;
+        go_get_specimen_2 = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(-40, 50), Math.toRadians(-90))
+//                .turn(Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-40, 66.5), Math.toRadians(-90))
+                .build();
+
+
+        //go score specimen 2
+        Action go_score_specimen_2;
+        go_score_specimen_2 = drive.actionBuilder(drive.pose)
+
+
+
+                .strafeToLinearHeading(new Vector2d(-40, 55), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-6, 45), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-6, 36.5), Math.toRadians(90))
+                .build();
+
+
+
+
+
+        Action go_park;
+        go_park = drive.actionBuilder(drive.pose)
+
+                .strafeToLinearHeading(new Vector2d(-45, 56), Math.toRadians(-90))
                 .build();
 
 
@@ -544,7 +582,7 @@ public final class auto_specimen_test8 extends LinearOpMode {
                     new ParallelAction(
                             go_get_specimen_1,
                             new SequentialAction(
-                                    new SleepAction(0.5),
+                                    new SleepAction(1),
                                     lift.liftdowntoMiddle()
                             )
                     ),
@@ -571,10 +609,32 @@ public final class auto_specimen_test8 extends LinearOpMode {
                     new ParallelAction(
                             push_2_samples_and_get_specimen_1,
                             new SequentialAction(
-                                    new SleepAction(0.5),
+                                    new SleepAction(1),
                                     lift.liftdowntoMiddle()
                             )
-                    )
+                    ),
+
+
+
+                    //go get specimen 2
+
+                    go_get_specimen_2,
+                    mclaw.closeMClaw(),
+//                    new SleepAction(0.5),
+
+                    //go score specimen 2
+                    new ParallelAction(
+                            lift.liftUp(),
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    go_score_specimen_2
+                            )
+                    ),
+                    new SleepAction(0.5),
+                    lift.liftdowntoScore(),
+                    mclaw.openMClaw(),
+                    new SleepAction(0.5),
+                    go_park
 
 
 
