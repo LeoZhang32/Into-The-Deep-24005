@@ -668,17 +668,17 @@ public class teleop extends LinearOpMode{
 
             // Cycle through the positions
             if (pressCount == 1) {
-                intakeRight.setPosition(0.35);
-                intakeLeft.setPosition(0.65);
-                intakeBack.setPosition(0.72); // Position 1 (aiming position)
+                intakeRight.setPosition(0.32);
+                intakeLeft.setPosition(0.68);
+                intakeBack.setPosition(0.74); // Position 1 (aiming position)
             } else if (pressCount == 2) {
-                intakeRight.setPosition(0.3);
-                intakeLeft.setPosition(0.7);
-                intakeBack.setPosition(0.8); // Position 2 (taking sample position)
+                intakeRight.setPosition(0.28);
+                intakeLeft.setPosition(0.72);
+                intakeBack.setPosition(0.85); // Position 2 (taking sample position)
             } else if (pressCount == 3) {
-                intakeRight.setPosition(0.35); //this is the initial position
-                intakeLeft.setPosition(0.65); // this = 1-intakeRight position
-                intakeBack.setPosition(0.72); // Position 3 (holding sample position)
+                intakeRight.setPosition(0.32); //this is the initial position
+                intakeLeft.setPosition(0.68); // this = 1-intakeRight position
+                intakeBack.setPosition(0.70); // Position 3 (holding sample position)
             }else if (pressCount == 4) {
 //                if (claw_time.seconds() >= 2){
 //                    sample_closed = false;
