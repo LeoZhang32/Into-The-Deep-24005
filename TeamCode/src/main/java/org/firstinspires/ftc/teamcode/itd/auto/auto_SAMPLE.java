@@ -206,8 +206,8 @@ public final class auto_SAMPLE extends LinearOpMode {
         public class ExtendArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.28);
-                intakeLeft.setPosition(0.72);
+                intakeRight.setPosition(0.24);
+                intakeLeft.setPosition(0.76);
                 intakeBack.setPosition(0.85); // Position 2 (taking sample position)
                 return false;
             }

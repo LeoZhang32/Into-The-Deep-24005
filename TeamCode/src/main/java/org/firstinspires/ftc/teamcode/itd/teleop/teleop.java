@@ -668,17 +668,17 @@ public class teleop extends LinearOpMode{
 
             // Cycle through the positions
             if (pressCount == 1) {
-                intakeRight.setPosition(0.32);
-                intakeLeft.setPosition(0.68);
+                intakeRight.setPosition(0.30);
+                intakeLeft.setPosition(0.70);
                 intakeBack.setPosition(0.74); // Position 1 (aiming position)
             } else if (pressCount == 2) {
-                intakeRight.setPosition(0.28);
-                intakeLeft.setPosition(0.72);
+                intakeRight.setPosition(0.24);
+                intakeLeft.setPosition(0.76);
                 intakeBack.setPosition(0.85); // Position 2 (taking sample position)
-            } else if (pressCount == 3) {
-                intakeRight.setPosition(0.32); //this is the initial position
-                intakeLeft.setPosition(0.68); // this = 1-intakeRight position
-                intakeBack.setPosition(0.70); // Position 3 (holding sample position)
+            } else if (pressCount == 3) {//holding position
+                intakeRight.setPosition(0.30);
+                intakeLeft.setPosition(0.70);
+                intakeBack.setPosition(0.72);
             }else if (pressCount == 4) {
 //                if (claw_time.seconds() >= 2){
 //                    sample_closed = false;
@@ -696,8 +696,8 @@ public class teleop extends LinearOpMode{
             pressCount = 1;
 
             if (pressCount == 1){
-                intakeRight.setPosition(0.35);
-                intakeLeft.setPosition(0.65);
+                intakeRight.setPosition(0.30);
+                intakeLeft.setPosition(0.70);
                 intakeBack.setPosition(0.72);
             }
         }
@@ -730,10 +730,9 @@ public class teleop extends LinearOpMode{
 //                if (claw_time.seconds() >= 2){
 //                    sample_closed = false;
 //                }
-                intakeRight.setPosition(0.4);
-                intakeLeft.setPosition(0.6);
-                intakeBack.setPosition(0.95);
-
+                intakeRight.setPosition(0.34);
+                intakeLeft.setPosition(0.66);
+                intakeBack.setPosition(1);
             }
         }
 
