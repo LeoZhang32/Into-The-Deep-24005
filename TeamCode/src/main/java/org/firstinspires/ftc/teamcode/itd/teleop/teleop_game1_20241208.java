@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,8 +20,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+@Disabled
 @TeleOp
-public class teleop_20241215 extends LinearOpMode{
+public class teleop_game1_20241208 extends LinearOpMode{
     //drivetrain
     DcMotor frontRight;
     DcMotor frontLeft;
@@ -44,11 +46,7 @@ public class teleop_20241215 extends LinearOpMode{
     Servo sample;
     Boolean sample_button_pressed = false;
     Boolean sample_closed = false;
-    Servo sampleWrist;
-    int wristCount = 0;
-    Boolean previousRBState = false;
-    Boolean currentRBState;
-    double wristPosition = 0.23;
+//    private ElapsedTime claw_time = new ElapsedTime();
 
 
     Servo intakeRight;
@@ -63,7 +61,8 @@ public class teleop_20241215 extends LinearOpMode{
     Boolean currentYState;
     Boolean previousBState = false;
     Boolean currentBState;
-
+    Boolean previousRBState = false;
+    Boolean currentRBState;
 
     Servo bucket;
     Boolean bucket_button_pressed = false;
@@ -92,7 +91,7 @@ public class teleop_20241215 extends LinearOpMode{
     Boolean specimenModeButtonPressed = false;
 
     DigitalChannel limitSwitch;
-
+//    Boolean gamepad2_dpad_down_isPressed = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -133,7 +132,6 @@ public class teleop_20241215 extends LinearOpMode{
 
         //servos
         sample = hardwareMap.servo.get("sample");
-        sampleWrist = hardwareMap.servo.get("sampleWrist");
         intakeRight = hardwareMap.servo.get("intakeRight");
         intakeLeft = hardwareMap.servo.get("intakeLeft");
         intakeBack = hardwareMap.servo.get("intakeBack");
@@ -146,10 +144,7 @@ public class teleop_20241215 extends LinearOpMode{
         // Set the initial positions for intakeRight, intakeLeft and intakeBack
         intakeRight.setPosition(0.57);
         intakeLeft.setPosition(0.43);
-        intakeBack.setPosition(0.25);
-
-        // Set the initial positions for sampleWrist
-        sampleWrist.setPosition(wristPosition);
+        intakeBack.setPosition(0.45);
 
         //sensors
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
@@ -234,10 +229,10 @@ public class teleop_20241215 extends LinearOpMode{
             double backRightPower = (rotY + rotX - rx) / denominator;
 
             if (slowModeOn){
-                frontLeft.setPower(frontLeftPower * 0.5);
-                backLeft.setPower(backLeftPower * 0.5);
-                frontRight.setPower(frontRightPower * 0.5);
-                backRight.setPower(backRightPower * 0.5);
+                frontLeft.setPower(frontLeftPower * 0.3);
+                backLeft.setPower(backLeftPower * 0.3);
+                frontRight.setPower(frontRightPower * 0.3);
+                backRight.setPower(backRightPower * 0.3);
             }
             else{
                 frontLeft.setPower(frontLeftPower * 1);
@@ -644,7 +639,6 @@ public class teleop_20241215 extends LinearOpMode{
             }
             specimenModeButtonPressed= true;
         } else specimenModeButtonPressed = false;
-
         //slow mode
         if (gamepad1.left_bumper){
             if (!slowModeButtonPressed){
@@ -652,7 +646,6 @@ public class teleop_20241215 extends LinearOpMode{
             }
             slowModeButtonPressed= true;
         } else slowModeButtonPressed = false;
-
         //sample
         if (gamepad1.a){
             if (!sample_button_pressed){
@@ -665,7 +658,7 @@ public class teleop_20241215 extends LinearOpMode{
         currentXState = gamepad1.x;
         currentYState = gamepad1.y;
         currentBState = gamepad1.b;
-
+        currentRBState = gamepad1.right_bumper;
 
         if (currentXState && !previousXState) { // Prevent "button held down" behavior
             // Increment the press count and ensure it loops between 0 and 2
@@ -675,28 +668,27 @@ public class teleop_20241215 extends LinearOpMode{
             if (pressCount == 1) {
                 intakeRight.setPosition(0.30);
                 intakeLeft.setPosition(0.70);
-                intakeBack.setPosition(0.95); // Position 1 (aiming position)
-
+                intakeBack.setPosition(0.74); // Position 1 (aiming position)
             } else if (pressCount == 2) {
-                intakeRight.setPosition(0.23);
-                intakeLeft.setPosition(0.77);
-                intakeBack.setPosition(0.95); // Position 2 (taking sample position)
-
-            } else if (pressCount == 3) {
+                intakeRight.setPosition(0.24);
+                intakeLeft.setPosition(0.76);
+                intakeBack.setPosition(0.85); // Position 2 (taking sample position)
+            } else if (pressCount == 3) {//holding position
                 intakeRight.setPosition(0.30);
                 intakeLeft.setPosition(0.70);
-                intakeBack.setPosition(0.95); // Position 3 (holding position)
-
+                intakeBack.setPosition(0.72);
             }else if (pressCount == 4) {
+//                if (claw_time.seconds() >= 2){
+//                    sample_closed = false;
+//                }
                 intakeRight.setPosition(0.57); //this is the initial position
                 intakeLeft.setPosition(0.43); //this = 1-intakeRight position
-                intakeBack.setPosition(0.25); //this is the initial position - Position 4 (drop sample into bucket)
+                intakeBack.setPosition(0.45); //this is the initial position - Position 3 (drop sample into bucket)
                 pressCount = 0; // Reset to cycle back to initial position
             }
         }
 
         previousXState = currentXState;
-
 
         if (currentYState && !previousYState) {
             pressCount = 1;
@@ -704,20 +696,23 @@ public class teleop_20241215 extends LinearOpMode{
             if (pressCount == 1){
                 intakeRight.setPosition(0.30);
                 intakeLeft.setPosition(0.70);
-                intakeBack.setPosition(0.95);
+                intakeBack.setPosition(0.72);
             }
         }
 
         previousYState = currentYState;
 
-
         if (currentBState && !previousBState) {
             pressCount = 4;
+//            claw_time.reset();
 
             if (pressCount == 4){
+//                if (claw_time.seconds() >= 2){
+//                    sample_closed = false;
+//                }
                 intakeRight.setPosition(0.57); //this is the initial position
                 intakeLeft.setPosition(0.43); //this = 1-intakeRight position
-                intakeBack.setPosition(0.25); //this is the initial position
+                intakeBack.setPosition(0.45); //this is the initial position
                 pressCount = 0; // Reset to cycle back to initial position
             }
         }
@@ -725,28 +720,22 @@ public class teleop_20241215 extends LinearOpMode{
         previousBState = currentBState;
 
 
+        if (currentRBState && !previousRBState) {
+            pressCount = 5;
+//            position to take close samples;
 
-        //sampleWrist Actions
-        currentRBState = gamepad1.right_bumper;
-
-        if (currentRBState && !previousRBState) { // Prevent "button held down" behavior
-            // Increment the press count and ensure it loops between 0 and 2
-            wristCount++;
-
-            // Cycle through the positions
-            if (wristCount == 1) {
-                sampleWrist.setPosition(wristPosition + 0.15); // Position 1 (45 degree)
-
-            } else if (wristCount == 2) {
-                sampleWrist.setPosition(wristPosition + 0.3); // Position 2 (90 degree)
-
-            } else if (wristCount == 3) {
-                sampleWrist.setPosition(wristPosition);  //this is the initial position - Position 0
-                wristCount = 0; // Reset to cycle back to initial position
+            if (pressCount == 5){
+//                if (claw_time.seconds() >= 2){
+//                    sample_closed = false;
+//                }
+                intakeRight.setPosition(0.34);
+                intakeLeft.setPosition(0.66);
+                intakeBack.setPosition(1);
             }
         }
 
         previousRBState = currentRBState;
+
 
 
 
@@ -795,16 +784,16 @@ public class teleop_20241215 extends LinearOpMode{
     }
     public void updateBooleans() {
         if (sample_closed && sample_color) {
-            sample.setPosition(1);
+            sample.setPosition(0.4);
         }
         else if (sample_closed || sample_color) {
-            sample.setPosition(0.68);
+            sample.setPosition(1);
             telemetry.addData("sample_color", "true");
             telemetry.addData("Color is Red", "Sample claw closes");
          }
 
         else{
-            sample.setPosition(1);//this is the initial position;
+            sample.setPosition(0.4);//this is the initial position;
             }
 
         if (bucket_dumped){
