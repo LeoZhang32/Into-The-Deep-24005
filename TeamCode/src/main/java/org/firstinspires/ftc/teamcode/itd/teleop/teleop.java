@@ -146,8 +146,8 @@ public class teleop extends LinearOpMode{
 
 
         // Set the initial positions for intakeRight, intakeLeft and intakeBack
-        intakeRight.setPosition(0.55);
-        intakeLeft.setPosition(0.45);
+        intakeRight.setPosition(0.54);
+        intakeLeft.setPosition(0.46);
         intakeBack.setPosition(0.25);
 
         // Set the initial positions for sampleWrist
@@ -691,8 +691,8 @@ public class teleop extends LinearOpMode{
                 intakeBack.setPosition(0.95); // Position 3 (holding position)
 
             }else if (pressCount == 4) {
-                intakeRight.setPosition(0.55); //this is the initial position
-                intakeLeft.setPosition(0.45); //this = 1-intakeRight position
+                intakeRight.setPosition(0.54); //this is the initial position
+                intakeLeft.setPosition(0.46); //this = 1-intakeRight position
                 intakeBack.setPosition(0.25); //this is the initial position - Position 4 (drop sample into bucket)
                 pressCount = 0; // Reset to cycle back to initial position
             }
@@ -718,8 +718,8 @@ public class teleop extends LinearOpMode{
             pressCount = 4;
 
             if (pressCount == 4){
-                intakeRight.setPosition(0.55); //this is the initial position
-                intakeLeft.setPosition(0.45); //this = 1-intakeRight position
+                intakeRight.setPosition(0.54); //this is the initial position
+                intakeLeft.setPosition(0.46); //this = 1-intakeRight position
                 intakeBack.setPosition(0.25); //this is the initial position
                 pressCount = 0; // Reset to cycle back to initial position
             }
