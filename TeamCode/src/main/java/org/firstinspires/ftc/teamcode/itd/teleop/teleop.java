@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -676,19 +677,19 @@ public class teleop extends LinearOpMode{
 
             // Cycle through the positions
             if (pressCount == 1) {
-                intakeRight.setPosition(0.28);
-                intakeLeft.setPosition(0.72);
-                intakeBack.setPosition(0.95); // Position 1 (aiming position)
+                intakeRight.setPosition(0.3);
+                intakeLeft.setPosition(0.7);
+                intakeBack.setPosition(0.94); // Position 1 (aiming position)
 
             } else if (pressCount == 2) {
-                intakeRight.setPosition(0.23);
-                intakeLeft.setPosition(0.77);
-                intakeBack.setPosition(0.95); // Position 2 (grabbing sample position)
+                intakeRight.setPosition(0.255);
+                intakeLeft.setPosition(0.745);
+                intakeBack.setPosition(0.94); // Position 2 (grabbing sample position)
 
             } else if (pressCount == 3) {
                 intakeRight.setPosition(0.35);
                 intakeLeft.setPosition(0.65);
-                intakeBack.setPosition(0.95); // Position 3 (holding position)
+                intakeBack.setPosition(0.94); // Position 3 (holding position)
 
             }else if (pressCount == 4) {
                 intakeRight.setPosition(0.54); //this is the initial position
@@ -705,9 +706,9 @@ public class teleop extends LinearOpMode{
             pressCount = 1;
 
             if (pressCount == 1){
-                intakeRight.setPosition(0.28);
-                intakeLeft.setPosition(0.72);
-                intakeBack.setPosition(0.95); // Position 1 (aiming position)
+                intakeRight.setPosition(0.3);
+                intakeLeft.setPosition(0.7);
+                intakeBack.setPosition(0.94); // Position 1 (aiming position)
             }
         }
 
@@ -741,9 +742,9 @@ public class teleop extends LinearOpMode{
             }
             else if (pressCountRight == 2){
 
-                intakeRight.setPosition(0.18);
-                intakeLeft.setPosition(0.82);
-                intakeBack.setPosition(0.75); // extra reach grabbing position
+                intakeRight.setPosition(0.195);
+                intakeLeft.setPosition(0.805);
+                intakeBack.setPosition(0.73); // extra reach grabbing position
                 pressCountRight = 0;
             }
         }
@@ -770,7 +771,7 @@ public class teleop extends LinearOpMode{
                 sampleWrist.setPosition(wristPosition + 0.3); // Position 2 (90 degree)
 
             } else if (wristCount == 3) {
-                sampleWrist.setPosition(wristPosition + 0.45); // Position 3 (135 degree)
+                sampleWrist.setPosition(wristPosition - 0.15); // Position 3 (-45 degree)
 
             } else if (wristCount == 4) {
                 sampleWrist.setPosition(wristPosition);  //this is the initial position - Position 0
@@ -843,7 +844,7 @@ public class teleop extends LinearOpMode{
             bucket.setPosition(0.57);
         }
         else {
-            bucket.setPosition(1);
+            bucket.setPosition(1); //this is the initial position
         }
 
         if (specimen_closed){
