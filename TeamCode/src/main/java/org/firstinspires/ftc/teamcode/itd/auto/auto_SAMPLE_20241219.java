@@ -26,6 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
+@Disabled
 @Autonomous (name = "auto_SAMPLE_20241219")
 
 public final class auto_SAMPLE_20241219 extends LinearOpMode {
