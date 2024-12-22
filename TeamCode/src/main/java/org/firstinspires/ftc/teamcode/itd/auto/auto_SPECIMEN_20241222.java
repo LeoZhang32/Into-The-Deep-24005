@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.itd.auto;
 
 
+import static org.firstinspires.ftc.teamcode.rr.MecanumDrive.normalizeAngle;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -11,6 +13,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,12 +29,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Disabled
-@Autonomous (name = "auto_SPECIMEN")
+// hang specimen 0 from top down
+@Autonomous (name = "auto_SPECIMEN_20241222")
 
-public final class auto_SPECIMEN_game1_20241208 extends LinearOpMode {
+public final class auto_SPECIMEN_20241222 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
+    double wristPosition = 0.23;
 
     public class Lift {
         private final DcMotorEx frontViper;
@@ -244,7 +248,7 @@ public final class auto_SPECIMEN_game1_20241208 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < 2200.0) {
+                if (pos < 2050.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -288,6 +292,9 @@ public final class auto_SPECIMEN_game1_20241208 extends LinearOpMode {
         public Action liftuptoScore (){
             return new LiftuptoScore();
         }
+
+
+
 
 
     }
@@ -347,12 +354,32 @@ public final class auto_SPECIMEN_game1_20241208 extends LinearOpMode {
         public class ExtendArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.3);
-                intakeLeft.setPosition(0.7);
-                intakeBack.setPosition(0.8);
+                intakeRight.setPosition(0.255);
+                intakeLeft.setPosition(0.745);
+                intakeBack.setPosition(0.94); // grabbing sample position
                 return false;
             }
         }
+
+
+        public class AimArm implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                intakeRight.setPosition(0.3);
+                intakeLeft.setPosition(0.7);
+                intakeBack.setPosition(0.94); // aiming position
+                return false;
+            }
+        }
+
+        public Action aimArm() {
+
+            return new IntakeSample.AimArm();
+        }
+
+
+
+
 
         public Action extendArm() {
             return new ExtendArm();
@@ -362,9 +389,9 @@ public final class auto_SPECIMEN_game1_20241208 extends LinearOpMode {
         public class RetractArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                intakeRight.setPosition(0.57);
-                intakeLeft.setPosition(0.43);
-                intakeBack.setPosition(0.45);
+                intakeRight.setPosition(0.54);
+                intakeLeft.setPosition(0.46);
+                intakeBack.setPosition(0.25); //drop sample into bucket
                 return false;
             }
         }
@@ -391,7 +418,7 @@ public final class auto_SPECIMEN_game1_20241208 extends LinearOpMode {
         public class CloseSClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                sample.setPosition(1);
+                sample.setPosition(0.68);
                 return false;
             }
         }
@@ -404,7 +431,7 @@ public final class auto_SPECIMEN_game1_20241208 extends LinearOpMode {
         public class OpenSClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                sample.setPosition(0.4);
+                sample.setPosition(1);
                 return false;
             }
         }
@@ -414,6 +441,72 @@ public final class auto_SPECIMEN_game1_20241208 extends LinearOpMode {
         }
 
     }
+
+
+
+        //sample claw wrist servo class
+        public class SampleWrist {
+            private final Servo sampleWrist;
+
+            public SampleWrist(HardwareMap hardwareMap) {
+                sampleWrist = hardwareMap.get(Servo.class, "sampleWrist");
+            }
+
+
+            public class Wrist1 implements Action {
+                @Override
+                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                    sampleWrist.setPosition(wristPosition);
+                    return false;
+                }
+            }
+
+            public Action Wrist1() {
+                return new Wrist1();
+            }
+
+
+            public class Wrist2 implements Action {
+                @Override
+                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                    sampleWrist.setPosition(wristPosition + 0.15);
+                    return false;
+                }
+            }
+
+            public Action Wrist2() {
+                return new Wrist2();
+            }
+
+
+            public class Wrist3 implements Action {
+                @Override
+                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                    sampleWrist.setPosition(wristPosition + 0.3);
+                    return false;
+                }
+            }
+
+            public Action Wrist3() {
+                return new Wrist3();
+            }
+
+
+
+            public class Wrist4 implements Action {
+                @Override
+                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                    sampleWrist.setPosition(wristPosition - 0.15);
+                    return false;
+                }
+            }
+
+            public Action Wrist4() {
+                return new Wrist4();
+            }
+
+
+        }
 
 
 
@@ -459,175 +552,257 @@ public final class auto_SPECIMEN_game1_20241208 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Pose2d beginPose = new Pose2d(0, 66, Math.toRadians(90));
+        Pose2d beginPose = new Pose2d(-8.3, 66, normalizeAngle(Math.toRadians(90)));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         ScoringSample bucket = new ScoringSample(hardwareMap);
         Lift lift = new Lift(hardwareMap);
         IntakeSample arm = new IntakeSample(hardwareMap);
         PickupSample sclaw = new PickupSample(hardwareMap);
         PickupSpecimen mclaw = new PickupSpecimen(hardwareMap);
+        SampleWrist wrist = new SampleWrist(hardwareMap);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         Actions.runBlocking(sclaw.openSClaw());
         Actions.runBlocking(arm.retractArm());
         Actions.runBlocking(mclaw.closeMClaw());
-
-        //deposit held specimen
-        Action go_score_specimen_0;
-        go_score_specimen_0 = drive.actionBuilder(drive.pose)
-
-                .strafeTo(new Vector2d(0, 35.5))
-                .build();
+        Actions.runBlocking(wrist.Wrist1());
 
 
-
-        //go get specimen 1
-        Action go_get_specimen_1;
-        go_get_specimen_1 = drive.actionBuilder(drive.pose)
-
-                .strafeToLinearHeading(new Vector2d(-40, 50), Math.toRadians(-90))
-//                .turn(Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(-40, 66), Math.toRadians(-90))
-                .build();
+        //score held specimen
+        TrajectoryActionBuilder go_score_specimen_0 = drive.actionBuilder(beginPose)
+                .strafeToLinearHeading(new Vector2d(-8.3, 35), normalizeAngle(Math.toRadians(90)));
 
 
-        //go score specimen 1
-        Action go_score_specimen_1;
-        go_score_specimen_1 = drive.actionBuilder(drive.pose)
+        //go get specimen 1 (if alliance member does not use it in auto)
+        TrajectoryActionBuilder go_get_specimen_1 = go_score_specimen_0.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-37, 60), normalizeAngle(Math.toRadians(-90)))
+                .strafeToLinearHeading(new Vector2d(-37, 66), normalizeAngle(Math.toRadians(-90)));
 
 
-
-                .strafeToLinearHeading(new Vector2d(-40, 52), Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(-6, 45), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-6, 35), Math.toRadians(90))
-                .build();
-
+        //go score specimen 1 (if alliance member does not use it in auto)
+        TrajectoryActionBuilder go_score_specimen_1 = go_get_specimen_1.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(-8, 40), normalizeAngle(Math.toRadians(90)))
+                .strafeToSplineHeading(new Vector2d(-8, 35), normalizeAngle(Math.toRadians(90)));
 
 
-        //push 2 samples and get specimen 1
-        Action push_2_samples_and_get_specimen_1;
-        push_2_samples_and_get_specimen_1 = drive.actionBuilder(drive.pose)
+//        //go push sample 4
+//        TrajectoryActionBuilder go_push_sample_4 = go_score_specimen_1.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-8.3, 38.5), normalizeAngle(Math.toRadians(110)))
+//                .strafeToLinearHeading(new Vector2d(-36, 38.5), normalizeAngle(Math.toRadians(-135)))
+//                .strafeToLinearHeading(new Vector2d(-36, 15), normalizeAngle(Math.toRadians(-90)))
+//                .strafeToLinearHeading(new Vector2d(-45, 15), normalizeAngle(Math.toRadians(-90)))
+//                .strafeToLinearHeading(new Vector2d(-48, 56), normalizeAngle(Math.toRadians(-90)))
+//                ;
 
-                .strafeTo(new Vector2d(-38, 36))
-//                .strafeTo(new Vector2d(-38, 36))
-                .strafeTo(new Vector2d(-40, 14.5))
-                .strafeTo(new Vector2d(-48, 14.5))
-                .strafeTo(new Vector2d(-48, 56))
-                .strafeTo(new Vector2d(-48, 14.5))
-                .strafeTo(new Vector2d(-56, 14.5))
-                .strafeTo(new Vector2d(-56, 62))
 
-//                .strafeTo(new Vector2d(-56, 46))
-//                .strafeTo(new Vector2d(-48, 46))
-//                .turn(Math.toRadians(182))
-//                .strafeTo(new Vector2d(-48, 65))
-//                .strafeToLinearHeading(new Vector2d(-48,46), Math.toRadians(-90))
-//                .strafeToLinearHeading(new Vector2d(-48,67), Math.toRadians(-90))
-                .build();
+        //go pick up sample 4
+        TrajectoryActionBuilder go_pickup_sample_4 = go_score_specimen_1.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-8.3, 38.5), normalizeAngle(Math.toRadians(110)))
+//                .strafeToLinearHeading(new Vector2d(-36, 38.5), normalizeAngle(Math.toRadians(-135)))
+//                .strafeToLinearHeading(new Vector2d(-36, 15), normalizeAngle(Math.toRadians(-90)))
+//                .strafeToLinearHeading(new Vector2d(-45, 15), normalizeAngle(Math.toRadians(-90)))
+                .strafeToSplineHeading(new Vector2d(-52, 48), normalizeAngle(Math.toRadians(-90)))
+                ;
+
+        //go dump sample 4
+        TrajectoryActionBuilder go_dump_sample_4 = go_pickup_sample_4.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-62.5, 48), normalizeAngle(Math.toRadians(-90)))
+                ;
+
+//        //go pick up sample 5
+//        TrajectoryActionBuilder go_pickup_sample_5 = go_dump_sample_4.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-60.5, 48), normalizeAngle(Math.toRadians(-90)))
+//                ;
+//
+//        //go dump sample 5
+//        TrajectoryActionBuilder go_dump_sample_5 = go_pickup_sample_5.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-60.5, 49), normalizeAngle(Math.toRadians(-90)))
+//                ;
+
+
+        //go get specimen 2
+        TrajectoryActionBuilder go_get_specimen_2 = go_dump_sample_4.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-37, 60), normalizeAngle(Math.toRadians(-90)))
+                .strafeToLinearHeading(new Vector2d(-37, 65.5), normalizeAngle(Math.toRadians(-90)));
+
+        //go score specimen 2
+        TrajectoryActionBuilder go_score_specimen_2 = go_get_specimen_2.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(0, 40), normalizeAngle(Math.toRadians(90)))
+                .strafeToSplineHeading(new Vector2d(0, 35), normalizeAngle(Math.toRadians(90)));
+
+
+        //there may not be enough time to get and score specimen 3
+        //go get specimen 3
+        TrajectoryActionBuilder go_get_specimen_3 = go_score_specimen_2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-37, 58), normalizeAngle(Math.toRadians(-90)))
+                .strafeToLinearHeading(new Vector2d(-37, 63), normalizeAngle(Math.toRadians(-90)));
+
+        //go score specimen 3
+        TrajectoryActionBuilder go_score_specimen_3 = go_get_specimen_3.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(3, 40), normalizeAngle(Math.toRadians(90)))
+                .strafeToSplineHeading(new Vector2d(3, 35), normalizeAngle(Math.toRadians(90)));
+
+
+        //go park
+        TrajectoryActionBuilder go_park = go_score_specimen_3.endTrajectory().fresh()
+
+                .strafeToSplineHeading(new Vector2d(-37, 56), normalizeAngle(Math.toRadians(160)));
+
 
 
         waitForStart();
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() <= 0.1) {
+        while (opModeIsActive() && runtime.seconds() <= 0.01) {
 
             Actions.runBlocking(new SequentialAction(
 
-                    //go score specimen 0
-                    new ParallelAction(
-                            go_score_specimen_0,
-                            lift.Liftspecimen0Up()
-                    ),
-                    new SleepAction(0.5),
-                    lift.liftuptoScore(),
-                    mclaw.openMClaw(),
-                    new SleepAction(0.5),
+                            //go score specimen 0
+                            new ParallelAction(
+                                    go_score_specimen_0.build(),
+                                    lift.Liftspecimen0Up()
+                            ),
+                            new SleepAction(0.3),
+                            lift.liftdowntoScore(),
+                            mclaw.openMClaw(),
+                            new SleepAction(0.3),
 
-                    //go get specimen 1
-                    new ParallelAction(
-                            go_get_specimen_1,
-                            new SequentialAction(
-                                    new SleepAction(0.5),
-                                    lift.liftdowntoMiddle()
-                            )
-                    ),
-                    mclaw.closeMClaw(),
-                    new SleepAction(0.5),
 
-                    //go score specimen 1
-                    new ParallelAction(
+                            //go get specimen 1 now (if alliance member does not use it in auto)
+                            //go get specimen 1
+                            new ParallelAction(
+                                    go_get_specimen_1.build(),
+                                    new SequentialAction(
+                                            new SleepAction(0.3),
+                                            lift.liftdowntoMiddle()
+                                    )
+                            ),
+                            mclaw.closeMClaw(),
+                            new SleepAction(0.3),
+
+                            //go score specimen 1
+                            new ParallelAction(
                                     lift.liftUp(),
                                     new SequentialAction(
-                                            new SleepAction(0.5),
-                                            go_score_specimen_1
+                                            new SleepAction(0.1),
+                                            go_score_specimen_1.build()
                                     )
-                    ),
-                    new SleepAction(0.5),
-                    lift.liftdowntoScore(),
-                    mclaw.openMClaw(),
-                    new SleepAction(0.5),
+                            ),
+                            new SleepAction(0.3),
+                            lift.liftdowntoScore(),
+                            mclaw.openMClaw(),
+                            new SleepAction(0.3),
 
 
 
 
-                    //push_2_samples_and_get_specimen_1
-                    new ParallelAction(
-                            push_2_samples_and_get_specimen_1,
-                            new SequentialAction(
-                                    new SleepAction(0.5),
-                                    lift.liftdowntoMiddle()
+                            //go pick up samples 4
+                            new ParallelAction(
+                                    go_pickup_sample_4.build(),
+                                    new SequentialAction(
+                                            new SleepAction(0.3),
+                                            lift.liftDown(),
+                                            new SleepAction(0.6),
+                                            arm.aimArm()
+                                    )
+                            ),
+                            arm.extendArm(),
+                            new SleepAction(0.3),
+                            sclaw.closeSClaw(),
+                            new SleepAction(0.3),
+
+                            //go dump sample 4
+                            new ParallelAction(
+                                 go_dump_sample_4.build(),
+                                 new SequentialAction(
+                                    arm.retractArm(),
+                                    new SleepAction(1.2),
+                                    sclaw.openSClaw(),
+                                    new SleepAction(0.3),
+                                    lift.liftuptoMiddle()
+                                 )
+                            ),
+
+                            new ParallelAction(
+                                    bucket.dumpBucket(),
+                                    arm.aimArm()
+                            ),
+
+                            new SleepAction(0.9),
+
+                            //go pick up sample 5
+                            arm.extendArm(),
+
+
+                            new SleepAction(0.3),
+                            new ParallelAction(
+                                    bucket.restoreBucket(),
+                                    sclaw.closeSClaw()
+                            ),
+                            new SleepAction(0.3),
+
+
+                            //go dump sample 5
+                            new ParallelAction(
+//                                 go_dump_sample_5.build(),
+                                 new SequentialAction(
+                                        new ParallelAction(
+                                                arm.retractArm(),
+                                                new SequentialAction(
+                                                    new SleepAction(0.5),
+                                                    lift.liftDown()
+                                                )
+                                                ),
+                                        new SleepAction(0.5),
+                                        sclaw.openSClaw(),
+                                        new SleepAction(0.3),
+                                         lift.liftuptoMiddle()
+                                 )
+                            ),
+
+                            bucket.dumpBucket(),
+                            new SleepAction(0.3),
+
+
+
+                            //go get specimen 2
+                            new ParallelAction(
+                                    go_get_specimen_2.build(),
+                                    new SequentialAction(
+                                            new SleepAction(0.5),
+                                            bucket.restoreBucket()
+                                    )
+
+                            ),
+                            mclaw.closeMClaw(),
+                            new SleepAction(0.3),
+
+                            //go score specimen 2
+                            new ParallelAction(
+                                    lift.liftUp(),
+                                    new SequentialAction(
+                                            new SleepAction(0.1),
+                                            go_score_specimen_2.build()
+                                    )
+                            ),
+                            new SleepAction(0.3),
+                            lift.liftdowntoScore(),
+                            mclaw.openMClaw(),
+                            new SleepAction(0.3),
+
+
+                            //there may not be enough time to get and score specimen 3, so code not used.
+
+
+                            //always go park
+                            new ParallelAction(
+                                    go_park.build(),
+                                    lift.liftdowntoMiddle(),
+                                    new SequentialAction(
+                                            new SleepAction(0.5),
+                                            arm.extendArm()
+                                    )
                             )
-                    )
 
-
-
-                            /*,
-
-
-                    new SleepAction(1),
-
-
-                    mclaw.closeMClaw(),
-
-
-                    new SleepAction(0.5),
-
-
-
-
-                    //go get specimen 2
-                    new ParallelAction(
-                            go_get_specimen_2,
-                            new SequentialAction(
-                                     new SleepAction(1),
-                                     lift.liftdowntoMiddle()
-                            )
-                    ),
-                    mclaw.closeMClaw(),
-
-
-                    //go score specimen 2
-                    new ParallelAction(
-                            lift.liftUp(),
-                            new SequentialAction(
-                                    new SleepAction(0.5),
-                                    go_score_specimen_2
-                            )
-                    ),
-                    new SleepAction(0.5),
-                    lift.liftdowntoScore(),
-                    mclaw.openMClaw(),
-                    new SleepAction(0.5),
-
-                    //go get specimen 3
-                    new ParallelAction(
-                            go_get_specimen_3,
-                            new SequentialAction(
-                                    new SleepAction(1),
-                                    lift.liftdowntoMiddle()
-                            )
-
-                    )
-                    */
 
                     )
             );
