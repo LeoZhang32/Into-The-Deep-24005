@@ -27,9 +27,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
-@Autonomous (name = "auto_SAMPLE_20241221")
+@Autonomous (name = "auto_SAMPLE_1plus3")
 
-public final class auto_SAMPLE_20241221 extends LinearOpMode {
+public final class auto_SAMPLE_1plus3 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -470,7 +470,7 @@ public final class auto_SAMPLE_20241221 extends LinearOpMode {
         //go to sample 3
         TrajectoryActionBuilder go_to_sample_3 = go_score_specimen_0.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(24, 43), normalizeAngle(Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(48.5, 49), normalizeAngle(Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(48.5, 48), normalizeAngle(Math.toRadians(-90)));
 
         //return to basket
         TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()
@@ -481,7 +481,7 @@ public final class auto_SAMPLE_20241221 extends LinearOpMode {
         //go to sample 2
         TrajectoryActionBuilder go_to_sample_2 = return_basket_3.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(60, 45), normalizeAngle(Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(60.5, 44.5), normalizeAngle(Math.toRadians(-90)));
 
 
         //return to basket
@@ -490,11 +490,10 @@ public final class auto_SAMPLE_20241221 extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(57, 57), normalizeAngle(Math.toRadians(-135)));
 
 
-
         //go to sample 1
         TrajectoryActionBuilder go_to_sample_1 = return_basket_2.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(54, 39), normalizeAngle(Math.toRadians(-45)));
+                .strafeToLinearHeading(new Vector2d(52, 38.5), normalizeAngle(Math.toRadians(-45)));
 
 
         //return to basket 1
@@ -510,7 +509,7 @@ public final class auto_SAMPLE_20241221 extends LinearOpMode {
 //                .strafeToLinearHeading(new Vector2d(48,48), normalizeAngle(Math.toRadians(-90)))
 //                .strafeToLinearHeading(new Vector2d(48,12), normalizeAngle(Math.toRadians(-45)))
                 .strafeToLinearHeading(new Vector2d(40,12), normalizeAngle(Math.toRadians(0)))
-                .strafeTo(new Vector2d(25,12));
+                .strafeTo(new Vector2d(21,12));
 
 
 
@@ -518,7 +517,7 @@ public final class auto_SAMPLE_20241221 extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() <= 0.1) {
+        while (opModeIsActive() && runtime.seconds() <= 0.01) {
 
             Actions.runBlocking(new SequentialAction(
 
@@ -527,10 +526,10 @@ public final class auto_SAMPLE_20241221 extends LinearOpMode {
                                     go_score_specimen_0.build(),
                                     lift.liftspecimen0Up()
                             ),
-                            new SleepAction(0.5),
+                            new SleepAction(0.4),
                             lift.liftdowntoScore(),
                             mclaw.openMClaw(),
-                            new SleepAction(0.5),
+                            new SleepAction(0.4),
                     // sample 0 cycle completes by now. sample 3 cycle starts below
 
 
@@ -553,7 +552,7 @@ public final class auto_SAMPLE_20241221 extends LinearOpMode {
                                     arm.retractArm(),
                                     new SleepAction(1.2),
                                     sclaw.openSClaw(),
-                                    new SleepAction(0.5),
+                                    new SleepAction(0.4),
                                     lift.liftUp()
                         )
                     ),
@@ -581,7 +580,7 @@ public final class auto_SAMPLE_20241221 extends LinearOpMode {
                                     arm.retractArm(),
                                     new SleepAction(1.2),
                                     sclaw.openSClaw(),
-                                    new SleepAction(0.5),
+                                    new SleepAction(0.4),
                                     lift.liftUp()
                                     )
                     ),
@@ -611,7 +610,7 @@ public final class auto_SAMPLE_20241221 extends LinearOpMode {
                                     arm.retractArm(),
                                     new SleepAction(1.2),
                                     sclaw.openSClaw(),
-                                    new SleepAction(0.5),
+                                    new SleepAction(0.4),
                                     lift.liftUp()
                                     )
                             ),
