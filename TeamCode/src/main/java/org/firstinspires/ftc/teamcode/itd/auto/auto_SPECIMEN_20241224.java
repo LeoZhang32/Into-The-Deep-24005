@@ -17,7 +17,6 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -30,9 +29,9 @@ import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
 // hang specimen 0 from top down
-@Autonomous (name = "auto_SPECIMEN_20241222")
+@Autonomous (name = "auto_SPECIMEN_20241224")
 
-public final class auto_SPECIMEN_20241222 extends LinearOpMode {
+public final class auto_SPECIMEN_20241224 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
     double wristPosition = 0.23;
@@ -263,14 +262,14 @@ public final class auto_SPECIMEN_20241222 extends LinearOpMode {
         }
 
 
-        public class Liftspecimen2Up implements Action {
+        public class LiftuptoScore implements Action {
             private boolean initialized = false;
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    frontViper.setPower(1);
-                    backViper.setPower(1);
+                    frontViper.setPower(0.5);
+                    backViper.setPower(0.5);
                     telemetry.addData("Position", frontViper.getCurrentPosition());
                     telemetry.addData("front Power", frontViper.getPower());
                     telemetry.addData("back Power", backViper.getPower());
@@ -280,7 +279,7 @@ public final class auto_SPECIMEN_20241222 extends LinearOpMode {
 
                 double pos = frontViper.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < 2400.0) {
+                if (pos < 2800.0) {
                     return true;
                 } else {
                     frontViper.setPower(0);
@@ -289,8 +288,8 @@ public final class auto_SPECIMEN_20241222 extends LinearOpMode {
                 }
             }
         }
-        public Action Liftspecimen2Up (){
-            return new Liftspecimen2Up();
+        public Action liftuptoScore (){
+            return new LiftuptoScore();
         }
 
 
@@ -374,7 +373,7 @@ public final class auto_SPECIMEN_20241222 extends LinearOpMode {
 
         public Action aimArm() {
 
-            return new IntakeSample.AimArm();
+            return new AimArm();
         }
 
 
@@ -601,27 +600,27 @@ public final class auto_SPECIMEN_20241222 extends LinearOpMode {
 //                .strafeToLinearHeading(new Vector2d(-36, 38.5), normalizeAngle(Math.toRadians(-135)))
 //                .strafeToLinearHeading(new Vector2d(-36, 15), normalizeAngle(Math.toRadians(-90)))
 //                .strafeToLinearHeading(new Vector2d(-45, 15), normalizeAngle(Math.toRadians(-90)))
-                .strafeToSplineHeading(new Vector2d(-52, 48), normalizeAngle(Math.toRadians(-90)))
+                .strafeToSplineHeading(new Vector2d(-37.5, 41.5), normalizeAngle(Math.toRadians(-135)))
                 ;
 
         //go dump sample 4
         TrajectoryActionBuilder go_dump_sample_4 = go_pickup_sample_4.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-62.5, 48), normalizeAngle(Math.toRadians(-90)))
+                .strafeToLinearHeading(new Vector2d(-36, 52), normalizeAngle(Math.toRadians(135)))
                 ;
 
-//        //go pick up sample 5
-//        TrajectoryActionBuilder go_pickup_sample_5 = go_dump_sample_4.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-60.5, 48), normalizeAngle(Math.toRadians(-90)))
-//                ;
-//
-//        //go dump sample 5
-//        TrajectoryActionBuilder go_dump_sample_5 = go_pickup_sample_5.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-60.5, 49), normalizeAngle(Math.toRadians(-90)))
-//                ;
+        //go pick up sample 5
+        TrajectoryActionBuilder go_pickup_sample_5 = go_dump_sample_4.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-47, 40), normalizeAngle(Math.toRadians(-135)))
+                ;
+
+        //go dump sample 5
+        TrajectoryActionBuilder go_dump_sample_5 = go_pickup_sample_5.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-48, 52), normalizeAngle(Math.toRadians(135)))
+                ;
 
 
         //go get specimen 2
-        TrajectoryActionBuilder go_get_specimen_2 = go_dump_sample_4.endTrajectory().fresh()
+        TrajectoryActionBuilder go_get_specimen_2 = go_dump_sample_5.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-37, 60), normalizeAngle(Math.toRadians(-90)))
                 .strafeToLinearHeading(new Vector2d(-37, 65.5), normalizeAngle(Math.toRadians(-90)));
 
@@ -698,87 +697,50 @@ public final class auto_SPECIMEN_20241222 extends LinearOpMode {
                             //go pick up samples 4
                             new ParallelAction(
                                     go_pickup_sample_4.build(),
+                                    wrist.Wrist2(),
                                     new SequentialAction(
                                             new SleepAction(0.3),
-                                            lift.liftDown(),
-                                            new SleepAction(0.6),
+                                            lift.liftdowntoMiddle(),
                                             arm.aimArm()
                                     )
                             ),
                             arm.extendArm(),
-                            new SleepAction(0.3),
+                            new SleepAction(0.8),
                             sclaw.closeSClaw(),
-                            new SleepAction(0.3),
+                            new SleepAction(0.6),
 
                             //go dump sample 4
-                            new ParallelAction(
-                                 go_dump_sample_4.build(),
-                                 new SequentialAction(
-                                    arm.retractArm(),
-                                    new SleepAction(1.2),
-                                    sclaw.openSClaw(),
-                                    new SleepAction(0.3),
-                                    lift.liftuptoMiddle()
-                                 )
-                            ),
+                            go_dump_sample_4.build(),
+                            new SleepAction(0.4),
+                            sclaw.openSClaw(),
+                            new SleepAction(0.3),
 
-                            new ParallelAction(
-                                    bucket.dumpBucket(),
-                                    arm.aimArm()
-                            ),
-
-                            new SleepAction(0.9),
 
                             //go pick up sample 5
-                            arm.extendArm(),
-
-
+                            go_pickup_sample_5.build(),
                             new SleepAction(0.3),
-                            new ParallelAction(
-                                    bucket.restoreBucket(),
-                                    sclaw.closeSClaw()
-                            ),
-                            new SleepAction(0.3),
+                            sclaw.closeSClaw(),
+                            new SleepAction(0.6),
 
 
                             //go dump sample 5
-                            new ParallelAction(
-//                                 go_dump_sample_5.build(),
-                                 new SequentialAction(
-                                        new ParallelAction(
-                                                arm.retractArm(),
-                                                new SequentialAction(
-                                                    new SleepAction(0.5),
-                                                    lift.liftDown()
-                                                )
-                                                ),
-                                        new SleepAction(0.5),
-                                        sclaw.openSClaw(),
-                                        new SleepAction(0.3),
-                                         lift.liftuptoMiddle()
-                                 )
-                            ),
-
-                            bucket.dumpBucket(),
+                            go_dump_sample_5.build(),
                             new SleepAction(0.3),
-
-
+                            sclaw.openSClaw(),
+                            new SleepAction(0.3),
 
                             //go get specimen 2
                             new ParallelAction(
                                     go_get_specimen_2.build(),
-                                    new SequentialAction(
-                                            new SleepAction(0.5),
-                                            bucket.restoreBucket()
-                                    )
-
+                                    arm.retractArm(),
+                                    wrist.Wrist1()
                             ),
                             mclaw.closeMClaw(),
                             new SleepAction(0.3),
 
                             //go score specimen 2
                             new ParallelAction(
-                                    lift.Liftspecimen2Up(),
+                                    lift.liftUp(),
                                     new SequentialAction(
                                             new SleepAction(0.1),
                                             go_score_specimen_2.build()
@@ -796,7 +758,10 @@ public final class auto_SPECIMEN_20241222 extends LinearOpMode {
                             //always go park
                             new ParallelAction(
                                     go_park.build(),
-                                    lift.liftdowntoMiddle(),
+                                    new SequentialAction(
+                                            new SleepAction(0.3),
+                                            lift.liftdowntoMiddle()
+                                    ),
                                     new SequentialAction(
                                             new SleepAction(0.5),
                                             arm.extendArm()
