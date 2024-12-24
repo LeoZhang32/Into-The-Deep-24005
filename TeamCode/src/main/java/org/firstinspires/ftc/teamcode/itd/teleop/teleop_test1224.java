@@ -496,7 +496,7 @@ public class teleop_test1224 extends LinearOpMode{
                         telemetry.update();
                     }
 
-                    if (frontViper.getCurrentPosition() > 2250 || backViper.getCurrentPosition() > 2250) {
+                    if (frontViper.getCurrentPosition() > 2400 || backViper.getCurrentPosition() > 2400) {
                         frontViper.setPower(0);
                         backViper.setPower(0);
                         VS_auto_up = !VS_auto_up;
@@ -583,6 +583,7 @@ public class teleop_test1224 extends LinearOpMode{
                         frontViper.setPower(0);
                         backViper.setPower(0);
                         VS_specscore = !VS_specscore;
+                        specimen_closed = false;
                         telemetry.addData("Status", "position reached");
                         telemetry.update();
                     }
