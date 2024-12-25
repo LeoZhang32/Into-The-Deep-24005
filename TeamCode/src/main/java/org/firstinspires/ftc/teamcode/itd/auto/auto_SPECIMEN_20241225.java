@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
 // hang specimen 0 from top down
-@Autonomous (name = "auto_SPECIMEN_20241222")
+@Autonomous (name = "auto_SPECIMEN_20241225")
 
 public final class auto_SPECIMEN_20241225 extends LinearOpMode {
 
@@ -523,7 +523,7 @@ public final class auto_SPECIMEN_20241225 extends LinearOpMode {
         public class CloseMClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                specimen.setPosition(0.68);
+                specimen.setPosition(0.66);
                 return false;
             }
         }

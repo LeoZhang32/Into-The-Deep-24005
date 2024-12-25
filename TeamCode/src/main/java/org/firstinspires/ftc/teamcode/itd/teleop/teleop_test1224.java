@@ -296,7 +296,7 @@ public class teleop_test1224 extends LinearOpMode{
 
                 } else if (gamepad2.dpad_down) {
                     VS_manual_running = true;
-                    if (!limitSwitch.getState() || frontViper.getCurrentPosition() < 10 || backViper.getCurrentPosition() < 10) {
+                    if (!limitSwitch.getState()) {
                         //if limit switch is pressed and dpad down
                         frontViper.setPower(0);
                         backViper.setPower(0);
@@ -451,7 +451,7 @@ public class teleop_test1224 extends LinearOpMode{
 
                 } else if (gamepad2.dpad_down) {
                     VS_manual_running = true;
-                    if (!limitSwitch.getState() || frontViper.getCurrentPosition() < 10 || backViper.getCurrentPosition() < 10) {
+                    if (!limitSwitch.getState()) {
                         //if limit switch is pressed and dpad down
                         frontViper.setPower(0);
                         backViper.setPower(0);
@@ -717,14 +717,14 @@ public class teleop_test1224 extends LinearOpMode{
                 intakeBack.setPosition(0.94); // Position 1 (aiming position)
 
             } else if (pressCount == 2) {
-                intakeRight.setPosition(0.255);
-                intakeLeft.setPosition(0.745);
+                intakeRight.setPosition(0.23);
+                intakeLeft.setPosition(0.77);
                 intakeBack.setPosition(0.94); // Position 2 (grabbing sample position)
 
             } else if (pressCount == 3) {
                 intakeRight.setPosition(0.35);
                 intakeLeft.setPosition(0.65);
-                intakeBack.setPosition(0.94); // Position 3 (holding position)
+                intakeBack.setPosition(0.6); // Position 3 (holding position)
 
             }else if (pressCount == 4) {
                 intakeRight.setPosition(0.54); //this is the initial position
@@ -881,7 +881,7 @@ public class teleop_test1224 extends LinearOpMode{
         }
 
         if (specimen_closed){
-            specimen.setPosition(0.68);
+            specimen.setPosition(0.66);
         }
         else {
             specimen.setPosition(0.83); //this is the initial position
