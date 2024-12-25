@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.itd.teleop;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,8 +17,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+@Disabled
 @TeleOp
-public class teleop_test1224 extends LinearOpMode{
+public class teleop_test1223 extends LinearOpMode{
     //drivetrain
     DcMotor frontRight;
     DcMotor frontLeft;
@@ -173,25 +175,6 @@ public class teleop_test1224 extends LinearOpMode{
         }
     }
     protected void runSample() {
-        // You can give the sensor a gain value, will be multiplied by the sensor's raw value before the
-        // normalized color values are calculated. Color sensors (especially the REV Color Sensor V3)
-        // can give very low values (depending on the lighting conditions), which only use a small part
-        // of the 0-1 range that is available for the red, green, and blue values. In brighter conditions,
-        // you should use a smaller gain than in dark conditions. If your gain is too high, all of the
-        // colors will report at or near 1, and you won't be able to determine what color you are
-        // actually looking at. For this reason, it's better to err on the side of a lower gain
-        // (but always greater than  or equal to 1).
-        float gain = 2;
-
-        // Once per loop, we will update this hsvValues array. The first element (0) will contain the
-        // hue, the second element (1) will contain the saturation, and the third element (2) will
-        // contain the value. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
-        // for an explanation of HSV color.
-        final float[] hsvValues = new float[3];
-
-        // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
-        // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
-        // the values you get from ColorSensor are dependent on the specific sensor you're using.
 
 
         waitForStart();
@@ -232,23 +215,17 @@ public class teleop_test1224 extends LinearOpMode{
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            if (slowModeOn){
+            if (slowModeOn) {
                 frontLeft.setPower(frontLeftPower * 0.5);
                 backLeft.setPower(backLeftPower * 0.5);
                 frontRight.setPower(frontRightPower * 0.5);
                 backRight.setPower(backRightPower * 0.5);
-            }
-            else{
+            } else {
                 frontLeft.setPower(frontLeftPower * 1);
                 backLeft.setPower(backLeftPower * 1);
                 frontRight.setPower(frontRightPower * 1);
                 backRight.setPower(backRightPower * 1);
             }
-
-
-
-            //Viper Slide Code
-
 
 
             if (!specimenModeOn) { //Sample Mode
@@ -296,7 +273,7 @@ public class teleop_test1224 extends LinearOpMode{
 
                 } else if (gamepad2.dpad_down) {
                     VS_manual_running = true;
-                    if (!limitSwitch.getState()) {
+                    if (!limitSwitch.getState() || frontViper.getCurrentPosition() < 10 || backViper.getCurrentPosition() < 10) {
                         //if limit switch is pressed and dpad down
                         frontViper.setPower(0);
                         backViper.setPower(0);
@@ -315,8 +292,8 @@ public class teleop_test1224 extends LinearOpMode{
                     VS_manual_running = false;
                     frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     backViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    frontViper.setPower(1);
-                    backViper.setPower(1);
+                    frontViper.setPower(0.4);
+                    backViper.setPower(0.4);
 
 
                     if ((frontViper.isBusy()) || (backViper.isBusy()) || !isStopRequested()) {
@@ -341,7 +318,7 @@ public class teleop_test1224 extends LinearOpMode{
                         telemetry.update();
                     }
 
-                    if (frontViper.getCurrentPosition() > 4000 || backViper.getCurrentPosition() > 4000) {
+                    if (frontViper.getCurrentPosition() > 3000 || backViper.getCurrentPosition() > 3000) {
                         frontViper.setPower(0);
                         backViper.setPower(0);
                         VS_auto_up = !VS_auto_up;
@@ -354,8 +331,8 @@ public class teleop_test1224 extends LinearOpMode{
                     VS_manual_running = false;
                     frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     backViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    frontViper.setPower(-1);
-                    backViper.setPower(-1);
+                    frontViper.setPower(-0.2);
+                    backViper.setPower(-0.2);
                     bucket_dumped = false;
 
 
@@ -451,7 +428,7 @@ public class teleop_test1224 extends LinearOpMode{
 
                 } else if (gamepad2.dpad_down) {
                     VS_manual_running = true;
-                    if (!limitSwitch.getState()) {
+                    if (!limitSwitch.getState() || frontViper.getCurrentPosition() < 10 || backViper.getCurrentPosition() < 10) {
                         //if limit switch is pressed and dpad down
                         frontViper.setPower(0);
                         backViper.setPower(0);
@@ -496,7 +473,7 @@ public class teleop_test1224 extends LinearOpMode{
                         telemetry.update();
                     }
 
-                    if (frontViper.getCurrentPosition() > 2300 || backViper.getCurrentPosition() > 2300) {
+                    if (frontViper.getCurrentPosition() > 2250 || backViper.getCurrentPosition() > 2250) {
                         frontViper.setPower(0);
                         backViper.setPower(0);
                         VS_auto_up = !VS_auto_up;
@@ -509,8 +486,8 @@ public class teleop_test1224 extends LinearOpMode{
                     VS_manual_running = false;
                     frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     backViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    frontViper.setPower(-1);
-                    backViper.setPower(-1);
+                    frontViper.setPower(-0.2);
+                    backViper.setPower(-0.2);
                     bucket_dumped = false;
 
 
@@ -551,8 +528,8 @@ public class teleop_test1224 extends LinearOpMode{
                     VS_manual_running = false;
                     frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     backViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    frontViper.setPower(-0.5);
-                    backViper.setPower(-0.5);
+                    frontViper.setPower(-0.2);
+                    backViper.setPower(-0.2);
                     bucket_dumped = false;
 
 
@@ -583,7 +560,6 @@ public class teleop_test1224 extends LinearOpMode{
                         frontViper.setPower(0);
                         backViper.setPower(0);
                         VS_specscore = !VS_specscore;
-                        specimen_closed = false;
                         telemetry.addData("Status", "position reached");
                         telemetry.update();
                     }
@@ -594,10 +570,167 @@ public class teleop_test1224 extends LinearOpMode{
                     backViper.setPower(0);
                 }
             }
+        }
 
-
-
-
+//
+//                // viper slides auto action specimen
+//                if (gamepad2.left_bumper||gamepad2.right_bumper){
+//                    if (!VS_specscore_button_pressed) {
+//                        VS_specscore = !VS_specscore;
+//                    }
+//                    VS_specscore_button_pressed = true;
+//                } else VS_specscore_button_pressed = false;
+//                if (gamepad2.x) {
+//                    if (!VS_auto_up_button_pressed) {
+//                        VS_auto_up = !VS_auto_up;
+//                    }
+//                    VS_auto_up_button_pressed = true;
+//                } else VS_auto_up_button_pressed = false;
+//                if (gamepad2.b) {
+//                    if (!VS_auto_down_button_pressed) {
+//                        VS_auto_down = !VS_auto_down;
+//                    }
+//                    VS_auto_down_button_pressed = true;
+//                } else VS_auto_down_button_pressed = false;
+//
+//                if (!limitSwitch.getState()&&!VS_auto_up&&!VS_auto_down&&!VS_manual_running) {
+//                    //if pressed
+//                    frontViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                    backViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                }
+//                else if (VS_auto_up) {
+//                    // viper slide going up
+//                    // Set the motor's target position
+//                    frontViper.setTargetPosition(2150);
+//                    backViper.setTargetPosition(2150);
+//
+//                    // Switch to RUN_TO_POSITION mode
+//                    frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                    backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//                    // Start the motor moving by setting power ratio
+//
+//                    frontViper.setPower(1);
+//                    backViper.setPower(1);
+//
+//                    // Loop while the motor is moving to the target
+//                    while ((frontViper.isBusy()) && (backViper.isBusy()) && !isStopRequested()) {
+//
+//                        // Check for an emergency stop condition
+//                        if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
+//                            // **ADDED: Stop the motors immediately**
+//                            stopVipers();
+//                            break; // **ADDED: Exit the loop on emergency stop**
+//                        }
+//
+//                        // Let the drive team see that we're waiting on the motor
+//                        telemetry.addData("Status", "Waiting to reach top");
+//                        telemetry.addData("power", frontViper.getPower());
+//                        telemetry.addData("position", frontViper.getCurrentPosition());
+//                        telemetry.addData("is at target", !frontViper.isBusy());
+//                        telemetry.update();
+//                    }
+//                    // One of the motor has reached its target position, and the program will continue
+//
+//                    // Stop all motion;
+//                    frontViper.setPower(0);
+//                    backViper.setPower(0);
+//
+//                    telemetry.addData("Status", "position achieved");
+//                    telemetry.update();
+//
+//                    // Loop while the motor is moving to the target
+//
+//                    VS_auto_up = !VS_auto_up;
+//                }
+//                else if (VS_auto_down) {
+//
+//                    // viper slide going down
+//                    frontViper.setTargetPosition(260);
+//                    backViper.setTargetPosition(260);
+//
+//                    // Switch to RUN_TO_POSITION mode
+//                    frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                    backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//                    frontViper.setPower(1);
+//                    backViper.setPower(1);
+//
+//                    // Loop while the motor is moving to the target
+//                    while ((frontViper.isBusy()) && backViper.isBusy() && !isStopRequested()) {
+//
+//                        // Check for an emergency stop condition
+//                        if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
+//                            // **ADDED: Stop the motors immediately**
+//                            stopVipers();
+//                            break; // **ADDED: Exit the loop on emergency stop**
+//                        }
+//
+//                        // Let the drive team see that we're waiting on the motor
+//                        telemetry.addData("Status", "Waiting to reach bottom");
+//                        telemetry.addData("power", frontViper.getPower());
+//                        telemetry.addData("position", frontViper.getCurrentPosition());
+//                        telemetry.addData("is at target", !frontViper.isBusy());
+//                        telemetry.update();
+//                    }
+//
+//                    // One of the motor has reached its target position, and the program will continue
+//                    // Stop all motion;
+//                    frontViper.setPower(0);
+//                    backViper.setPower(0);
+//
+//                    telemetry.addData("Status", "position achieved");
+//                    telemetry.update();
+//
+//                    // Loop while the motor is moving to the target
+//
+//                    VS_auto_down = !VS_auto_down;
+//                }
+//                else if (VS_specscore){
+//
+//                    // viper slide going down
+//                    frontViper.setTargetPosition(1600);
+//                    backViper.setTargetPosition(1600);
+//
+//                    // Switch to RUN_TO_POSITION mode
+//                    frontViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                    backViper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//                    frontViper.setPower(1);
+//                    backViper.setPower(1);
+//
+//                    // Loop while the motor is moving to the target
+//                    while ((frontViper.isBusy()) && backViper.isBusy() && !isStopRequested()) {
+//
+//                        // Check for an emergency stop condition
+//                        if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
+//                            // **ADDED: Stop the motors immediately**
+//                            stopVipers();
+//                            break; // **ADDED: Exit the loop on emergency stop**
+//                        }
+//
+//                        // Let the drive team see that we're waiting on the motor
+//                        telemetry.addData("Status", "Waiting to reach bottom");
+//                        telemetry.addData("power", frontViper.getPower());
+//                        telemetry.addData("position", frontViper.getCurrentPosition());
+//                        telemetry.addData("is at target", !frontViper.isBusy());
+//                        telemetry.update();
+//                    }
+//
+//                    // One of the motor has reached its target position, and the program will continue
+//                    // Stop all motion;
+//                    frontViper.setPower(0);
+//                    backViper.setPower(0);
+//                    specimen_closed = false;
+//
+//                    telemetry.addData("Status", "position achieved");
+//                    telemetry.update();
+//
+//                    // Loop while the motor is moving to the target
+//
+//                    VS_specscore = !VS_specscore;
+//                }
+//            }
 
             sticky_keys();
             updateBooleans();
@@ -671,7 +804,7 @@ public class teleop_test1224 extends LinearOpMode{
 
         }
 
-    }
+
 
     public void sticky_keys() {
     //sticky key presses
@@ -717,14 +850,14 @@ public class teleop_test1224 extends LinearOpMode{
                 intakeBack.setPosition(0.94); // Position 1 (aiming position)
 
             } else if (pressCount == 2) {
-                intakeRight.setPosition(0.23);
-                intakeLeft.setPosition(0.77);
+                intakeRight.setPosition(0.255);
+                intakeLeft.setPosition(0.745);
                 intakeBack.setPosition(0.94); // Position 2 (grabbing sample position)
 
             } else if (pressCount == 3) {
                 intakeRight.setPosition(0.35);
                 intakeLeft.setPosition(0.65);
-                intakeBack.setPosition(0.6); // Position 3 (holding position)
+                intakeBack.setPosition(0.94); // Position 3 (holding position)
 
             }else if (pressCount == 4) {
                 intakeRight.setPosition(0.54); //this is the initial position
@@ -852,13 +985,13 @@ public class teleop_test1224 extends LinearOpMode{
         } else hangLeft_button_pressed = false;
 
     }
-    public void stopVipers() {
-        // Override RUN_TO_POSITION mode and stop the motors
-        frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontViper.setPower(0);
-        backViper.setPower(0);
-    }
+//    public void stopVipers() {
+//        // Override RUN_TO_POSITION mode and stop the motors
+//        frontViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        backViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        frontViper.setPower(0);
+//        backViper.setPower(0);
+//    }
     public void updateBooleans() {
         if (sample_closed && sample_color) {
             sample.setPosition(1);
@@ -881,7 +1014,7 @@ public class teleop_test1224 extends LinearOpMode{
         }
 
         if (specimen_closed){
-            specimen.setPosition(0.66);
+            specimen.setPosition(0.68);
         }
         else {
             specimen.setPosition(0.83); //this is the initial position

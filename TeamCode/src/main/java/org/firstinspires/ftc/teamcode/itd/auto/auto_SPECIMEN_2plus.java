@@ -17,7 +17,6 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -32,7 +31,7 @@ import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 // hang specimen 0 from top down
 @Autonomous (name = "auto_SPECIMEN_20241222")
 
-public final class auto_SPECIMEN_20241222 extends LinearOpMode {
+public final class auto_SPECIMEN_2plus extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
     double wristPosition = 0.23;
