@@ -143,9 +143,9 @@ public class teleop extends LinearOpMode{
 
 
         // Set the initial positions for intakeRight, intakeLeft and intakeBack
-        intakeRight.setPosition(0.54);
-        intakeLeft.setPosition(0.46);
-        intakeBack.setPosition(0.25);
+        intakeRight.setPosition(0.58);
+        intakeLeft.setPosition(0.42);
+        intakeBack.setPosition(0.3);
 
         // Set the initial positions for sampleWrist
         sampleWrist.setPosition(wristPosition);
@@ -727,9 +727,9 @@ public class teleop extends LinearOpMode{
                 intakeBack.setPosition(0.6); // Position 3 (holding position)
 
             }else if (pressCount == 4) {
-                intakeRight.setPosition(0.59); //this is the initial position
-                intakeLeft.setPosition(0.41); //this = 1-intakeRight position
-                intakeBack.setPosition(0.28); //this is the initial position - Position 4 (drop sample into bucket)
+                intakeRight.setPosition(0.58); //this is the initial position
+                intakeLeft.setPosition(0.42); //this = 1-intakeRight position
+                intakeBack.setPosition(0.3); //this is the initial position - Position 4 (drop sample into bucket)
                 pressCount = 0; // Reset to cycle back to initial position
             }
         }
@@ -741,8 +741,8 @@ public class teleop extends LinearOpMode{
             pressCount = 1;
 
             if (pressCount == 1){
-                intakeRight.setPosition(0.36);
-                intakeLeft.setPosition(0.64);
+                intakeRight.setPosition(0.34);
+                intakeLeft.setPosition(0.66);
                 intakeBack.setPosition(0.94); // Position 1 (aiming position)
             }
         }
@@ -754,9 +754,9 @@ public class teleop extends LinearOpMode{
             pressCount = 4;
 
             if (pressCount == 4){
-                intakeRight.setPosition(0.57); //this is the initial position
-                intakeLeft.setPosition(0.43); //this = 1-intakeRight position
-                intakeBack.setPosition(0.28); //this is the initial position
+                intakeRight.setPosition(0.58); //this is the initial position
+                intakeLeft.setPosition(0.42); //this = 1-intakeRight position
+                intakeBack.setPosition(0.3); //this is the initial position
                 pressCount = 0; // Reset to cycle back to initial position
             }
         }
