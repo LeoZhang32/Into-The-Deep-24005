@@ -277,8 +277,8 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class AimArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.3);
-                intakeLeft.setPosition(0.7);
+                intakeRight.setPosition(0.34);
+                intakeLeft.setPosition(0.66);
                 intakeBack.setPosition(0.94); // aiming position
                 return false;
             }
@@ -293,9 +293,9 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class ExtendArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.255);
-                intakeLeft.setPosition(0.745);
-                intakeBack.setPosition(0.94); // grabbing sample position
+                intakeRight.setPosition(0.27);
+                intakeLeft.setPosition(0.73);
+                intakeBack.setPosition(0.94); // grabbing sample position (a bit lower than teleop)
                 return false;
             }
         }
@@ -309,9 +309,9 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class RetractArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                intakeRight.setPosition(0.54);
-                intakeLeft.setPosition(0.46);
-                intakeBack.setPosition(0.25);  //drop sample into bucket
+                intakeRight.setPosition(0.58);
+                intakeLeft.setPosition(0.42);
+                intakeBack.setPosition(0.3);  //drop sample into bucket
                 return false;
             }
         }
@@ -383,6 +383,33 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
 
         public Action Wrist1() {
             return new Wrist1();
+        }
+
+
+
+        public class Wrist2 implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                sampleWrist.setPosition(wristPosition + 0.15);
+                return false;
+            }
+        }
+
+        public Action Wrist2() {
+            return new Wrist2();
+        }
+
+
+
+        public class Wrist3 implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                sampleWrist.setPosition(wristPosition + 0.3);
+                return false;
+            }
+        }
+        public Action Wrist3() {
+            return new Wrist3();
         }
 
 
@@ -476,7 +503,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         //return to basket
         TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(57, 57), normalizeAngle(Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(57.5, 57.5), normalizeAngle(Math.toRadians(-135)));
 
 
         //go to sample 2
@@ -494,23 +521,23 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         //go to sample 1
         TrajectoryActionBuilder go_to_sample_1 = return_basket_2.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(52, 38.5), normalizeAngle(Math.toRadians(-45)));
+                .strafeToLinearHeading(new Vector2d(43, 25), normalizeAngle(Math.toRadians(-1)))
+                .strafeToLinearHeading(new Vector2d(47.5, 25), normalizeAngle(Math.toRadians(-1)));
 
 
         //return to basket 1
         TrajectoryActionBuilder return_basket_1 = go_to_sample_1.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(57, 57), normalizeAngle(Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(43, 25), normalizeAngle(Math.toRadians(-1)))
+                .strafeToLinearHeading(new Vector2d(57, 58), normalizeAngle(Math.toRadians(-135)));
 
 
 
         //go to hang
         TrajectoryActionBuilder go_to_hang = return_basket_1.endTrajectory().fresh()
 
-//                .strafeToLinearHeading(new Vector2d(48,48), normalizeAngle(Math.toRadians(-90)))
-//                .strafeToLinearHeading(new Vector2d(48,12), normalizeAngle(Math.toRadians(-45)))
-                .strafeToLinearHeading(new Vector2d(40,12), normalizeAngle(Math.toRadians(0)))
-                .strafeTo(new Vector2d(21,12));
+                .strafeToLinearHeading(new Vector2d(35,12), normalizeAngle(Math.toRadians(-1)))
+                .strafeToLinearHeading(new Vector2d(20,12), normalizeAngle(Math.toRadians(-1)));
 
 
 
@@ -540,9 +567,8 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                             arm.aimArm()
                              ),
 
-//                    new SleepAction(0.4),
                     arm.extendArm(),
-                    new SleepAction(0.4),
+                    new SleepAction(0.3),
                     sclaw.closeSClaw(),
                     new SleepAction(0.4),
 
@@ -559,19 +585,22 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     ),
 
                     bucket.dumpBucket(),
-                    new SleepAction(0.7),
+                    new SleepAction(0.6),
                     // sample 3 cycle completes by now. sample 2 cycle starts below
 
 //
                     new ParallelAction(
-                            bucket.restoreBucket(),
-                            lift.liftDown(),
                             go_to_sample_2.build(),
-                            arm.aimArm()
+                            bucket.restoreBucket(),
+                            new SequentialAction(
+                                    new SleepAction(0.2),
+                                    lift.liftDown()
                             ),
+                            arm.aimArm()
+                    ),
 
                     arm.extendArm(),
-                    new SleepAction(0.4),
+                    new SleepAction(0.3),
                     sclaw.closeSClaw(),
                     new SleepAction(0.4),
 
@@ -587,44 +616,54 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     ),
 
                     bucket.dumpBucket(),
-                    new SleepAction(0.7),
+                    new SleepAction(0.6),
                     // sample 2 cycle completes by now. sample 1 cycle starts below
 
 
                     new ParallelAction(
-                            bucket.restoreBucket(),
-                            lift.liftDown(),
                             go_to_sample_1.build(),
+                            bucket.restoreBucket(),
+                            new SequentialAction(
+                                    new SleepAction(0.2),
+                                    lift.liftDown()
+                            ),
                             arm.aimArm(),
-                            wrist.Wrist4()
+                            wrist.Wrist3()
                             ),
 
                     arm.extendArm(),
-                    new SleepAction(0.4),
+                    new SleepAction(0.3),
                     sclaw.closeSClaw(),
                     new SleepAction(0.4),
+                    arm.aimArm(),
 
                     new ParallelAction(
-                             return_basket_1.build(),
-                             wrist.Wrist1(),
-                             new SequentialAction(
+                            return_basket_1.build(),
+                            new SequentialAction(
+                                    new SleepAction(0.4),
                                     arm.retractArm(),
-                                    new SleepAction(1.2),
+                                    new SleepAction(0.6),
+                                    wrist.Wrist1(),
+                                    new SleepAction(0.4),
                                     sclaw.openSClaw(),
                                     new SleepAction(0.4),
                                     lift.liftUp()
-                                    )
-                            ),
+                            )
+                    ),
 
                     bucket.dumpBucket(),
-                    new SleepAction(0.7),
+                    new SleepAction(0.6),
                     // sample 1 cycle completes by now. Go to Hang Level 1.
 
 
                     new ParallelAction(
-                             bucket.restoreBucket(),
-                             lift.lifttoHang(),
-                             go_to_hang.build()
+                            go_to_hang.build(),
+                            bucket.restoreBucket(),
+                            new SequentialAction(
+                                    new SleepAction(0.2),
+                                    lift.lifttoHang()
+                            )
+
                     )
 
 

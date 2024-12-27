@@ -662,8 +662,8 @@ public final class auto_SAMPLE_4 extends LinearOpMode {
 
 
                     new ParallelAction(
-                            bucket.restoreBucket(),
                             go_to_hang.build(),
+                            bucket.restoreBucket(),
                             new SequentialAction(
                                     new SleepAction(0.2),
                                     lift.lifttoHang()
