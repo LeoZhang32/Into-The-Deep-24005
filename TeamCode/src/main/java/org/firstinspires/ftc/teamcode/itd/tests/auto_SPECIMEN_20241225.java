@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.auto;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 
 import static org.firstinspires.ftc.teamcode.rr.MecanumDrive.normalizeAngle;
@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
 // hang specimen 0 from top down
+@Disabled
 @Autonomous (name = "auto_SPECIMEN_20241225")
 
 public final class auto_SPECIMEN_20241225 extends LinearOpMode {

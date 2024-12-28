@@ -278,8 +278,8 @@ public final class auto_SAMPLE_4 extends LinearOpMode {
         public class AimArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.34);
-                intakeLeft.setPosition(0.66);
+                intakeRight.setPosition(0.31);
+                intakeLeft.setPosition(0.69);
                 intakeBack.setPosition(0.94); // aiming position
                 return false;
             }
@@ -310,8 +310,8 @@ public final class auto_SAMPLE_4 extends LinearOpMode {
         public class RetractArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                intakeRight.setPosition(0.58);
-                intakeLeft.setPosition(0.42);
+                intakeRight.setPosition(0.61);
+                intakeLeft.setPosition(0.39);
                 intakeBack.setPosition(0.3);  //drop sample into bucket
                 return false;
             }
@@ -444,7 +444,7 @@ public final class auto_SAMPLE_4 extends LinearOpMode {
         public class CloseMClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                specimen.setPosition(0.68);
+                specimen.setPosition(0.66);
                 return false;
             }
         }
@@ -457,7 +457,7 @@ public final class auto_SAMPLE_4 extends LinearOpMode {
         public class OpenMClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                specimen.setPosition(0.8);
+                specimen.setPosition(0.83);
                 return false;
             }
         }
@@ -497,7 +497,7 @@ public final class auto_SAMPLE_4 extends LinearOpMode {
         //go to sample 3
         TrajectoryActionBuilder go_to_sample_3 = go_score_sample_0.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(24, 43), normalizeAngle(Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(49, 45), normalizeAngle(Math.toRadians(-92)));
+                .strafeToLinearHeading(new Vector2d(48.5, 45), normalizeAngle(Math.toRadians(-92)));
 
         //return to basket
         TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()

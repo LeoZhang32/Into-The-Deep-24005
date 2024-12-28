@@ -29,9 +29,9 @@ import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
 // hang specimen 0 from top down
-@Autonomous (name = "auto_SPECIMEN_2_Preload")
+@Autonomous (name = "auto_SPECIMEN_1_Preload")
 
-public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
+public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
     double wristPosition = 0.23;
@@ -365,7 +365,7 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
 
         public Action aimArm() {
 
-            return new IntakeSample.AimArm();
+            return new AimArm();
         }
 
 
@@ -574,37 +574,28 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-8.3, 35), normalizeAngle(Math.toRadians(90)));
 
 
-        //go get specimen 1 (if alliance member does not use it in auto)
-        TrajectoryActionBuilder go_get_specimen_1 = go_score_specimen_0.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-37, 60), normalizeAngle(Math.toRadians(-90)))
-                .strafeToLinearHeading(new Vector2d(-37, 66), normalizeAngle(Math.toRadians(-90)));
+//        //go get specimen 1 (if alliance member does not use it in auto)
+//        TrajectoryActionBuilder go_get_specimen_1 = go_score_specimen_0.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-37, 60), normalizeAngle(Math.toRadians(-90)))
+//                .strafeToLinearHeading(new Vector2d(-37, 66), normalizeAngle(Math.toRadians(-90)));
+//
+//
+//        //go score specimen 1 (if alliance member does not use it in auto)
+//        TrajectoryActionBuilder go_score_specimen_1 = go_get_specimen_1.endTrajectory().fresh()
+//                .strafeToSplineHeading(new Vector2d(-8, 40), normalizeAngle(Math.toRadians(90)))
+//                .strafeToSplineHeading(new Vector2d(-8, 35), normalizeAngle(Math.toRadians(90)));
 
-
-        //go score specimen 1 (if alliance member does not use it in auto)
-        TrajectoryActionBuilder go_score_specimen_1 = go_get_specimen_1.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-8, 40), normalizeAngle(Math.toRadians(90)))
-                .strafeToSplineHeading(new Vector2d(-8, 35), normalizeAngle(Math.toRadians(90)));
-
-
-//        //go push sample 4
-//        TrajectoryActionBuilder go_push_sample_4 = go_score_specimen_1.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-8.3, 38.5), normalizeAngle(Math.toRadians(110)))
-//                .strafeToLinearHeading(new Vector2d(-36, 38.5), normalizeAngle(Math.toRadians(-135)))
-//                .strafeToLinearHeading(new Vector2d(-36, 15), normalizeAngle(Math.toRadians(-90)))
-//                .strafeToLinearHeading(new Vector2d(-45, 15), normalizeAngle(Math.toRadians(-90)))
-//                .strafeToLinearHeading(new Vector2d(-48, 56), normalizeAngle(Math.toRadians(-90)))
-//                ;
 
 
         //go pick up sample 4
-        TrajectoryActionBuilder go_pickup_sample_4 = go_score_specimen_1.endTrajectory().fresh()
+        TrajectoryActionBuilder go_pickup_sample_4 = go_score_specimen_0.endTrajectory().fresh()
 
-                .strafeToSplineHeading(new Vector2d(-50.5, 48), normalizeAngle(Math.toRadians(-93)))
+                .strafeToLinearHeading(new Vector2d(-50, 46.5), normalizeAngle(Math.toRadians(-90.0000001)))
                 ;
 
         //go dump sample 4
         TrajectoryActionBuilder go_dump_sample_4 = go_pickup_sample_4.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-60.5, 49), normalizeAngle(Math.toRadians(-93)))
+                .strafeToLinearHeading(new Vector2d(-61.5, 45.5), normalizeAngle(Math.toRadians(-90.0000001)))
                 ;
 
 //        //go pick up sample 5
@@ -620,26 +611,26 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
 
         //go get specimen 2
         TrajectoryActionBuilder go_get_specimen_2 = go_dump_sample_4.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-37, 60), normalizeAngle(Math.toRadians(-93)))
+                .strafeToLinearHeading(new Vector2d(-37, 60), normalizeAngle(Math.toRadians(-90)))
                 .waitSeconds(0.4)
-                .strafeToLinearHeading(new Vector2d(-37, 65), normalizeAngle(Math.toRadians(-93)));
+                .strafeToLinearHeading(new Vector2d(-37, 65), normalizeAngle(Math.toRadians(-90)));
 
         //go score specimen 2
         TrajectoryActionBuilder go_score_specimen_2 = go_get_specimen_2.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(0, 40), normalizeAngle(Math.toRadians(90)))
-                .strafeToSplineHeading(new Vector2d(0, 33.5), normalizeAngle(Math.toRadians(90)));
+                .strafeToSplineHeading(new Vector2d(-6.5, 40), normalizeAngle(Math.toRadians(90)))
+                .strafeToSplineHeading(new Vector2d(-6.5, 34), normalizeAngle(Math.toRadians(90)));
 
 
-//        //there may not be enough time to get and score specimen 3
-//        //go get specimen 3
-//        TrajectoryActionBuilder go_get_specimen_3 = go_score_specimen_2.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-37, 58), normalizeAngle(Math.toRadians(-90)))
-//                .strafeToLinearHeading(new Vector2d(-37, 63), normalizeAngle(Math.toRadians(-90)));
-//
-//        //go score specimen 3
-//        TrajectoryActionBuilder go_score_specimen_3 = go_get_specimen_3.endTrajectory().fresh()
-//                .strafeToSplineHeading(new Vector2d(3, 40), normalizeAngle(Math.toRadians(90)))
-//                .strafeToSplineHeading(new Vector2d(3, 35), normalizeAngle(Math.toRadians(90)));
+        //there may not be enough time to get and score specimen 3
+        //go get specimen 3
+        TrajectoryActionBuilder go_get_specimen_3 = go_score_specimen_2.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(-43, 58), normalizeAngle(Math.toRadians(-90.0000001)))
+                .strafeToSplineHeading(new Vector2d(-43, 64), normalizeAngle(Math.toRadians(-88)));
+
+        //go score specimen 3
+        TrajectoryActionBuilder go_score_specimen_3 = go_get_specimen_3.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(0, 40), normalizeAngle(Math.toRadians(89)))
+                .strafeToSplineHeading(new Vector2d(0, 33), normalizeAngle(Math.toRadians(89)));
 
 
         //go park
@@ -664,34 +655,6 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
                             lift.liftdowntoScore(),
                             mclaw.openMClaw(),
                             new SleepAction(0.3),
-
-
-                            //go get specimen 1 now (if alliance member does not use it in auto)
-                            //go get specimen 1
-                            new ParallelAction(
-                                    go_get_specimen_1.build(),
-                                    new SequentialAction(
-                                            new SleepAction(0.3),
-                                            lift.liftdowntoMiddle()
-                                    )
-                            ),
-                            mclaw.closeMClaw(),
-                            new SleepAction(0.3),
-
-                            //go score specimen 1
-                            new ParallelAction(
-                                    lift.liftUp(),
-                                    new SequentialAction(
-                                            new SleepAction(0.1),
-                                            go_score_specimen_1.build()
-                                    )
-                            ),
-                            new SleepAction(0.3),
-                            lift.liftdowntoScore(),
-                            mclaw.openMClaw(),
-                            new SleepAction(0.3),
-
-
 
 
                             //go pick up samples 4
@@ -743,19 +706,19 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
                             //go dump sample 5
                             new ParallelAction(
 //                                 go_dump_sample_5.build(),
-                                 new SequentialAction(
-                                        new ParallelAction(
-                                                arm.retractArm(),
-                                                new SequentialAction(
-                                                    new SleepAction(0.2),
-                                                    lift.liftDown()
-                                                )
-                                        ),
-                                        new SleepAction(0.9),
-                                        sclaw.openSClaw(),
-                                        new SleepAction(0.4),
-                                         lift.liftuptoMiddle()
-                                 )
+                                    new SequentialAction(
+                                            new ParallelAction(
+                                                    arm.retractArm(),
+                                                    new SequentialAction(
+                                                            new SleepAction(0.2),
+                                                            lift.liftDown()
+                                                    )
+                                            ),
+                                            new SleepAction(0.9),
+                                            sclaw.openSClaw(),
+                                            new SleepAction(0.4),
+                                            lift.liftuptoMiddle()
+                                    )
                             ),
 
                             bucket.dumpBucket(),
@@ -768,7 +731,7 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
                                     go_get_specimen_2.build(),
                                     lift.liftdowntoMiddle(),
                                     new SequentialAction(
-                                            new SleepAction(0.5),
+                                            new SleepAction(0.3),
                                             bucket.restoreBucket()
                                     )
 
@@ -792,9 +755,33 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
 
                             //there may not be enough time to get and score specimen 3, so code not used.
 
+                    //go get specimen 3
+                    new ParallelAction(
+                            go_get_specimen_3.build(),
+                            new SequentialAction(
+                                    new SleepAction(0.3),
+                                    lift.liftdowntoMiddle()
+                            )
+                    ),
+                    mclaw.closeMClaw(),
+                    new SleepAction(0.3),
+
+                    //go score specimen 3
+                    new ParallelAction(
+                            lift.liftUp(),
+                            new SequentialAction(
+                                    new SleepAction(0.1),
+                                    go_score_specimen_3.build()
+                            )
+                    ),
+                    new SleepAction(0.3),
+                    lift.liftdowntoScore(),
+                    mclaw.openMClaw(),
+                    new SleepAction(0.3),
+
 
                             //always go park
-                            new ParallelAction(
+                    new ParallelAction(
                                     go_park.build(),
                                     new SequentialAction(
                                             new SleepAction(0.3),
@@ -804,8 +791,9 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
                                             new SleepAction(0.5),
                                             arm.aimArm()
                                     )
-                            ),
-                            arm.extendArm()
+                    ),
+                    arm.extendArm()
+
 
                     )
             );
