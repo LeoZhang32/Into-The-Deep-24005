@@ -96,7 +96,7 @@ public final class MecanumDrive {
         // path controller gains
         public double axialGain = 1.6;
         public double lateralGain = 0.7;
-        public double headingGain = 23; // shared with turn
+        public double headingGain = 15; // shared with turn (previous value = 23)
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;

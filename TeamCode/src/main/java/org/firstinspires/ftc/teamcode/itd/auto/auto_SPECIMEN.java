@@ -29,9 +29,9 @@ import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
 // hang specimen 0 from top down
-@Autonomous (name = "auto_SPECIMEN_1_Preload")
+@Autonomous (name = "auto_SPECIMEN")
 
-public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
+public final class auto_SPECIMEN extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
     double wristPosition = 0.23;
@@ -311,7 +311,7 @@ public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
         public class DumpBucket implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                bucket.setPosition(0.57); //0.57
+                bucket.setPosition(0.59); //teleop 0.57
                 return false;
             }
         }
@@ -373,8 +373,8 @@ public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
         public class ExtendArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.28);
-                intakeLeft.setPosition(0.72);
+                intakeRight.setPosition(0.27);
+                intakeLeft.setPosition(0.73);
                 intakeBack.setPosition(0.94); // grabbing sample position (a bit lower than teleop)
                 return false;
             }
@@ -524,7 +524,7 @@ public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
         public class CloseMClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                specimen.setPosition(0.66);
+                specimen.setPosition(0.68);
                 return false;
             }
         }
@@ -590,12 +590,12 @@ public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
         //go pick up sample 4
         TrajectoryActionBuilder go_pickup_sample_4 = go_score_specimen_0.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(-50, 46.5), normalizeAngle(Math.toRadians(-90.0000001)))
-                ;
+//                .strafeToLinearHeading(new Vector2d(-27, 45), normalizeAngle(Math.toRadians(180)))
+                .strafeToLinearHeading(new Vector2d(-50, 46.5), normalizeAngle(Math.toRadians(-90.001)));
 
         //go dump sample 4
         TrajectoryActionBuilder go_dump_sample_4 = go_pickup_sample_4.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-61.5, 45.5), normalizeAngle(Math.toRadians(-90.0000001)))
+                .strafeToLinearHeading(new Vector2d(-61.5, 45.5), normalizeAngle(Math.toRadians(-90)))
                 ;
 
 //        //go pick up sample 5
@@ -617,26 +617,26 @@ public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
 
         //go score specimen 2
         TrajectoryActionBuilder go_score_specimen_2 = go_get_specimen_2.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-6.5, 40), normalizeAngle(Math.toRadians(90)))
-                .strafeToSplineHeading(new Vector2d(-6.5, 34), normalizeAngle(Math.toRadians(90)));
+                .strafeToSplineHeading(new Vector2d(-9, 40), normalizeAngle(Math.toRadians(90.001)))
+                .strafeToSplineHeading(new Vector2d(-9, 33.5), normalizeAngle(Math.toRadians(90.001)));
 
 
         //there may not be enough time to get and score specimen 3
         //go get specimen 3
         TrajectoryActionBuilder go_get_specimen_3 = go_score_specimen_2.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-43, 58), normalizeAngle(Math.toRadians(-90.0000001)))
-                .strafeToSplineHeading(new Vector2d(-43, 64), normalizeAngle(Math.toRadians(-88)));
+                .strafeToSplineHeading(new Vector2d(-43, 56), normalizeAngle(Math.toRadians(-90)))
+                .strafeToSplineHeading(new Vector2d(-43, 63.5), normalizeAngle(Math.toRadians(-90)));
 
         //go score specimen 3
         TrajectoryActionBuilder go_score_specimen_3 = go_get_specimen_3.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(0, 40), normalizeAngle(Math.toRadians(89)))
-                .strafeToSplineHeading(new Vector2d(0, 33), normalizeAngle(Math.toRadians(89)));
+                .strafeToSplineHeading(new Vector2d(-4.5, 40), normalizeAngle(Math.toRadians(90.001)))
+                .strafeToSplineHeading(new Vector2d(-4.5, 33.5), normalizeAngle(Math.toRadians(90.001)));
 
 
         //go park
         TrajectoryActionBuilder go_park = go_score_specimen_2.endTrajectory().fresh()
 
-                .strafeToSplineHeading(new Vector2d(-37, 56), normalizeAngle(Math.toRadians(160)));
+                .strafeToSplineHeading(new Vector2d(-48, 56), normalizeAngle(Math.toRadians(170)));
 
 
 
@@ -677,7 +677,7 @@ public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
                                  go_dump_sample_4.build(),
                                  new SequentialAction(
                                     arm.retractArm(),
-                                    new SleepAction(0.9),
+                                    new SleepAction(1),
                                     sclaw.openSClaw(),
                                     new SleepAction(0.4),
                                     lift.liftuptoMiddle()
@@ -695,7 +695,7 @@ public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
                             arm.extendArm(),
 
 
-                            new SleepAction(0.3),
+                            new SleepAction(0.2),
                             new ParallelAction(
                                     bucket.restoreBucket(),
                                     sclaw.closeSClaw()
@@ -714,7 +714,7 @@ public final class auto_SPECIMEN_1_Preload extends LinearOpMode {
                                                             lift.liftDown()
                                                     )
                                             ),
-                                            new SleepAction(0.9),
+                                            new SleepAction(0.7),
                                             sclaw.openSClaw(),
                                             new SleepAction(0.4),
                                             lift.liftuptoMiddle()

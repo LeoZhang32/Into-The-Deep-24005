@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.auto;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 
 import static org.firstinspires.ftc.teamcode.rr.MecanumDrive.normalizeAngle;
@@ -17,6 +17,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -29,6 +30,7 @@ import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 
 
 // hang specimen 0 from top down
+@Disabled
 @Autonomous (name = "auto_SPECIMEN_2_Preload")
 
 public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
@@ -373,8 +375,8 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
         public class ExtendArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.28);
-                intakeLeft.setPosition(0.72);
+                intakeRight.setPosition(0.27);
+                intakeLeft.setPosition(0.73);
                 intakeBack.setPosition(0.94); // grabbing sample position (a bit lower than teleop)
                 return false;
             }
@@ -524,7 +526,7 @@ public final class auto_SPECIMEN_2_Preload extends LinearOpMode {
         public class CloseMClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                specimen.setPosition(0.66);
+                specimen.setPosition(0.68);
                 return false;
             }
         }

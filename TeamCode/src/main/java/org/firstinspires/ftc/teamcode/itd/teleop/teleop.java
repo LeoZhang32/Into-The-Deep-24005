@@ -881,7 +881,7 @@ public class teleop extends LinearOpMode{
         }
 
         if (specimen_closed){
-            specimen.setPosition(0.66);
+            specimen.setPosition(0.68); //close position
         }
         else {
             specimen.setPosition(0.83); //this is the initial position

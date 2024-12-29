@@ -293,8 +293,8 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class ExtendArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.28);
-                intakeLeft.setPosition(0.72);
+                intakeRight.setPosition(0.27);
+                intakeLeft.setPosition(0.73);
                 intakeBack.setPosition(0.94); // grabbing sample position (a bit lower than teleop)
                 return false;
             }
@@ -446,7 +446,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class CloseMClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                specimen.setPosition(0.66);
+                specimen.setPosition(0.68);
                 return false;
             }
         }
@@ -503,7 +503,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         //return to basket
         TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(57.5, 57.5), normalizeAngle(Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(58, 58), normalizeAngle(Math.toRadians(-135)));
 
 
         //go to sample 2
@@ -521,8 +521,8 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         //go to sample 1
         TrajectoryActionBuilder go_to_sample_1 = return_basket_2.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(43, 25), normalizeAngle(Math.toRadians(-1)))
-                .strafeToLinearHeading(new Vector2d(47.5, 25), normalizeAngle(Math.toRadians(-1)));
+                .strafeToLinearHeading(new Vector2d(43, 26), normalizeAngle(Math.toRadians(-1)))
+                .strafeToLinearHeading(new Vector2d(47.5, 26), normalizeAngle(Math.toRadians(-1)));
 
 
         //return to basket 1
@@ -585,7 +585,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     ),
 
                     bucket.dumpBucket(),
-                    new SleepAction(0.6),
+                    new SleepAction(0.55),
                     // sample 3 cycle completes by now. sample 2 cycle starts below
 
 //
@@ -616,7 +616,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     ),
 
                     bucket.dumpBucket(),
-                    new SleepAction(0.6),
+                    new SleepAction(0.55),
                     // sample 2 cycle completes by now. sample 1 cycle starts below
 
 
@@ -644,7 +644,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                                     arm.retractArm(),
                                     new SleepAction(0.6),
                                     wrist.Wrist1(),
-                                    new SleepAction(0.4),
+                                    new SleepAction(1.6),
                                     sclaw.openSClaw(),
                                     new SleepAction(0.4),
                                     lift.liftUp()
@@ -652,7 +652,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     ),
 
                     bucket.dumpBucket(),
-                    new SleepAction(0.6),
+                    new SleepAction(0.55),
                     // sample 1 cycle completes by now. Go to Hang Level 1.
 
 
