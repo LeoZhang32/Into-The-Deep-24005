@@ -390,8 +390,8 @@ public final class auto_SPECIMEN extends LinearOpMode {
         public class RetractArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                intakeRight.setPosition(0.61);
-                intakeLeft.setPosition(0.39);
+                intakeRight.setPosition(0.62);
+                intakeLeft.setPosition(0.38);
                 intakeBack.setPosition(0.3); //drop sample into bucket
                 return false;
             }
@@ -729,10 +729,12 @@ public final class auto_SPECIMEN extends LinearOpMode {
                             //go get specimen 2
                             new ParallelAction(
                                     go_get_specimen_2.build(),
-                                    lift.liftdowntoMiddle(),
+
                                     new SequentialAction(
-                                            new SleepAction(0.3),
-                                            bucket.restoreBucket()
+                                            new SleepAction(0.4),
+                                            bucket.restoreBucket(),
+                                            new SleepAction(0.5),
+                                            lift.liftdowntoMiddle()
                                     )
 
                             ),

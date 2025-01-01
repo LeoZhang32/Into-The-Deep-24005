@@ -309,8 +309,8 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class RetractArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                intakeRight.setPosition(0.61);
-                intakeLeft.setPosition(0.39);
+                intakeRight.setPosition(0.62);
+                intakeLeft.setPosition(0.38);
                 intakeBack.setPosition(0.3);  //drop sample into bucket
                 return false;
             }
