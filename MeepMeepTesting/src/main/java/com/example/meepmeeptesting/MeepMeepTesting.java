@@ -19,23 +19,24 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-8.3, 66, Math.toRadians(90)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(8.3, 65, Math.toRadians(180)))
 
-                .strafeToLinearHeading(new Vector2d(-8.3, 35), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(8.3, 60), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(58, 56), (Math.toRadians(-135)))
 
-                .strafeToLinearHeading(new Vector2d(-8.3, 38.5), Math.toRadians(110))
-                .strafeToLinearHeading(new Vector2d(-36, 38.5), Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(-36, 15), (Math.toRadians(-90)))
-                .strafeToLinearHeading(new Vector2d(-45, 15), (Math.toRadians(-90)))
-                .strafeToLinearHeading(new Vector2d(-48, 56), (Math.toRadians(-90)))
+                .strafeToLinearHeading(new Vector2d(48.5, 45.5), (Math.toRadians(-90)))
+                .strafeToLinearHeading(new Vector2d(57, 57), (Math.toRadians(-135)))
 
-                .strafeToLinearHeading(new Vector2d(-37, 56), Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(-37, 62), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(62.8, 43.5), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(57, 57), Math.toRadians(-135))
 
-//                .strafeToLinearHeading(new Vector2d(-37, 56), Math.toRadians(-90))
-//                .strafeToSplineHeading(new Vector2d(-5, 41), Math.toRadians(90))
-                .strafeToSplineHeading(new Vector2d(-5, 35), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(43, 26.5), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(47.5, 26.5), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(43, 25), Math.toRadians(0))
+                .strafeToSplineHeading(new Vector2d(57, 58), Math.toRadians(-135))
 
+                .strafeToSplineHeading(new Vector2d(35, 12), Math.toRadians(0))
+                .strafeToSplineHeading(new Vector2d(20, 12), Math.toRadians(0))
 
 
 

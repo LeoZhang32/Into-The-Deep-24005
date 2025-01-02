@@ -234,7 +234,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class DumpBucket implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                bucket.setPosition(0.57);
+                bucket.setPosition(0.56);
                 return false;
             }
         }
@@ -570,7 +570,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     arm.extendArm(),
                     new SleepAction(0.3),
                     sclaw.closeSClaw(),
-                    new SleepAction(0.4),
+                    new SleepAction(0.3),
 
 
                     new ParallelAction(
@@ -585,7 +585,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     ),
 
                     bucket.dumpBucket(),
-                    new SleepAction(0.55),
+                    new SleepAction(0.65),
                     // sample 3 cycle completes by now. sample 2 cycle starts below
 
 //
@@ -602,7 +602,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     arm.extendArm(),
                     new SleepAction(0.3),
                     sclaw.closeSClaw(),
-                    new SleepAction(0.4),
+                    new SleepAction(0.3),
 
                     new ParallelAction(
                             return_basket_2.build(),
@@ -616,7 +616,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     ),
 
                     bucket.dumpBucket(),
-                    new SleepAction(0.55),
+                    new SleepAction(0.65),
                     // sample 2 cycle completes by now. sample 1 cycle starts below
 
 
@@ -634,7 +634,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     arm.extendArm(),
                     new SleepAction(0.3),
                     sclaw.closeSClaw(),
-                    new SleepAction(0.4),
+                    new SleepAction(0.3),
                     arm.aimArm(),
 
                     new ParallelAction(
@@ -652,7 +652,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
                     ),
 
                     bucket.dumpBucket(),
-                    new SleepAction(0.55),
+                    new SleepAction(0.65),
                     // sample 1 cycle completes by now. Go to Hang Level 1.
 
 
