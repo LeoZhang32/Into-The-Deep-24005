@@ -497,7 +497,7 @@ public final class auto_SAMPLE_4 extends LinearOpMode {
         //go to sample 3
         TrajectoryActionBuilder go_to_sample_3 = go_score_sample_0.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(24, 43), normalizeAngle(Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(48.5, 45.5), normalizeAngle(Math.toRadians(-92)));
+                .strafeToLinearHeading(new Vector2d(49, 45.5), normalizeAngle(Math.toRadians(-90)));
 
         //return to basket
         TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()
@@ -508,7 +508,7 @@ public final class auto_SAMPLE_4 extends LinearOpMode {
         //go to sample 2
         TrajectoryActionBuilder go_to_sample_2 = return_basket_3.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(62.8, 43.5), normalizeAngle(Math.toRadians(-92)));
+                .strafeToLinearHeading(new Vector2d(62.8, 43.5), normalizeAngle(Math.toRadians(-90)));
 
 
         //return to basket
@@ -520,8 +520,8 @@ public final class auto_SAMPLE_4 extends LinearOpMode {
         //go to sample 1
         TrajectoryActionBuilder go_to_sample_1 = return_basket_2.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(43, 26.5), normalizeAngle(Math.toRadians(-1)))
-                .strafeToLinearHeading(new Vector2d(47.5, 26.5), normalizeAngle(Math.toRadians(-1)));
+                .strafeToLinearHeading(new Vector2d(43, 27.5), normalizeAngle(Math.toRadians(-1)))
+                .strafeToLinearHeading(new Vector2d(47.5, 27.5), normalizeAngle(Math.toRadians(-1)));
 
 
         //return to basket 1
