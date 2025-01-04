@@ -277,8 +277,8 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class AimArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.31);
-                intakeLeft.setPosition(0.69);
+                intakeRight.setPosition(0.34);
+                intakeLeft.setPosition(0.66);
                 intakeBack.setPosition(0.94); // aiming position
                 return false;
             }
@@ -293,8 +293,8 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class ExtendArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                intakeRight.setPosition(0.27);
-                intakeLeft.setPosition(0.73);
+                intakeRight.setPosition(0.3);
+                intakeLeft.setPosition(0.7);
                 intakeBack.setPosition(0.94); // grabbing sample position (a bit lower than teleop)
                 return false;
             }
@@ -309,8 +309,8 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class RetractArm implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                intakeRight.setPosition(0.62);
-                intakeLeft.setPosition(0.38);
+                intakeRight.setPosition(0.63);
+                intakeLeft.setPosition(0.37);
                 intakeBack.setPosition(0.3);  //drop sample into bucket
                 return false;
             }
@@ -338,7 +338,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class CloseSClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                sample.setPosition(0.68);
+                sample.setPosition(0.65);
                 return false;
             }
         }
@@ -446,7 +446,7 @@ public final class auto_SAMPLE_1plus3 extends LinearOpMode {
         public class CloseMClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                specimen.setPosition(0.68);
+                specimen.setPosition(0.675);
                 return false;
             }
         }

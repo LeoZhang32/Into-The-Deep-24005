@@ -143,8 +143,8 @@ public class teleop extends LinearOpMode{
 
 
         // Set the initial positions for intakeRight, intakeLeft and intakeBack
-        intakeRight.setPosition(0.62);
-        intakeLeft.setPosition(0.38);
+        intakeRight.setPosition(0.63);
+        intakeLeft.setPosition(0.37);
         intakeBack.setPosition(0.3);
 
         // Set the initial positions for sampleWrist
@@ -712,23 +712,23 @@ public class teleop extends LinearOpMode{
 
             // Cycle through the positions
             if (pressCount == 1) {
-                intakeRight.setPosition(0.31);
-                intakeLeft.setPosition(0.69);
+                intakeRight.setPosition(0.34);
+                intakeLeft.setPosition(0.66);
                 intakeBack.setPosition(0.94); // Position 1 (aiming position)
 
             } else if (pressCount == 2) {
-                intakeRight.setPosition(0.28);
-                intakeLeft.setPosition(0.72);
+                intakeRight.setPosition(0.3);
+                intakeLeft.setPosition(0.7);
                 intakeBack.setPosition(0.94); // Position 2 (grabbing sample position)
 
             } else if (pressCount == 3) {
-                intakeRight.setPosition(0.33);
-                intakeLeft.setPosition(0.67);
+                intakeRight.setPosition(0.34);
+                intakeLeft.setPosition(0.66);
                 intakeBack.setPosition(0.6); // Position 3 (holding position)
 
             }else if (pressCount == 4) {
-                intakeRight.setPosition(0.62); //this is the initial position
-                intakeLeft.setPosition(0.38); //this = 1-intakeRight position
+                intakeRight.setPosition(0.63); //this is the initial position
+                intakeLeft.setPosition(0.37); //this = 1-intakeRight position
                 intakeBack.setPosition(0.3); //this is the initial position - Position 4 (drop sample into bucket)
                 pressCount = 0; // Reset to cycle back to initial position
             }
@@ -741,8 +741,8 @@ public class teleop extends LinearOpMode{
             pressCount = 1;
 
             if (pressCount == 1){
-                intakeRight.setPosition(0.31);
-                intakeLeft.setPosition(0.69);
+                intakeRight.setPosition(0.34);
+                intakeLeft.setPosition(0.66);
                 intakeBack.setPosition(0.94); // Position 1 (aiming position)
             }
         }
@@ -754,8 +754,8 @@ public class teleop extends LinearOpMode{
             pressCount = 4;
 
             if (pressCount == 4){
-                intakeRight.setPosition(0.62); //this is the initial position
-                intakeLeft.setPosition(0.38); //this = 1-intakeRight position
+                intakeRight.setPosition(0.63); //this is the initial position
+                intakeLeft.setPosition(0.37); //this = 1-intakeRight position
                 intakeBack.setPosition(0.3); //this is the initial position
                 pressCount = 0; // Reset to cycle back to initial position
             }
@@ -771,14 +771,14 @@ public class teleop extends LinearOpMode{
 
             if (pressCountRight == 1){
 
-                intakeRight.setPosition(0.28);
-                intakeLeft.setPosition(0.72);
+                intakeRight.setPosition(0.3);
+                intakeLeft.setPosition(0.7);
                 intakeBack.setPosition(0.65); // extra reach aiming position
             }
             else if (pressCountRight == 2){
 
-                intakeRight.setPosition(0.24);
-                intakeLeft.setPosition(0.76);
+                intakeRight.setPosition(0.26);
+                intakeLeft.setPosition(0.74);
                 intakeBack.setPosition(0.73); // extra reach grabbing position
                 pressCountRight = 0;
             }
@@ -864,7 +864,7 @@ public class teleop extends LinearOpMode{
             sample.setPosition(1);
         }
         else if (sample_closed || sample_color) {
-            sample.setPosition(0.68);
+            sample.setPosition(0.65);
             telemetry.addData("sample_color", "true");
             telemetry.addData("Color is Red", "Sample claw closes");
          }
@@ -881,7 +881,7 @@ public class teleop extends LinearOpMode{
         }
 
         if (specimen_closed){
-            specimen.setPosition(0.68); //close position
+            specimen.setPosition(0.675); //close position
         }
         else {
             specimen.setPosition(0.83); //this is the initial position
