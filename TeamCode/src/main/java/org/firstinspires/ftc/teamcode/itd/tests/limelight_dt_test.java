@@ -8,12 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-
 import java.util.List;
 
 @TeleOp
-public class limelighttest extends LinearOpMode {
+public class limelight_dt_test extends LinearOpMode {
 
     Limelight3A limelight;
     DcMotor frontLeft;
