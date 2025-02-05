@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class intake_tele extends LinearOpMode {
     ElapsedTime transferTimer = new ElapsedTime();
     Boolean extendoIn = true;
+    boolean isTransferTimerRunning = false; // Track if timer is running
     Servo IArmL;
     Servo IArmR;
     Servo IWrist;
@@ -45,6 +46,7 @@ public class intake_tele extends LinearOpMode {
             cycle_gamepad1.updateX(4);
             cycle_gamepad1.updateRB(4);
             cycle_gamepad1.updateA(2);
+            cycle_gamepad1.updateB(2);
 
             dashboard.sendTelemetryPacket(packet);
 
@@ -82,20 +84,33 @@ public class intake_tele extends LinearOpMode {
             else{
                 IWrist.setPosition(pos.intake_wrist3);
             }
-            //claw movement
-            if (cycle_gamepad1.aPressCount == 1){
-                IClaw.setPosition(pos.intake_claw_open);
-                transferTimer.reset();
-                if (extendoIn){
-                    if (transferTimer.milliseconds()>=200){
-                        OClaw.setPosition(pos.outtake_claw_close);
-                        transferTimer.reset();
-                    }
+            //intake claw movement
+            if (!extendoIn && !isTransferTimerRunning) {
+                if (cycle_gamepad1.aPressCount == 1) {
+                    IClaw.setPosition(pos.intake_claw_close);
+                } else {
+                    IClaw.setPosition(pos.intake_claw_open);
                 }
             }
-            else {
+            //outtake claw movement
+            if (cycle_gamepad1.bPressCount == 1) {
+                OClaw.setPosition(pos.outtake_claw_close);
                 IClaw.setPosition(pos.intake_claw_close);
+                transferTimer.reset();
+                isTransferTimerRunning = true;  // Indicate timer has started
             }
+            else{
+                OClaw.setPosition(pos.outtake_claw_open);
+            }
+
+            //Delayed IClaw opening
+            if (extendoIn && isTransferTimerRunning && transferTimer.milliseconds() >= 200) {
+                    IClaw.setPosition(pos.intake_claw_open);
+                    isTransferTimerRunning = false; // Stop tracking timer once done
+            }
+
+
+
         }
     }
 }
