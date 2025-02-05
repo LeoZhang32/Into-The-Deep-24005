@@ -11,7 +11,9 @@ public class cycletest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
-            cycle_gamepad1.updateX(4);
+            cycle_gamepad1.updateX(2);
+            telemetry.addData("cycle number", cycle_gamepad1.xPressCount);
+            telemetry.update();
         }
     }
 }

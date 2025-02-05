@@ -15,60 +15,20 @@ public class motorstest extends LinearOpMode {
 
     Limelight3A limelight;
     DcMotor frontLeft;
-    DcMotor frontRight;
-    DcMotor backLeft;
-    DcMotor backRight;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        frontLeft = hardwareMap.get(DcMotor.class,"frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class,"frontRight");
-        backLeft = hardwareMap.get(DcMotor.class,"backLeft");
-        backRight = hardwareMap.get(DcMotor.class,"backRight");
+        frontLeft = hardwareMap.get(DcMotor.class,"FL");
 
-        limelight.setPollRateHz(100);
-        telemetry.setMsTransmissionInterval(11);
-
-        limelight.pipelineSwitch(0);
-
-        /*
-         * Starts polling for data.
-         */
-        limelight.start();
         waitForStart();
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
-
                 if (gamepad1.y){
                     frontLeft.setPower(1);
                 }
                 else {
                     frontLeft.setPower(0);
                 }
-
-                if (gamepad1.b){
-                    frontRight.setPower(1);
-                }
-                else {
-                    frontRight.setPower(0);
-                }
-
-                if (gamepad1.x){
-                    backLeft.setPower(1);
-                }
-                else{
-                    backLeft.setPower(0);
-                }
-
-                if (gamepad1.a){
-                    backRight.setPower(1);
-
-                }
-                else{
-                    backRight.setPower(0);
-                }
-            telemetry.update();
         }
     }
 }

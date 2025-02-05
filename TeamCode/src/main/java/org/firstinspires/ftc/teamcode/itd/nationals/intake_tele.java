@@ -5,14 +5,21 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 
 @TeleOp
 public class intake_tele extends LinearOpMode {
+    ElapsedTime transferTimer = new ElapsedTime();
+    Boolean extendoIn = true;
     Servo IArmL;
     Servo IArmR;
     Servo IWrist;
     Servo IClaw;
     Servo IArmC;
+
+    Servo OClaw;
+
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,16 +35,20 @@ public class intake_tele extends LinearOpMode {
         IWrist = hardwareMap.get(Servo.class, "IWrist");
         IClaw = hardwareMap.get(Servo.class, "IClaw");
 
+        OClaw = hardwareMap.get(Servo.class, "OClaw");
+
+        OClaw.setPosition(pos.outtake_claw_open);
+
         waitForStart();
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
             cycle_gamepad1.updateX(4);
-            cycle_gamepad1.updateLB(4);
+            cycle_gamepad1.updateRB(4);
             cycle_gamepad1.updateA(2);
 
             dashboard.sendTelemetryPacket(packet);
-            //arm movements
 
+            //arm movements
             if (cycle_gamepad1.xPressCount == 0){
                 IArmL.setPosition(pos.intake_arm_trans);
                 IArmR.setPosition(1-pos.intake_arm_trans);
@@ -59,21 +70,31 @@ public class intake_tele extends LinearOpMode {
                 IArmC.setPosition(pos.intake_coax_lift);
             }
             //wrist movements
-            if (cycle_gamepad1.lbPressCount == 0){
+            if (cycle_gamepad1.rbPressCount == 0){
                 IWrist.setPosition(pos.intake_wrist0);
             }
-            else if (cycle_gamepad1.lbPressCount == 1){
+            else if (cycle_gamepad1.rbPressCount == 1){
                 IWrist.setPosition(pos.intake_wrist1);
             }
-            else if (cycle_gamepad1.lbPressCount == 2){
+            else if (cycle_gamepad1.rbPressCount == 2){
                 IWrist.setPosition(pos.intake_wrist2);
             }
             else{
                 IWrist.setPosition(pos.intake_wrist3);
             }
             //claw movement
-            if (cycle_gamepad1.aPressCount == 0){
+            if (cycle_gamepad1.aPressCount == 1){
                 IClaw.setPosition(pos.intake_claw_open);
+                transferTimer.reset();
+                if (extendoIn){
+                    if (transferTimer.milliseconds()>=200){
+                        OClaw.setPosition(pos.outtake_claw_close);
+                        transferTimer.reset();
+                    }
+                }
+            }
+            else {
+                IClaw.setPosition(pos.intake_claw_close);
             }
         }
     }

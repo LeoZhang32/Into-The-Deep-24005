@@ -43,7 +43,7 @@ public class CycleGamepad {
 
     public void updateA(int cycles) {
 
-        boolean currentAState = gamepad.y;
+        boolean currentAState = gamepad.a;
         if (currentAState && !previousAState) { // Prevent "button held down" behavior
             // Increment the press count and ensure it loops between 0 and 2
             aPressCount++;
@@ -55,7 +55,7 @@ public class CycleGamepad {
     }
 
     public void updateB(int cycles) {
-        boolean currentBState = gamepad.y;
+        boolean currentBState = gamepad.b;
         if (currentBState && !previousBState) { // Prevent "button held down" behavior
             // Increment the press count and ensure it loops between 0 and 2
             bPressCount++;
@@ -66,7 +66,7 @@ public class CycleGamepad {
         previousBState = currentBState;
     }
     public void updateLB(int cycles) {
-        boolean currentLBState = gamepad.y;
+        boolean currentLBState = gamepad.left_bumper;
         if (currentLBState && !previousLBState) { // Prevent "button held down" behavior
             // Increment the press count and ensure it loops between 0 and 2
             lbPressCount++;
@@ -77,7 +77,7 @@ public class CycleGamepad {
         previousLBState = currentLBState;
     }
     public void updateRB(int cycles) {
-        boolean currentRBState = gamepad.y;
+        boolean currentRBState = gamepad.right_bumper;
         if (currentRBState && !previousRBState) { // Prevent "button held down" behavior
             // Increment the press count and ensure it loops between 0 and 2
             rbPressCount++;
