@@ -84,6 +84,7 @@ public class intake_tele_YZ extends LinearOpMode {
                 IArmL.setPosition(pos.intake_arm_grab);
                 IArmR.setPosition(1-pos.intake_arm_grab);
                 IArmC.setPosition(pos.intake_coax_grab);
+                cycle_gamepad1.aPressCount = 1;
                 extendoIn = false;
             }
             else{
@@ -93,6 +94,11 @@ public class intake_tele_YZ extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_lift);
                 IArmC.setPosition(pos.intake_coax_lift);
                 extendoIn = false;
+            }
+
+            if (gamepad1.y) {
+                cycle_gamepad1.xPressCount = 1;
+                cycle_gamepad1.aPressCount = 0;
             }
 
             //wrist movements
@@ -131,8 +137,10 @@ public class intake_tele_YZ extends LinearOpMode {
             }
 
             //Delayed IClaw opening
-            if (extendoIn && isTransferTimerRunning && transferTimer.milliseconds() >= 300) {
+            if (extendoIn && isTransferTimerRunning && transferTimer.milliseconds() >= 200) {
                     IClaw.setPosition(pos.intake_claw_open);
+                    HSlideL.setPosition(pos.hslide_after_trans);
+                    HSlideR.setPosition(1-pos.hslide_after_trans);
                     cycle_gamepad1.aPressCount = 0;
                     isTransferTimerRunning = false; // Stop tracking timer once done
             }
