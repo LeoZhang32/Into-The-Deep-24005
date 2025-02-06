@@ -4,7 +4,6 @@ public class positions_and_variables {
     public double vert_slides_power = 1.0;
 
     public double hslide_trans = 0.33;
-    public double hslide_after_trans = 0.3;
     public double hslide_aim = 0.1;
 
     public double intake_arm_trans = 0.33;
