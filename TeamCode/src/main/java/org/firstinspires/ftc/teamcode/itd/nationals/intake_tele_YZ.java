@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @TeleOp
-public class intake_tele extends LinearOpMode {
+public class intake_tele_YZ extends LinearOpMode {
     ElapsedTime transferTimer = new ElapsedTime();
     Boolean extendoIn = true;
     boolean isTransferTimerRunning = false; // Track if timer is running
@@ -110,7 +110,7 @@ public class intake_tele extends LinearOpMode {
             }
 
             //intake claw movement
-            if (!extendoIn && !isTransferTimerRunning) {
+            if (!extendoIn) {
                 if (cycle_gamepad1.aPressCount == 1) {
                     IClaw.setPosition(pos.intake_claw_close);
                 } else {
@@ -133,7 +133,7 @@ public class intake_tele extends LinearOpMode {
             //Delayed IClaw opening
             if (extendoIn && isTransferTimerRunning && transferTimer.milliseconds() >= 300) {
                     IClaw.setPosition(pos.intake_claw_open);
-//                    cycle_gamepad1.aPressCount = 0;
+                    cycle_gamepad1.aPressCount = 0;
                     isTransferTimerRunning = false; // Stop tracking timer once done
             }
             //outtake arm movement
