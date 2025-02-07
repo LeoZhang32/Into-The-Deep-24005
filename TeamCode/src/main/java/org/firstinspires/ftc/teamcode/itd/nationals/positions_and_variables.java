@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.itd.nationals;
 
 public class positions_and_variables {
-    public double vert_slides_power = 1.0;
+    public double vert_slides_power = 0.5;
 
     public double hslide_trans = 0.33;
     public double hslide_aim = 0.1;
@@ -29,5 +29,5 @@ public class positions_and_variables {
 
     public double outtake_arm_transfer = 0.95;
     public double outtake_arm_sample = 0.3;
-    public double outtake_arm_specimen = 0.3;
+    public double outtake_arm_specimen = 0.25;
 }
