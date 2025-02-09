@@ -13,8 +13,8 @@ public class hang_test extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         double vert_power = positions.vert_slides_power;
-        v_slide_front = hardwareMap.get(DcMotor.class, "vslidefront");
-        v_slide_back = hardwareMap.get(DcMotor.class, "vslideback");
+        v_slide_front = hardwareMap.get(DcMotor.class, "VSlideF");
+        v_slide_back = hardwareMap.get(DcMotor.class, "VSlideB");
         v_slide_front.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
         if (isStopRequested()) return;
@@ -27,7 +27,7 @@ public class hang_test extends LinearOpMode {
                 v_slide_front.setPower(0);
                 v_slide_back.setPower(0);
             }
-            if (gamepad2.dpad_up){
+            if (gamepad2.dpad_down){
                 v_slide_front.setPower(-vert_power);
                 v_slide_back.setPower(vert_power);
             }
