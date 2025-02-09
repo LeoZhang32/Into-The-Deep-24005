@@ -11,7 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class iclawtele extends LinearOpMode {
     ElapsedTime transferTimer = new ElapsedTime();
     Boolean extendoIn = true;
-    boolean isTransferTimerRunning = false; // Track if timer is running
+    Boolean isTransferTimerRunning = false;
+    Boolean timerrunning = true;// Track if timer is running
     Servo IArmL;
     Servo IArmR;
     Servo IWrist;
@@ -56,59 +57,31 @@ public class iclawtele extends LinearOpMode {
 
             cycle_gamepad2.updateA(2);
             cycle_gamepad2.updateX(2);
+
             //initial
-            if (cycle_gamepad1.aPressCount == 0){
+            if (cycle_gamepad1.aPressCount == 1){
                 IClaw.setPosition(pos.intake_claw_open);
+                telemetry.addData("pause completed", "false");
+
+                boolean timerpause = pause(transferTimer, 200);
+                if (timerpause){
+                    OClaw.setPosition(pos.outtake_claw_close);
+                    telemetry.addData("pause completed", "true");
+                }
+
             }
             //closed
             else {
                 IClaw.setPosition(pos.intake_claw_close);
             }
-
-            //arm movements
-            if (cycle_gamepad1.xPressCount == 0){
-                HSlideL.setPosition(pos.hslide_trans);
-                HSlideR.setPosition(1-pos.hslide_trans);
-                IArmL.setPosition(pos.intake_arm_trans);
-                IArmR.setPosition(1-pos.intake_arm_trans);
-                IArmC.setPosition(pos.intake_coax_trans);
-            }
-            else if (cycle_gamepad1.xPressCount == 1){
-                HSlideL.setPosition(pos.hslide_aim);
-                HSlideR.setPosition(1-pos.hslide_aim);
-                IArmL.setPosition(pos.intake_arm_aim);
-                IArmR.setPosition(1-pos.intake_arm_aim);
-                IArmC.setPosition(pos.intake_coax_aim);
-            }
-            else if (cycle_gamepad1.xPressCount == 2){
-                HSlideL.setPosition(pos.hslide_aim);
-                HSlideR.setPosition(1-pos.hslide_aim);
-                IArmL.setPosition(pos.intake_arm_grab);
-                IArmR.setPosition(1-pos.intake_arm_grab);
-                IArmC.setPosition(pos.intake_coax_grab);
-            }
-            else{
-                HSlideL.setPosition(pos.hslide_aim);
-                HSlideR.setPosition(1-pos.hslide_aim);
-                IArmL.setPosition(pos.intake_arm_lift);
-                IArmR.setPosition(1-pos.intake_arm_lift);
-                IArmC.setPosition(pos.intake_coax_lift);
-            }
-            if (cycle_gamepad2.aPressCount == 1){
-                OClaw.setPosition(pos.outtake_claw_close);
-                if (!isTransferTimerRunning && cycle_gamepad1.aPressCount == 1 && cycle_gamepad1.xPressCount == 0){
-                    transferTimer.reset();
-                    isTransferTimerRunning = true;
-                }
-            }
-            else {
-                OClaw.setPosition(pos.outtake_claw_open);
-            }
-            if (transferTimer.milliseconds() >= 300 && isTransferTimerRunning){
-                cycle_gamepad1.aPressCount = 0;
+            if (timerrunning){
                 transferTimer.reset();
-                isTransferTimerRunning = false;
+                timerrunning = false;
             }
+            telemetry.update();
         }
+    }
+    public boolean pause(ElapsedTime timer, double waitTime) {
+        return timer.milliseconds() >= waitTime;
     }
 }
