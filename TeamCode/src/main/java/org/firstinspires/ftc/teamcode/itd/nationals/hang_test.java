@@ -5,19 +5,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp
 public class hang_test extends LinearOpMode {
-    Boolean VS_manual_running = false;
-    Boolean VS_auto_up_button_pressed = false;
-    Boolean VS_auto_up = false;
-    Boolean VS_auto_down_button_pressed = false;
-    Boolean VS_auto_down = false;
-    Boolean VS_specscore_button_pressed = false;
-    Boolean VS_specscore = false;
+    Boolean manual_running = false;
+    Boolean auto_up_button_pressed = false;
+    Boolean auto_up = false;
+    Boolean auto_down_button_pressed = false;
+    Boolean auto_down = false;
+    Boolean specscore_button_pressed = false;
+    Boolean specscore = false;
 
     DcMotor VSlideF;
     DcMotor VSlideB;
@@ -46,17 +45,17 @@ public class hang_test extends LinearOpMode {
             cycle_gamepad2.updateLB(3);
             cycle_gamepad2.updateX(2);
             if (gamepad2.y) {
-                if (!VS_auto_up_button_pressed) {
-                    VS_auto_up = !VS_auto_up;
+                if (!auto_up_button_pressed) {
+                    auto_up = !auto_up;
                 }
-                VS_auto_up_button_pressed = true;
-            } else VS_auto_up_button_pressed = false;
+                auto_up_button_pressed = true;
+            } else auto_up_button_pressed = false;
             if (gamepad2.b) {
-                if (!VS_auto_down_button_pressed) {
-                    VS_auto_down = !VS_auto_down;
+                if (!auto_down_button_pressed) {
+                    auto_down = !auto_down;
                 }
-                VS_auto_down_button_pressed = true;
-            } else VS_auto_down_button_pressed = false;
+                auto_down_button_pressed = true;
+            } else auto_down_button_pressed = false;
 
             if (cycle_gamepad2.lbPressCount == 2){
                 OArm.setPosition(pos.outtake_arm_specimen);
@@ -69,20 +68,20 @@ public class hang_test extends LinearOpMode {
             }
 
             if (gamepad2.right_bumper) {
-                if (!VS_specscore_button_pressed) {
-                    VS_specscore = !VS_specscore;
+                if (!specscore_button_pressed) {
+                    specscore = !specscore;
                 }
-                VS_specscore_button_pressed = true;
-            } else VS_specscore_button_pressed = false;
+                specscore_button_pressed = true;
+            } else specscore_button_pressed = false;
 
-            if (!limitSwitch.getState() && !VS_auto_up && !VS_auto_down && !VS_manual_running) {
+            if (!limitSwitch.getState() && !auto_up && !auto_down && !manual_running) {
                 //if pressed
                 VSlideF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 VSlideB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             V_SLIDES:
             if (gamepad2.dpad_up) {
-                VS_manual_running = true;
+                manual_running = true;
                 if (VSlideF.getCurrentPosition() > 2850 || VSlideB.getCurrentPosition() > 2850) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
@@ -96,7 +95,7 @@ public class hang_test extends LinearOpMode {
                 VSlideB.setPower(1);
 
             } else if (gamepad2.dpad_down) {
-                VS_manual_running = true;
+                manual_running = true;
                 if (!limitSwitch.getState()) {
                     //if limit switch is pressed and dpad down
                     VSlideF.setPower(0);
@@ -111,9 +110,9 @@ public class hang_test extends LinearOpMode {
                 VSlideB.setPower(-1);
 
 
-            } else if (VS_auto_up) { //viper slide auto actions
+            } else if (auto_up) { //viper slide auto actions
 
-                VS_manual_running = false;
+                manual_running = false;
                 VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideF.setPower(1);
@@ -127,7 +126,7 @@ public class hang_test extends LinearOpMode {
                         // **ADDED: Stop the motors immediately**
                         VSlideF.setPower(0);
                         VSlideB.setPower(0);
-                        VS_auto_up = !VS_auto_up;
+                        auto_up = !auto_up;
 //                            break; // **ADDED: Exit the loop on emergency stop**
 
                     }
@@ -145,14 +144,14 @@ public class hang_test extends LinearOpMode {
                 if (VSlideF.getCurrentPosition() > 2750 || VSlideB.getCurrentPosition() > 2750) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
-                    VS_auto_up = !VS_auto_up;
+                    auto_up = !auto_up;
                     telemetry.addData("Status", "position reached");
                     telemetry.update();
                 }
 
-            } else if (VS_auto_down) { //viper slide auto action down
+            } else if (auto_down) { //viper slide auto action down
 
-                VS_manual_running = false;
+                manual_running = false;
                 VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideF.setPower(-1);
@@ -166,7 +165,7 @@ public class hang_test extends LinearOpMode {
                         // **ADDED: Stop the motors immediately**
                         VSlideF.setPower(0);
                         VSlideB.setPower(0);
-                        VS_auto_down = !VS_auto_down;
+                        auto_down = !auto_down;
 //                            break; // **ADDED: Exit the loop on emergency stop**
 
                     }
@@ -185,15 +184,15 @@ public class hang_test extends LinearOpMode {
                 if (VSlideF.getCurrentPosition() < 30 || VSlideB.getCurrentPosition() < 30) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
-                    VS_auto_down = !VS_auto_down;
+                    auto_down = !auto_down;
                     telemetry.addData("Status", "position reached");
                     telemetry.update();
                 }
 
 
-            } else if (VS_specscore) { //viper slide auto action down score
+            } else if (specscore) { //viper slide auto action down score
 
-                VS_manual_running = false;
+                manual_running = false;
                 VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideF.setPower(0.5);
@@ -206,7 +205,7 @@ public class hang_test extends LinearOpMode {
                         // **ADDED: Stop the motors immediately**
                         VSlideF.setPower(0);
                         VSlideB.setPower(0);
-                        VS_specscore = !VS_specscore;
+                        specscore = !specscore;
 //                            break; // **ADDED: Exit the loop on emergency stop**
 
                     }
@@ -225,14 +224,14 @@ public class hang_test extends LinearOpMode {
                 if (VSlideF.getCurrentPosition() > 130 || VSlideB.getCurrentPosition() > 130) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
-                    VS_specscore = !VS_specscore;
+                    specscore = !specscore;
                     telemetry.addData("Status", "position reached");
                     telemetry.update();
                 }
 
             }
             else {
-                VS_manual_running = false;
+                manual_running = false;
                 VSlideF.setPower(0);
                 VSlideB.setPower(0);
             }

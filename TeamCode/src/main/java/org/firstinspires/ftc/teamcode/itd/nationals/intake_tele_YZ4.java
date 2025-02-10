@@ -79,7 +79,6 @@ public class intake_tele_YZ4 extends LinearOpMode {
                 IArmL.setPosition(pos.intake_arm_lift);
                 IArmR.setPosition(1-pos.intake_arm_lift);
                 IArmC.setPosition(pos.intake_coax_lift);
-                IClaw.setPosition(pos.intake_claw_open);
                 extendoIn = false;
                 isTransferTimerRunning = false;
             }
@@ -141,13 +140,13 @@ public class intake_tele_YZ4 extends LinearOpMode {
                 IWrist.setPosition(pos.intake_wrist0);
             }
             else if (cycle_gamepad1.rbPressCount == 1){
-                IWrist.setPosition(pos.intake_wrist1);
+                IWrist.setPosition(pos.intake_wrist45);
             }
             else if (cycle_gamepad1.rbPressCount == 2){
-                IWrist.setPosition(pos.intake_wrist2);
+                IWrist.setPosition(pos.intake_wrist90);
             }
             else{
-                IWrist.setPosition(pos.intake_wrist3);
+                IWrist.setPosition(pos.intake_wrist135);
             }
 
             //intake claw movement
