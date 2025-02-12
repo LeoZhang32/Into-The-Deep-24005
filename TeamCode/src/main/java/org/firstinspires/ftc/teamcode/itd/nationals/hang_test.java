@@ -58,7 +58,7 @@ public class hang_test extends LinearOpMode {
             } else auto_down_button_pressed = false;
 
             if (cycle_gamepad2.lbPressCount == 2){
-                OArm.setPosition(pos.outtake_arm_specimen);
+                OArm.setPosition(pos.outtake_arm_specimenHold);
             }
             else if (cycle_gamepad2.lbPressCount == 1||cycle_gamepad2.xPressCount == 1){
                 OArm.setPosition(pos.outtake_arm_sample);

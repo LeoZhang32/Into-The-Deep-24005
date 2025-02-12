@@ -42,7 +42,6 @@ public class CycleGamepad {
     }
 
     public void updateA(int cycles) {
-
         boolean currentAState = gamepad.a;
         if (currentAState && !previousAState) { // Prevent "button held down" behavior
             // Increment the press count and ensure it loops between 0 and 2

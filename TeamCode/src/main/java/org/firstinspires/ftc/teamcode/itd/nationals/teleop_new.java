@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
 public class teleop_new extends LinearOpMode {
+    Boolean aaa;
     ElapsedTime transferTimer = new ElapsedTime();
     ElapsedTime grabTimer = new ElapsedTime();
     boolean isTransferTimerRunning = false; // Track if timer is running
@@ -32,6 +33,7 @@ public class teleop_new extends LinearOpMode {
 
     Servo OClaw;
     Servo OArm;
+    Boolean specArmOn = false;
 
     Boolean slowModeOn = false;
     DcMotor FR;
@@ -118,12 +120,7 @@ public class teleop_new extends LinearOpMode {
             cycle_gamepad2.updateX(2);
             cycle_gamepad2.updateLB(3);
 
-            if (cycle_gamepad1.lbPressCount == 0) {
-                slowModeOn = false;
-            }
-            else {
-                slowModeOn = true;
-            }
+            slowModeOn = cycle_gamepad1.lbPressCount != 0;
 
             //drivetrain
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
@@ -196,6 +193,7 @@ public class teleop_new extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_aim);
                 IArmC.setPosition(pos.intake_coax_aim);
                 IClaw.setPosition(pos.intake_claw_open);
+                isTransferTimerRunning = false;
                 extendoIn = false;
             }
             else if (cycle_gamepad1.xPressCount == 3){
@@ -205,6 +203,7 @@ public class teleop_new extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_grab);
                 IArmC.setPosition(pos.intake_coax_grab);
                 IClaw.setPosition(pos.intake_claw_close);
+                isTransferTimerRunning = false;
                 extendoIn = false;
 
                 if (!isGrabTimerRunning) {
@@ -221,6 +220,7 @@ public class teleop_new extends LinearOpMode {
                 IArmC.setPosition(pos.intake_coax_lift);
                 IClaw.setPosition(pos.intake_claw_close);
                 cycle_gamepad1.rbPressCount = 0;
+                isTransferTimerRunning = false;
                 extendoIn = false;
             }
 
@@ -300,26 +300,7 @@ public class teleop_new extends LinearOpMode {
                 }
             }
 
-            //outtake arm movement
-            if (cycle_gamepad2.xPressCount == 0){
-                OArm.setPosition(pos.outtake_arm_transfer);
-            }
-            else{
-                OArm.setPosition(pos.outtake_arm_sample);
-            }
 
-            telemetry.addData("extendo", extendoIn);
-            telemetry.addData("transfer Timer Active", isTransferTimerRunning);
-            telemetry.addData("transfer Timer Time", transferTimer.milliseconds());
-            telemetry.addData("Grab Timer Active", isGrabTimerRunning);
-            telemetry.addData("Grab Timer Time", grabTimer.milliseconds());
-            telemetry.addData("Gamepad1 xPressCount", cycle_gamepad1.xPressCount);
-
-
-            telemetry.addData("Gamepad1 aPressCount", cycle_gamepad1.aPressCount);
-            telemetry.addData("Gamepad2 aPressCount", cycle_gamepad2.aPressCount);
-            telemetry.addData("Gamepad2 xPressCount", cycle_gamepad2.xPressCount);
-            telemetry.update();
             if (!isTransferTimerRunning) {
                 transferTimer.reset();
                 // Indicate timer has started
@@ -340,15 +321,23 @@ public class teleop_new extends LinearOpMode {
                 auto_down_button_pressed = true;
             } else auto_down_button_pressed = false;
 
-            if (cycle_gamepad2.lbPressCount == 2){
-                OArm.setPosition(pos.outtake_arm_specimen);
+            if (gamepad2.left_bumper){
+                cycle_gamepad2.xPressCount = -2;
             }
-            else if (cycle_gamepad2.lbPressCount == 1||cycle_gamepad2.xPressCount == 1){
+
+            if (cycle_gamepad2.xPressCount == 1){
                 OArm.setPosition(pos.outtake_arm_sample);
             }
-            else if (cycle_gamepad2.lbPressCount == 0||cycle_gamepad2.xPressCount == 0){
+            else if (cycle_gamepad2.xPressCount == 0){
                 OArm.setPosition(pos.outtake_arm_transfer);
             }
+            else if (cycle_gamepad2.xPressCount == -1){
+                OArm.setPosition(pos.outtake_arm_specimenScore);
+            }
+            else if (cycle_gamepad2.xPressCount == -2){
+                OArm.setPosition(pos.outtake_arm_specimenHold);
+            }
+
 
             if (gamepad2.right_bumper) {
                 if (!specscore_button_pressed) {
@@ -479,8 +468,8 @@ public class teleop_new extends LinearOpMode {
                 manual_running = false;
                 VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                VSlideF.setPower(0.5);
-                VSlideB.setPower(0.5);
+                VSlideF.setPower(0.3);
+                VSlideB.setPower(0.3);
 
                 if ((VSlideF.isBusy()) || (VSlideB.isBusy()) || !isStopRequested()) {
 
@@ -505,7 +494,7 @@ public class teleop_new extends LinearOpMode {
                 }
 
 
-                if (VSlideF.getCurrentPosition() > 130 || VSlideB.getCurrentPosition() > 130) {
+                if (VSlideF.getCurrentPosition() > 30 || VSlideB.getCurrentPosition() > 30) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
                     specscore = !specscore;
@@ -519,6 +508,20 @@ public class teleop_new extends LinearOpMode {
                 VSlideF.setPower(0);
                 VSlideB.setPower(0);
             }
+
+            telemetry.addData("extendo", extendoIn);
+            telemetry.addData("transfer Timer Active", isTransferTimerRunning);
+            telemetry.addData("transfer Timer Time", transferTimer.milliseconds());
+            telemetry.addData("Grab Timer Active", isGrabTimerRunning);
+            telemetry.addData("Grab Timer Time", grabTimer.milliseconds());
+            telemetry.addData("Gamepad1 xPressCount", cycle_gamepad1.xPressCount);
+
+
+            telemetry.addData("Gamepad1 aPressCount", cycle_gamepad1.aPressCount);
+            telemetry.addData("Gamepad2 aPressCount", cycle_gamepad2.aPressCount);
+            telemetry.addData("Gamepad2 xPressCount", cycle_gamepad2.xPressCount);
+
+            telemetry.update();
         }
     }
 }
