@@ -28,8 +28,8 @@ public class positions_and_variables {
     public double outtake_claw_close = 0.37;
     public double outtake_claw_open = 0.7;
 
-    public double outtake_arm_transfer = 0.87;
-    public double outtake_arm_sample = 0.25;
-    public double outtake_arm_specimenHold = 0.35;
-    public double outtake_arm_specimenScore = 0.25;
+    public double outtake_arm_transfer = 0.82;
+    public double outtake_arm_sample = 0.45;
+    public double outtake_arm_specimenHold = 0.6;
+    public double outtake_arm_specimenScore = 0.5;
 }

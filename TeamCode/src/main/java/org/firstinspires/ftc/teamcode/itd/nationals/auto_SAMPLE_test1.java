@@ -1,18 +1,13 @@
 package org.firstinspires.ftc.teamcode.itd.nationals;
 
-
-import static org.firstinspires.ftc.teamcode.rr.MecanumDrive.normalizeAngle;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -25,7 +20,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 
 @Autonomous (name = "auto_SAMPLE_test1")
@@ -456,7 +451,7 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Pose2d beginPose = new Pose2d(8.3, 65, normalizeAngle(Math.toRadians(180)));
+        Pose2d beginPose = new Pose2d(8.3, 65, (Math.toRadians(180)));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         Lift lift = new Lift(hardwareMap);
         OuttakeClaw oclaw = new OuttakeClaw(hardwareMap);
@@ -475,52 +470,52 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
 
         //score held sample
         TrajectoryActionBuilder go_score_sample_0 = drive.actionBuilder(beginPose)
-                .strafeToLinearHeading(new Vector2d(8.3, 60), normalizeAngle(Math.toRadians(180)))
-                .strafeToSplineHeading(new Vector2d(58, 56), normalizeAngle(Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(8.3, 60), (Math.toRadians(180)))
+                .strafeToSplineHeading(new Vector2d(58, 56), (Math.toRadians(-135)));
 
         //go to sample 3
         TrajectoryActionBuilder go_to_sample_3 = go_score_sample_0.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(24, 43), normalizeAngle(Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(49, 45.5), normalizeAngle(Math.toRadians(-90)));
+//                .strafeToLinearHeading(new Vector2d(24, 43), (Math.toRadians(0)))
+                .strafeToLinearHeading(new Vector2d(49, 45.5), (Math.toRadians(-90)));
 
         //return to basket
         TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(57, 57), normalizeAngle(Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(57, 57), (Math.toRadians(-135)));
 
 
         //go to sample 2
         TrajectoryActionBuilder go_to_sample_2 = return_basket_3.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(62.8, 43.5), normalizeAngle(Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(62.8, 43.5), (Math.toRadians(-90)));
 
 
         //return to basket
         TrajectoryActionBuilder return_basket_2 = go_to_sample_2.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(57, 57), normalizeAngle(Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(57, 57), (Math.toRadians(-135)));
 
 
         //go to sample 1
         TrajectoryActionBuilder go_to_sample_1 = return_basket_2.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(43, 27.5), normalizeAngle(Math.toRadians(-1)))
-                .strafeToLinearHeading(new Vector2d(47.5, 27.5), normalizeAngle(Math.toRadians(-1)));
+                .strafeToLinearHeading(new Vector2d(43, 27.5), (Math.toRadians(-1)))
+                .strafeToLinearHeading(new Vector2d(47.5, 27.5), (Math.toRadians(-1)));
 
 
         //return to basket 1
         TrajectoryActionBuilder return_basket_1 = go_to_sample_1.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(43, 25), normalizeAngle(Math.toRadians(-1)))
-                .strafeToLinearHeading(new Vector2d(57, 58), normalizeAngle(Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(43, 25), (Math.toRadians(-1)))
+                .strafeToLinearHeading(new Vector2d(57, 58), (Math.toRadians(-135)));
 
 
 
         //go to hang
         TrajectoryActionBuilder go_to_hang = return_basket_1.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(35,12), normalizeAngle(Math.toRadians(-1)))
-                .strafeToLinearHeading(new Vector2d(20,12), normalizeAngle(Math.toRadians(-1)));
+                .strafeToLinearHeading(new Vector2d(35,12), (Math.toRadians(-1)))
+                .strafeToLinearHeading(new Vector2d(20,12), (Math.toRadians(-1)));
 
 
 
