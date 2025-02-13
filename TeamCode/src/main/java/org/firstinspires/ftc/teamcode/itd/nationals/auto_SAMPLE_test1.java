@@ -6,8 +6,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -28,7 +30,6 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 public final class auto_SAMPLE_test1 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
-//    double wristPosition = 0.23;
 
     positions_and_variables pos = new positions_and_variables();
 
@@ -461,17 +462,17 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         IntakeWrist wrist = new IntakeWrist(hardwareMap);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        Actions.runBlocking(oclaw.OpenOClaw());
+        Actions.runBlocking(oclaw.CloseOClaw());
         Actions.runBlocking(oarm.LowerOArm());
-        Actions.runBlocking(intake.SettoTrasfer());
+        Actions.runBlocking(intake.SettoAfterTrasfer());
         Actions.runBlocking(iclaw.OpenIClaw());
         Actions.runBlocking(wrist.SettoWrist0());
 
 
         //score held sample
         TrajectoryActionBuilder go_score_sample_0 = drive.actionBuilder(beginPose)
-                .strafeToLinearHeading(new Vector2d(8.3, 60), (Math.toRadians(180)))
-                .strafeToSplineHeading(new Vector2d(58, 56), (Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(40, 65), (Math.toRadians(-90)))
+                .strafeToSplineHeading(new Vector2d(57, 57), (Math.toRadians(-135)));
 
         //go to sample 3
         TrajectoryActionBuilder go_to_sample_3 = go_score_sample_0.endTrajectory().fresh()
@@ -499,14 +500,14 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         //go to sample 1
         TrajectoryActionBuilder go_to_sample_1 = return_basket_2.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(43, 27.5), (Math.toRadians(-1)))
-                .strafeToLinearHeading(new Vector2d(47.5, 27.5), (Math.toRadians(-1)));
+                .strafeToLinearHeading(new Vector2d(43, 27.5), (Math.toRadians(0)))
+                .strafeToLinearHeading(new Vector2d(47.5, 27.5), (Math.toRadians(0)));
 
 
         //return to basket 1
         TrajectoryActionBuilder return_basket_1 = go_to_sample_1.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(43, 25), (Math.toRadians(-1)))
+                .strafeToLinearHeading(new Vector2d(43, 25), (Math.toRadians(0)))
                 .strafeToLinearHeading(new Vector2d(57, 58), (Math.toRadians(-135)));
 
 
@@ -514,8 +515,8 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         //go to hang
         TrajectoryActionBuilder go_to_hang = return_basket_1.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(35,12), (Math.toRadians(-1)))
-                .strafeToLinearHeading(new Vector2d(20,12), (Math.toRadians(-1)));
+                .strafeToLinearHeading(new Vector2d(35,12), (Math.toRadians(0)))
+                .strafeToLinearHeading(new Vector2d(20,12), (Math.toRadians(0)));
 
 
 
@@ -527,50 +528,54 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
 
             Actions.runBlocking(new SequentialAction(
 
-//                    //go score specimen 0
-//                            new ParallelAction(
-//                                    go_score_sample_0.build(),
-//                                    new SequentialAction(
-//                                            new SleepAction(0.5),
-//                                            lift.liftUp()
-//                                    )
-//                            ),
-//
-//                            bucket.dumpBucket(),
-//                            new SleepAction(0.65),
-//                            // sample 0 cycle completes by now. sample 3 cycle starts below
-//
-//                            new ParallelAction(
-//                                    go_to_sample_3.build(),
-//                                    bucket.restoreBucket(),
-//                                    new SequentialAction(
-//                                            new SleepAction(0.2),
-//                                            lift.liftDown()
-//                                    ),
-//                                    arm.aimArm()
-//                            ),
-//
-//                            arm.extendArm(),
-//                            new SleepAction(0.3),
-//                            sclaw.closeSClaw(),
-//                            new SleepAction(0.3),
-//
-//
-//                            new ParallelAction(
-//                            return_basket_3.build(),
-//                            new SequentialAction(
-//                                    arm.retractArm(),
-//                                    new SleepAction(1),
-//                                    sclaw.openSClaw(),
-//                                    new SleepAction(0.4),
-//                                    lift.liftUp()
-//                             )
-//                            ),
-//
-//                    bucket.dumpBucket(),
-//                    new SleepAction(0.65),
-//                    // sample 3 cycle completes by now. sample 2 cycle starts below
-//
+                    //go score specimen 0
+                            new ParallelAction(
+                                    go_score_sample_0.build(),
+                                    lift.liftUp(),
+                                    oarm.LiftOArm()
+                            ),
+
+                            oclaw.OpenOClaw(),
+                            new SleepAction(0.4),
+                            // sample 0 cycle completes by now. sample 3 cycle starts below
+
+                            new ParallelAction(
+                                    go_to_sample_3.build(),
+                                    oarm.LowerOArm(),
+                                    lift.liftDown()
+                                    ),
+
+                            intake.SettoAim(),
+                            new SleepAction(0.3),
+                            intake.SettoGrab(),
+                            new SleepAction(0.3),
+
+
+                            new ParallelAction(
+                                return_basket_3.build(),
+                                new SequentialAction(
+                                    intake.SettoTrasfer(),
+                                    new SleepAction(1),
+                                    oclaw.CloseOClaw(),
+                                    new SleepAction(0.3),
+                                    iclaw.OpenIClaw(),
+                                    new SleepAction(0.3),
+                                    new ParallelAction(
+                                                intake.SettoAfterTrasfer(),
+                                                lift.liftUp(),
+                                                new SequentialAction(
+                                                        new SleepAction(0.3),
+                                                        oarm.LiftOArm()
+                                                )
+                                    )
+                                )
+                            ),
+
+                    oclaw.OpenOClaw(),
+                    new SleepAction(0.65)
+
+                    // sample 3 cycle completes by now. sample 2 cycle starts below
+
 ////
 //
 //                            new ParallelAction(
