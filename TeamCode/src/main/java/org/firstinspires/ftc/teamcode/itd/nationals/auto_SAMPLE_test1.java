@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.PinpointDrive;
 
 
 @Autonomous (name = "auto_SAMPLE_test1")
@@ -43,7 +44,9 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
             VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             VSlideF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideF.setDirection(DcMotorSimple.Direction.REVERSE);
+
             VSlideB = hardwareMap.get(DcMotorEx.class, "VSlideB");
+            VSlideB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             VSlideB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideB.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -99,8 +102,8 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
 
                 if (!initialized) {
 
-                    VSlideF.setPower(1);
-                    VSlideB.setPower(1);
+                    VSlideF.setPower(0.1);
+                    VSlideB.setPower(0.1);
                     telemetry.addData("front Position", VSlideF.getCurrentPosition());
                     telemetry.addData("back Position", VSlideB.getCurrentPosition());
                     telemetry.addData("front Power", VSlideF.getPower());
@@ -114,7 +117,7 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if (pos_VSF < 2750.0 || pos_VSB < 2750.0) {
+                if (pos_VSF < 275.0 || pos_VSB < 275.0) {
                     return true;
                 } else {
                     VSlideF.setPower(0);
@@ -137,8 +140,8 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    VSlideF.setPower(-1);
-                    VSlideB.setPower(-1);
+                    VSlideF.setPower(-0.1);
+                    VSlideB.setPower(-0.1);
                     telemetry.addData("front Position", VSlideF.getCurrentPosition());
                     telemetry.addData("back Position", VSlideB.getCurrentPosition());
                     telemetry.addData("front Power", VSlideF.getPower());
@@ -452,8 +455,8 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Pose2d beginPose = new Pose2d(8.3, 65, (Math.toRadians(180)));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
+        Pose2d beginPose = new Pose2d(40, 63.5, (Math.toRadians(-90)));
+        PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
         Lift lift = new Lift(hardwareMap);
         OuttakeClaw oclaw = new OuttakeClaw(hardwareMap);
         OuttakeArm oarm = new OuttakeArm(hardwareMap);
@@ -471,8 +474,8 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
 
         //score held sample
         TrajectoryActionBuilder go_score_sample_0 = drive.actionBuilder(beginPose)
-                .strafeToLinearHeading(new Vector2d(40, 65), (Math.toRadians(-90)))
-                .strafeToSplineHeading(new Vector2d(57, 57), (Math.toRadians(-135)));
+
+                .strafeToSplineHeading(new Vector2d(56, 56), (Math.toRadians(-135)));
 
         //go to sample 3
         TrajectoryActionBuilder go_to_sample_3 = go_score_sample_0.endTrajectory().fresh()
@@ -482,7 +485,7 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         //return to basket
         TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(57, 57), (Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(56, 56), (Math.toRadians(-135)));
 
 
         //go to sample 2
@@ -546,6 +549,14 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                                     ),
 
                             intake.SettoAim(),
+
+
+
+
+
+
+
+
                             new SleepAction(0.3),
                             intake.SettoGrab(),
                             new SleepAction(0.3),

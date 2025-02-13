@@ -16,27 +16,16 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 10.62795)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(8.3, 65, Math.toRadians(180)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(40, 63.5, Math.toRadians(-90)))
 
-                .strafeToLinearHeading(new Vector2d(8.3, 60), Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(58, 56), (Math.toRadians(-135)))
 
-                .strafeToLinearHeading(new Vector2d(48.5, 45.5), (Math.toRadians(-90)))
-                .strafeToLinearHeading(new Vector2d(57, 57), (Math.toRadians(-135)))
+                .strafeToLinearHeading(new Vector2d(56, 56), (Math.toRadians(-135)))
 
-                .strafeToLinearHeading(new Vector2d(62.8, 43.5), Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(57, 57), Math.toRadians(-135))
-
-                .strafeToLinearHeading(new Vector2d(43, 26.5), Math.toRadians(0))
-                .strafeToLinearHeading(new Vector2d(47.5, 26.5), Math.toRadians(0))
-                .strafeToLinearHeading(new Vector2d(43, 25), Math.toRadians(0))
-                .strafeToSplineHeading(new Vector2d(57, 58), Math.toRadians(-135))
-
-                .strafeToSplineHeading(new Vector2d(35, 12), Math.toRadians(0))
-                .strafeToSplineHeading(new Vector2d(20, 12), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(49, 45.5), (Math.toRadians(-90)))
+                .strafeToLinearHeading(new Vector2d(56, 56), (Math.toRadians(-135)))
 
 
 
