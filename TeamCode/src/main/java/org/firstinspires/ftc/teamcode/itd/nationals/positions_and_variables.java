@@ -11,7 +11,7 @@ public class positions_and_variables {
     public double intake_arm_grab = 0.66;
     public double intake_arm_lift = 0.4;
 
-    public double intake_coax_trans = 0.14;
+    public double intake_coax_trans = 0.15;
     public double intake_coax_aim = 0.95;
     public double intake_coax_grab = 0.95;
     public double intake_coax_lift = 0.5;
@@ -28,8 +28,8 @@ public class positions_and_variables {
     public double outtake_claw_close = 0.37;
     public double outtake_claw_open = 0.7;
 
-    public double outtake_arm_transfer = 0.82;
+    public double outtake_arm_transfer = 0.97;
     public double outtake_arm_sample = 0.45;
-    public double outtake_arm_specimenHold = 0.6;
-    public double outtake_arm_specimenScore = 0.5;
+    public double outtake_arm_specimenHold = 0.55;
+    public double outtake_arm_specimenScore = 0.45;
 }
