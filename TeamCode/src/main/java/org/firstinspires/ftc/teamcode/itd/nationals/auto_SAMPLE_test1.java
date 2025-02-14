@@ -43,12 +43,16 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
 
         public Lift(HardwareMap hardwareMap) {
             VSlideF = hardwareMap.get(DcMotorEx.class, "VSlideF");
+            VSlideF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             VSlideF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideF.setDirection(DcMotorSimple.Direction.REVERSE);
 
             VSlideB = hardwareMap.get(DcMotorEx.class, "VSlideB");
+            VSlideB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             VSlideB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideB.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
             limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
             limitSwitch.setMode(DigitalChannel.Mode.INPUT);
@@ -78,7 +82,7 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if (pos_VSF < 2050.0 || pos_VSB > -2050.0) {
+                if (pos_VSF < 2050.0) {
                     return true;
                 } else {
                     VSlideF.setPower(0);
@@ -114,7 +118,7 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if (pos_VSF < 2750 || pos_VSB > -2750) {
+                if (pos_VSF < 2750) {
                     telemetry.addData("front Position", VSlideF.getCurrentPosition());
                     telemetry.addData("back Position", VSlideB.getCurrentPosition());
                     telemetry.addData("front Power", VSlideF.getPower());
@@ -133,21 +137,6 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
             return new LiftUp();
         }
 
-        public class ResetEncoders implements Action{
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                VSlideF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                VSlideB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                VSlideF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                VSlideB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                return false;
-            }
-        }
-        public Action resetEncoders() {
-            return new ResetEncoders();
-        }
-
 
         public class LiftDown implements Action {
             private boolean initialized = false;
@@ -164,18 +153,19 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if ((pos_VSF > 250 || pos_VSB < -250) && limitSwitch.getState()) {
+                if (!limitSwitch.getState()) {
+                    VSlideF.setPower(0);
+                    VSlideB.setPower(0);
+                    return false;
+                }
+                else {
                     telemetry.addData("front Position", VSlideF.getCurrentPosition());
                     telemetry.addData("back Position", VSlideB.getCurrentPosition());
                     telemetry.addData("front Power", VSlideF.getPower());
                     telemetry.addData("back Power", VSlideB.getPower());
-                    telemetry.addData("limit switch", "not pressed");
+//                    telemetry.addData("limit switch", "not pressed");
                     telemetry.update();
                     return true;
-                } else {
-                    VSlideF.setPower(0);
-                    VSlideB.setPower(0);
-                    return false;
                 }
             }
         }
@@ -496,7 +486,7 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         //go to sample 3
         TrajectoryActionBuilder go_to_sample_3 = go_score_sample_0.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(24, 43), (Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(49, 45.5), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(46.5, 49), (Math.toRadians(-90)));
 
         //return to basket
         TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()
@@ -546,7 +536,6 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         while (opModeIsActive() && runtime.seconds() <= 0.01) {
 
             Actions.runBlocking(new SequentialAction(
-                lift.resetEncoders(),
                 new ParallelAction(
                         go_score_sample_0.build(),
                         lift.liftUp()
@@ -562,7 +551,6 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                         oarm.LowerOArm(),
                         lift.liftDown()
                 ),
-                lift.resetEncoders(),
 
                 intake.SettoAim(),
                 new SleepAction(0.3),
@@ -581,14 +569,11 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                         new SleepAction(0.3),
                         new ParallelAction(
                                     intake.SettoAfterTrasfer(),
-                                    lift.liftUp(),
-                                    new SequentialAction(
-                                            new SleepAction(0.3),
-                                            oarm.LiftOArm()
-                                    )
+                                    lift.liftUp()
                         )
                     )
                 ),
+        oarm.LiftOArm(),
 
         oclaw.OpenOClaw(),
         new SleepAction(0.65)
