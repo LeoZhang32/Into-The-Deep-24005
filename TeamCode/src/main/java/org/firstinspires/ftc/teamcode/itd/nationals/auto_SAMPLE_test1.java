@@ -44,11 +44,12 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         public Lift(HardwareMap hardwareMap) {
             VSlideF = hardwareMap.get(DcMotorEx.class, "VSlideF");
             VSlideF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            VSlideF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             VSlideF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideF.setDirection(DcMotorSimple.Direction.REVERSE);
 
             VSlideB = hardwareMap.get(DcMotorEx.class, "VSlideB");
+            VSlideB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             VSlideB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             VSlideB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideB.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -153,7 +154,8 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if (!limitSwitch.getState()) {
+                boolean switchPressed = limitSwitch.getState();
+                if (pos_VSF < 50) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
                     return false;
@@ -481,23 +483,22 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         //score held sample
         TrajectoryActionBuilder go_score_sample_0 = drive.actionBuilder(beginPose)
 
-                .strafeToSplineHeading(new Vector2d(56, 56), (Math.toRadians(-135)));
+                .strafeToSplineHeading(new Vector2d(58, 58), (Math.toRadians(-135)));
 
         //go to sample 3
         TrajectoryActionBuilder go_to_sample_3 = go_score_sample_0.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(24, 43), (Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(46.5, 49), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(49, 49), (Math.toRadians(-88)));
 
         //return to basket
         TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(56, 56), (Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(58, 58), (Math.toRadians(-135)));
 
 
         //go to sample 2
         TrajectoryActionBuilder go_to_sample_2 = return_basket_3.endTrajectory().fresh()
-
-                .strafeToLinearHeading(new Vector2d(62.8, 43.5), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(56, 50), Math.toRadians(-90));
 
 
         //return to basket
@@ -536,47 +537,75 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         while (opModeIsActive() && runtime.seconds() <= 0.01) {
 
             Actions.runBlocking(new SequentialAction(
-                new ParallelAction(
-                        go_score_sample_0.build(),
-                        lift.liftUp()
-                ),
-                oarm.LiftOArm(),
-                new SleepAction(0.3),
-                oclaw.OpenOClaw(),
-                new SleepAction(0.4),
-                // sample 0 cycle completes by now. sample 3 cycle starts below
+                    new ParallelAction(
+                            go_score_sample_0.build(),
+                            lift.liftUp()
+                    ),
+                    oarm.LiftOArm(),
+                    new SleepAction(0.3),
+                    oclaw.OpenOClaw(),
+                    new SleepAction(0.4),
+                    // sample 0 cycle completes by now. sample 3 cycle starts below
 
-                new ParallelAction(
-                        go_to_sample_3.build(),
-                        oarm.LowerOArm(),
-                        lift.liftDown()
-                ),
+                    new ParallelAction(
+                            go_to_sample_3.build(),
+                            oarm.LowerOArm(),
+                            lift.liftDown()
+                    ),
 
-                intake.SettoAim(),
-                new SleepAction(0.3),
-                intake.SettoGrab(),
-                new SleepAction(0.3),
+                    intake.SettoAim(),
+                    new SleepAction(0.6),
+                    intake.SettoGrab(),
+                    new SleepAction(0.3),
 
 
-                new ParallelAction(
-                    return_basket_3.build(),
-                    new SequentialAction(
-                        intake.SettoTrasfer(),
-                        new SleepAction(1),
-                        oclaw.CloseOClaw(),
-                        new SleepAction(0.3),
-                        iclaw.OpenIClaw(),
-                        new SleepAction(0.3),
-                        new ParallelAction(
+                    new ParallelAction(
+                        return_basket_3.build(),
+                        new SequentialAction(
+                            intake.SettoTrasfer(),
+                            new SleepAction(1),
+                            oclaw.CloseOClaw(),
+                            new SleepAction(0.2),
+                            iclaw.OpenIClaw(),
+                            new SleepAction(0.3),
+                            new ParallelAction(
+                                intake.SettoAfterTrasfer(),
+                                lift.liftUp()
+                            )
+                        )
+                    ),
+                    oarm.LiftOArm(),
+                    new SleepAction(0.5),
+
+                    oclaw.OpenOClaw(),
+                    new SleepAction(0.65),
+                    new ParallelAction(
+                            go_to_sample_2.build(),
+                            oarm.LowerOArm(),
+                            lift.liftDown()
+                    ),
+                    intake.SettoAim(),
+                    new SleepAction(0.6),
+                    intake.SettoGrab(),
+                    new SleepAction(0.3),
+                    new ParallelAction(
+                        return_basket_2.build(),
+                        new SequentialAction(
+                            intake.SettoTrasfer(),
+                            new SleepAction(1),
+                            oclaw.CloseOClaw(),
+                            new SleepAction(0.2),
+                            iclaw.OpenIClaw(),
+                            new SleepAction(0.3),
+                            new ParallelAction(
                                     intake.SettoAfterTrasfer(),
                                     lift.liftUp()
+                            )
                         )
                     )
-                ),
-        oarm.LiftOArm(),
 
-        oclaw.OpenOClaw(),
-        new SleepAction(0.65)
+
+
 
                     // sample 3 cycle completes by now. sample 2 cycle starts below
 
