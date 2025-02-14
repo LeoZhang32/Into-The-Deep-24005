@@ -13,11 +13,13 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -37,19 +39,19 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
     public class Lift {
         private final DcMotorEx VSlideF;
         private final DcMotorEx VSlideB;
+        private final DigitalChannel limitSwitch;
 
         public Lift(HardwareMap hardwareMap) {
             VSlideF = hardwareMap.get(DcMotorEx.class, "VSlideF");
-            VSlideF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             VSlideF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideF.setDirection(DcMotorSimple.Direction.REVERSE);
 
             VSlideB = hardwareMap.get(DcMotorEx.class, "VSlideB");
-            VSlideB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             VSlideB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideB.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+            limitSwitch.setMode(DigitalChannel.Mode.INPUT);
              }
 
 
@@ -61,8 +63,8 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
 
                 if (!initialized) {
 
-                    VSlideF.setPower(1);
-                    VSlideB.setPower(1);
+                    VSlideF.setPower(0.5);
+                    VSlideB.setPower(0.5);
                     telemetry.addData("front Position", VSlideF.getCurrentPosition());
                     telemetry.addData("back Position", VSlideB.getCurrentPosition());
                     telemetry.addData("front Power", VSlideF.getPower());
@@ -76,7 +78,7 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if (pos_VSF < 2050.0 || pos_VSB < 2050.0) {
+                if (pos_VSF < 2050.0 || pos_VSB > -2050.0) {
                     return true;
                 } else {
                     VSlideF.setPower(0);
@@ -94,7 +96,7 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
 
 
 
-             public class LiftUp implements Action {
+            public class LiftUp implements Action {
             private boolean initialized = false;
 
             @Override
@@ -102,13 +104,8 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
 
                 if (!initialized) {
 
-                    VSlideF.setPower(0.1);
-                    VSlideB.setPower(0.1);
-                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
-                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
-                    telemetry.addData("front Power", VSlideF.getPower());
-                    telemetry.addData("back Power", VSlideB.getPower());
-                    telemetry.update();
+                    VSlideF.setPower(0.5);
+                    VSlideB.setPower(0.5);
 
                     initialized = true;
                 }
@@ -117,7 +114,12 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if (pos_VSF < 275.0 || pos_VSB < 275.0) {
+                if (pos_VSF < 2750 || pos_VSB > -2750) {
+                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
+                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
+                    telemetry.addData("front Power", VSlideF.getPower());
+                    telemetry.addData("back Power", VSlideB.getPower());
+                    telemetry.update();
                     return true;
                 } else {
                     VSlideF.setPower(0);
@@ -131,7 +133,20 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
             return new LiftUp();
         }
 
+        public class ResetEncoders implements Action{
 
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                VSlideF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                VSlideB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                VSlideF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                VSlideB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                return false;
+            }
+        }
+        public Action resetEncoders() {
+            return new ResetEncoders();
+        }
 
 
         public class LiftDown implements Action {
@@ -140,13 +155,8 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    VSlideF.setPower(-0.1);
-                    VSlideB.setPower(-0.1);
-                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
-                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
-                    telemetry.addData("front Power", VSlideF.getPower());
-                    telemetry.addData("back Power", VSlideB.getPower());
-                    telemetry.update();
+                    VSlideF.setPower(-0.5);
+                    VSlideB.setPower(-0.5);
                     initialized = true;
                 }
 
@@ -154,7 +164,13 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if (pos_VSF > 50.0 || pos_VSB > 50.0) {
+                if ((pos_VSF > 250 || pos_VSB < -250) && limitSwitch.getState()) {
+                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
+                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
+                    telemetry.addData("front Power", VSlideF.getPower());
+                    telemetry.addData("back Power", VSlideB.getPower());
+                    telemetry.addData("limit switch", "not pressed");
+                    telemetry.update();
                     return true;
                 } else {
                     VSlideF.setPower(0);
@@ -530,60 +546,52 @@ public final class auto_SAMPLE_test1 extends LinearOpMode {
         while (opModeIsActive() && runtime.seconds() <= 0.01) {
 
             Actions.runBlocking(new SequentialAction(
+                lift.resetEncoders(),
+                new ParallelAction(
+                        go_score_sample_0.build(),
+                        lift.liftUp()
+                ),
+                oarm.LiftOArm(),
+                new SleepAction(0.3),
+                oclaw.OpenOClaw(),
+                new SleepAction(0.4),
+                // sample 0 cycle completes by now. sample 3 cycle starts below
 
-                    //go score specimen 0
-                            new ParallelAction(
-                                    go_score_sample_0.build(),
+                new ParallelAction(
+                        go_to_sample_3.build(),
+                        oarm.LowerOArm(),
+                        lift.liftDown()
+                ),
+                lift.resetEncoders(),
+
+                intake.SettoAim(),
+                new SleepAction(0.3),
+                intake.SettoGrab(),
+                new SleepAction(0.3),
+
+
+                new ParallelAction(
+                    return_basket_3.build(),
+                    new SequentialAction(
+                        intake.SettoTrasfer(),
+                        new SleepAction(1),
+                        oclaw.CloseOClaw(),
+                        new SleepAction(0.3),
+                        iclaw.OpenIClaw(),
+                        new SleepAction(0.3),
+                        new ParallelAction(
+                                    intake.SettoAfterTrasfer(),
                                     lift.liftUp(),
-                                    oarm.LiftOArm()
-                            ),
-
-                            oclaw.OpenOClaw(),
-                            new SleepAction(0.4),
-                            // sample 0 cycle completes by now. sample 3 cycle starts below
-
-                            new ParallelAction(
-                                    go_to_sample_3.build(),
-                                    oarm.LowerOArm(),
-                                    lift.liftDown()
-                                    ),
-
-                            intake.SettoAim(),
-
-
-
-
-
-
-
-
-                            new SleepAction(0.3),
-                            intake.SettoGrab(),
-                            new SleepAction(0.3),
-
-
-                            new ParallelAction(
-                                return_basket_3.build(),
-                                new SequentialAction(
-                                    intake.SettoTrasfer(),
-                                    new SleepAction(1),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new SleepAction(0.3),
-                                    new ParallelAction(
-                                                intake.SettoAfterTrasfer(),
-                                                lift.liftUp(),
-                                                new SequentialAction(
-                                                        new SleepAction(0.3),
-                                                        oarm.LiftOArm()
-                                                )
+                                    new SequentialAction(
+                                            new SleepAction(0.3),
+                                            oarm.LiftOArm()
                                     )
-                                )
-                            ),
+                        )
+                    )
+                ),
 
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.65)
+        oclaw.OpenOClaw(),
+        new SleepAction(0.65)
 
                     // sample 3 cycle completes by now. sample 2 cycle starts below
 
