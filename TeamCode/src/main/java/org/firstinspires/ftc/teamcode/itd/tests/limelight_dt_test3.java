@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.List;
 
 @TeleOp
-public class limelight_dt_test2 extends LinearOpMode {
+public class limelight_dt_test3 extends LinearOpMode {
 
     Limelight3A limelight;
     DcMotor FL;
@@ -50,32 +50,28 @@ public class limelight_dt_test2 extends LinearOpMode {
                     telemetry.update();
 
                     List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                    if (result.getTx() < -10){
+                    if (result.getTy() < -5) {
                         FL.setPower(-0.2);
                         BR.setPower(-0.2);
                         FR.setPower(0.2);
                         BL.setPower(0.2);
-                    }
-                    else if (result.getTx() > 10){
+                    } else if (result.getTy() > 5) {
                         FL.setPower(0.2);
                         BR.setPower(0.2);
                         FR.setPower(-0.2);
                         BL.setPower(-0.2);
-                    }
-                    else {
-                        if (result.getTy() > 10){
-                            FL.setPower(0.2);
-                            BR.setPower(0.2);
-                            FR.setPower(0.2);
-                            BL.setPower(0.2);
-                        }
-                        else if (result.getTy() < -10){
+                    } else {
+                        if (result.getTx() > 5) {
                             FL.setPower(-0.2);
                             BR.setPower(-0.2);
                             FR.setPower(-0.2);
                             BL.setPower(-0.2);
-                        }
-                        else {
+                        } else if (result.getTx() < -5) {
+                            FL.setPower(0.2);
+                            BR.setPower(0.2);
+                            FR.setPower(0.2);
+                            BL.setPower(0.2);
+                        } else {
                             FL.setPower(0);
                             BR.setPower(0);
                             FR.setPower(0);
@@ -83,20 +79,23 @@ public class limelight_dt_test2 extends LinearOpMode {
                         }
                     }
                 }
-                else {
-                    telemetry.addData("result is not valid", result);
-                    telemetry.update();
-
-                }
-            } else {
-                telemetry.addData("no result", result);
-                telemetry.update();
             }
+
+
+//                else {
+//                    telemetry.addData("result is not valid", result);
+//                    telemetry.update();
+//
+//                }
+//            } else {
+//                telemetry.addData("no result", result);
+//                telemetry.update();
+//            }
             telemetry.update();
 
-            Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
-            telemetry.addData("Limelight Connected", limelight != null ? "Yes" : "No");
-            telemetry.update();
+//            Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//            telemetry.addData("Limelight Connected", limelight != null ? "Yes" : "No");
+//            telemetry.update();
         }
     }
 }
