@@ -20,10 +20,10 @@ public class positions_and_variables {
     public double intake_claw_open = 1;
 
     public double intake_wrist0 = 0.0;
-    public double intake_wrist45 = 0.15;
-    public double intake_wrist90 = 0.3;
-    public double intake_wrist135 = 0.45;
-    public double intake_wrist180 = 0.6;
+    public double intake_wrist45 = 0.25;
+    public double intake_wrist90 = 0.5;
+    public double intake_wrist135 = 0.75;
+    public double intake_wrist180 = 1.0;
 
     public double outtake_claw_close = 0.37;
     public double outtake_claw_open = 0.7;

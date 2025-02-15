@@ -70,6 +70,7 @@ public class teleop_new extends LinearOpMode {
         IArmR = hardwareMap.get(Servo.class, "IArmR");
         IArmC = hardwareMap.get(Servo.class, "IArmC");
         IWrist = hardwareMap.get(Servo.class, "IWrist");
+        IWrist.scaleRange(0.0, 0.6);
         IClaw = hardwareMap.get(Servo.class, "IClaw");
         HSlideL = hardwareMap.get(Servo.class, "HSlideL");
         HSlideR = hardwareMap.get(Servo.class, "HSlideR");
@@ -244,7 +245,7 @@ public class teleop_new extends LinearOpMode {
             }
 
             //wrist movements
-            if (cycle_gamepad1.xPressCount == 2|| cycle_gamepad1.xPressCount == 3){
+            if (cycle_gamepad1.xPressCount == 1 ||cycle_gamepad1.xPressCount == 2|| cycle_gamepad1.xPressCount == 3){
                 if (cycle_gamepad1.rbPressCount == 0){
                     IWrist.setPosition(pos.intake_wrist0);
                 }
