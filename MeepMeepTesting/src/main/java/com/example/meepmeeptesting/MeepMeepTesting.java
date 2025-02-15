@@ -22,13 +22,18 @@ public class MeepMeepTesting {
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(40, 63.5, Math.toRadians(-90)))
 
 
-                .strafeToLinearHeading(new Vector2d(56, 56), (Math.toRadians(-135)))
+                .strafeToLinearHeading(new Vector2d(58, 58), (Math.toRadians(-135)))
 
-                .strafeToLinearHeading(new Vector2d(49, 45.5), (Math.toRadians(-90)))
-                .strafeToLinearHeading(new Vector2d(56, 56), (Math.toRadians(-135)))
-
-
-
+                .strafeToLinearHeading(new Vector2d(49, 49), (Math.toRadians(-88)))
+                .strafeToLinearHeading(new Vector2d(58, 58), (Math.toRadians(-135)))
+                .strafeToLinearHeading(new Vector2d(56, 50), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(57, 57), (Math.toRadians(-135)))
+                .strafeToLinearHeading(new Vector2d(43, 27.5), (Math.toRadians(0)))
+                .strafeToLinearHeading(new Vector2d(47.5, 27.5), (Math.toRadians(0)))
+                .strafeToLinearHeading(new Vector2d(43, 25), (Math.toRadians(0)))
+                .strafeToLinearHeading(new Vector2d(57, 58), (Math.toRadians(-135)))
+                .strafeToLinearHeading(new Vector2d(35,12), (Math.toRadians(0)))
+                .strafeToLinearHeading(new Vector2d(20,12), (Math.toRadians(0)))
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_OFFICIAL)

@@ -13,6 +13,9 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,13 +28,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 
+import java.util.List;
 
-@Autonomous (name = "auto_SAMPLE_test2")
 
-public final class auto_SAMPLE_test2 extends LinearOpMode {
+@Autonomous (name = "auto_SAMPLE_test3_LL")
 
+public final class auto_SAMPLE_test3_LL extends LinearOpMode {
+    DcMotor FR;
+    DcMotor FL;
+    DcMotor BR;
+    DcMotor BL;
+    Limelight3A limelight;
     private final ElapsedTime runtime = new ElapsedTime();
-
     positions_and_variables pos = new positions_and_variables();
 
     public class Lift {
@@ -58,42 +66,42 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
              }
 
 
-//        public class Liftspecimen0Up implements Action {
-//            private boolean initialized = false;
-//
-//            @Override
-//            public boolean run(@NonNull TelemetryPacket packet) {
-//
-//                if (!initialized) {
-//
-//                    VSlideF.setPower(0.5);
-//                    VSlideB.setPower(0.5);
-//                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
-//                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
-//                    telemetry.addData("front Power", VSlideF.getPower());
-//                    telemetry.addData("back Power", VSlideB.getPower());
-//                    telemetry.update();
-//
-//                    initialized = true;
-//                }
-//
-//                double pos_VSF = VSlideF.getCurrentPosition();
-//                packet.put("liftPosF", pos_VSF);
-//                double pos_VSB = VSlideB.getCurrentPosition();
-//                packet.put("liftPosB", pos_VSB);
-//                if (pos_VSF < 2050.0) {
-//                    return true;
-//                } else {
-//                    VSlideF.setPower(0);
-//                    VSlideB.setPower(0);
-//
-//                    return false;
-//                }
-//            }
-//        }
-//        public Action liftspecimen0Up() {
-//            return new Liftspecimen0Up();
-//        }
+        public class Liftspecimen0Up implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                if (!initialized) {
+
+                    VSlideF.setPower(0.5);
+                    VSlideB.setPower(0.5);
+                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
+                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
+                    telemetry.addData("front Power", VSlideF.getPower());
+                    telemetry.addData("back Power", VSlideB.getPower());
+                    telemetry.update();
+
+                    initialized = true;
+                }
+
+                double pos_VSF = VSlideF.getCurrentPosition();
+                packet.put("liftPosF", pos_VSF);
+                double pos_VSB = VSlideB.getCurrentPosition();
+                packet.put("liftPosB", pos_VSB);
+                if (pos_VSF < 2050.0) {
+                    return true;
+                } else {
+                    VSlideF.setPower(0);
+                    VSlideB.setPower(0);
+
+                    return false;
+                }
+            }
+        }
+        public Action liftspecimen0Up() {
+            return new Liftspecimen0Up();
+        }
 
 
 
@@ -107,8 +115,8 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
 
                 if (!initialized) {
 
-                    VSlideF.setPower(0.2);
-                    VSlideB.setPower(0.2);
+                    VSlideF.setPower(1);
+                    VSlideB.setPower(1);
                     telemetry.addData("front Position", VSlideF.getCurrentPosition());
                     telemetry.addData("back Position", VSlideB.getCurrentPosition());
                     telemetry.addData("front Power", VSlideF.getPower());
@@ -121,7 +129,7 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if (pos_VSF < 1000 && pos_VSB > -1000) {
+                if (pos_VSF < 2750 && pos_VSB > -2750) {
                     return true;
                 } else {
                     VSlideF.setPower(0);
@@ -141,8 +149,8 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    VSlideF.setPower(-0.2);
-                    VSlideB.setPower(-0.2);
+                    VSlideF.setPower(-1);
+                    VSlideB.setPower(-1);
                     telemetry.addData("front Position", VSlideF.getCurrentPosition());
                     telemetry.addData("back Position", VSlideB.getCurrentPosition());
                     telemetry.addData("front Power", VSlideF.getPower());
@@ -341,6 +349,23 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
         }
 
 
+        public class Intake_AfterGrab implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                HSlideL.setPosition(pos.hslide_after_trans);
+                HSlideR.setPosition(1-pos.hslide_after_trans);
+                IArmL.setPosition(pos.intake_arm_trans);
+                IArmR.setPosition(1-pos.intake_arm_trans);
+                IArmC.setPosition(pos.intake_coax_trans);
+                IClaw.setPosition(pos.intake_claw_close); // after grabbing sample
+                return false;
+            }
+        }
+
+        public Action SettoAfterGrab() {
+
+            return new Intake_AfterGrab();
+        }
     }
 
 
@@ -448,6 +473,44 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
         }
 
 
+
+
+        public class Limelight {
+            private final Limelight3A limelight;
+
+            public Limelight (HardwareMap hardwareMap) {
+                limelight = hardwareMap.get(Limelight3A.class, "limelight");
+            }
+
+
+            public class OArm_Up implements Action {
+                @Override
+                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                    OArm.setPosition(pos.outtake_arm_sample);
+                    return false;
+                }
+            }
+
+            public Action LiftOArm() {
+                return new auto_SAMPLE_test3_LL.OuttakeArm.OArm_Up();
+            }
+
+
+            public class OArm_Down implements Action {
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet) {
+                    OArm.setPosition(pos.outtake_arm_transfer);
+                    return false;
+                }
+            }
+
+            public Action LowerOArm() {
+                return new auto_SAMPLE_test3_LL.OuttakeArm.OArm_Down();
+            }
+
+        }
+
+
     }
 
 
@@ -473,11 +536,66 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
         Actions.runBlocking(intake.SettoAfterTrasfer());
         Actions.runBlocking(iclaw.OpenIClaw());
         Actions.runBlocking(wrist.SettoWrist0());
-
-
         DigitalChannel limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
+
+        // drivetrain motors
+        FR = hardwareMap.dcMotor.get("FR");
+        FL = hardwareMap.dcMotor.get("FL");
+        BR = hardwareMap.dcMotor.get("BR");
+        BL = hardwareMap.dcMotor.get("BL");
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // limelight
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(100);
+        telemetry.setMsTransmissionInterval(11);
+        limelight.pipelineSwitch(0);
+        /*
+         * Starts polling for data.
+         */
+        limelight.start();
+
+
+        LLResult result = limelight.getLatestResult();
+        if (result != null) {
+            if (result.isValid()) {
+                telemetry.addData("tx", result.getTx());
+                telemetry.addData("ty", result.getTy());
+                List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+                if (result.getTx() < -10){
+                    FL.setPower(-0.2);
+                    BR.setPower(-0.2);
+                    FR.setPower(0.2);
+                    BL.setPower(0.2);
+                }
+                else if (result.getTx() > 10){
+                    FL.setPower(0.2);
+                    BR.setPower(0.2);
+                    FR.setPower(-0.2);
+                    BL.setPower(-0.2);
+                }
+                else {
+                    if (result.getTy() > 10){
+                        FL.setPower(0.2);
+                        BR.setPower(0.2);
+                        FR.setPower(0.2);
+                        BL.setPower(0.2);
+                    }
+                    else if (result.getTy() < -10){
+                        FL.setPower(-0.2);
+                        BR.setPower(-0.2);
+                        FR.setPower(-0.2);
+                        BL.setPower(-0.2);
+                    }
+                    else {
+                        FL.setPower(0);
+                        BR.setPower(0);
+                        FR.setPower(0);
+                        BL.setPower(0);
+                    }
 
 
 
@@ -499,7 +617,7 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
 
         //go to sample 2
         TrajectoryActionBuilder go_to_sample_2 = return_basket_3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(56, 50), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(58, 48), Math.toRadians(-90));
 
 
         //return to basket
@@ -537,6 +655,7 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() <= 0.01) {
 
+
             boolean switchPressed = !limitSwitch.getState(); // Inverted to show "pressed" as true
 
             // Display the state on the telemetry
@@ -548,101 +667,150 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
 
             telemetry.update();
 
-            // Optional: Add some delay to prevent too frequent updates in telemetry
-            sleep(100);
+
+            LLResult result = limelight.getLatestResult();
+
 
             Actions.runBlocking(new SequentialAction(
+                    new ParallelAction(
+                            go_score_sample_0.build(),
+                            lift.liftUp()
+                    ),
+                    oarm.LiftOArm(),
+                    new SleepAction(0.7),
+                    oclaw.OpenOClaw(),
+                    new SleepAction(0.4),
+                    // sample 0 cycle completes by now. sample 3 cycle starts below
 
-                    lift.liftUp(),
-                    new SleepAction(1),
-                    lift.liftDown()
+                    new ParallelAction(
+                            go_to_sample_3.build(),
+                            oarm.LowerOArm(),
+                            lift.liftDown()
+                    ),
+
+                    intake.SettoAim(),
+                    new SleepAction(0.6),
+
+                    //add limelight movement here
 
 
 
-                    // sample 3 cycle completes by now. sample 2 cycle starts below
 
-////
-//
-//                            new ParallelAction(
-//                                    go_to_sample_2.build(),
-//                                    bucket.restoreBucket(),
-//                                    new SequentialAction(
-//                                            new SleepAction(0.2),
-//                                            lift.liftDown()
-//                                    ),
-//                                    arm.aimArm()
-//                            ),
-//
-//                            arm.extendArm(),
-//                            new SleepAction(0.3),
-//                            sclaw.closeSClaw(),
-//                            new SleepAction(0.3),
-//
-//                    new ParallelAction(
-//                            return_basket_2.build(),
-//                            new SequentialAction(
-//                                    arm.retractArm(),
-//                                    new SleepAction(1),
-//                                    sclaw.openSClaw(),
-//                                    new SleepAction(0.4),
-//                                    lift.liftUp()
-//                                    )
-//                    ),
-//
-//                    bucket.dumpBucket(),
-//                    new SleepAction(0.65),
-//                    // sample 2 cycle completes by now. sample 1 cycle starts below
-//
-//
+
+
+                    intake.SettoGrab(),
+                    new SleepAction(0.3),
+
+
+                    new ParallelAction(
+                        return_basket_3.build(),
+                        new SequentialAction(
+                            intake.SettoAfterGrab(),
+                            new SleepAction(0.2),
+                            intake.SettoTrasfer(),
+                            new SleepAction(1),
+                            oclaw.CloseOClaw(),
+                            new SleepAction(0.2),
+                            iclaw.OpenIClaw(),
+                            new SleepAction(0.3),
+                            new ParallelAction(
+                                intake.SettoAfterTrasfer(),
+                                lift.liftUp()
+                            )
+                        )
+                    ),
+                    oarm.LiftOArm(),
+                    new SleepAction(0.7),
+                    oclaw.OpenOClaw(),
+                    new SleepAction(0.4),
+
+                            // sample 3 cycle completes by now. sample 2 cycle starts below
+
+                    new ParallelAction(
+                            go_to_sample_2.build(),
+                            oarm.LowerOArm(),
+                            lift.liftDown()
+                    ),
+                    intake.SettoAim(),
+                    new SleepAction(0.6),
+                    intake.SettoGrab(),
+                    new SleepAction(0.3),
+
+                    new ParallelAction(
+                        return_basket_2.build(),
+                        new SequentialAction(
+                                intake.SettoAfterGrab(),
+                                new SleepAction(0.2),
+                                intake.SettoTrasfer(),
+                                new SleepAction(1),
+                                oclaw.CloseOClaw(),
+                                new SleepAction(0.2),
+                                iclaw.OpenIClaw(),
+                                new SleepAction(0.3),
+                                new ParallelAction(
+                                    intake.SettoAfterTrasfer(),
+                                    lift.liftUp()
+                                )
+                        )
+                    ),
+                            oarm.LiftOArm(),
+                            new SleepAction(0.7),
+                            oclaw.OpenOClaw(),
+                            new SleepAction(0.4)
+
+                            // sample 2 cycle completes by now. sample 1 cycle starts below
+
 //                            new ParallelAction(
 //                                    go_to_sample_1.build(),
-//                                    bucket.restoreBucket(),
-//                                    new SequentialAction(
-//                                            new SleepAction(0.2),
-//                                            lift.liftDown()
-//                                    ),
-//                                    arm.aimArm(),
-//                                    wrist.Wrist3()
+//                                    oarm.LowerOArm(),
+//                                    lift.liftDown()
+//                             ),
+//                            new ParallelAction(
+//                                    intake.SettoAim(),
+//                                    wrist.SettoWrist45()
 //                            ),
-//
-//                            arm.extendArm(),
+//                            new SleepAction(0.6),
+//                            intake.SettoGrab(),
 //                            new SleepAction(0.3),
-//                            sclaw.closeSClaw(),
-//                            new SleepAction(0.3),
-//                            arm.aimArm(),
 //
-//                    new ParallelAction(
-//                             return_basket_1.build(),
-//                             new SequentialAction(
-//                                    new SleepAction(0.4),
-//                                    arm.retractArm(),
-//                                    new SleepAction(0.6),
-//                                    wrist.Wrist1(),
-//                                    new SleepAction(2),
-//                                    sclaw.openSClaw(),
-//                                    new SleepAction(0.4),
-//                                    lift.liftUp()
+//                            new ParallelAction(
+//                                return_basket_1.build(),
+//                                wrist.SettoWrist0(),
+//                                new SequentialAction(
+//                                    intake.SettoAfterGrab(),
+//                                      new SleepAction(0.2),
+//                                      intake.SettoTrasfer(),
+//                                    new SleepAction(1),
+//                                    oclaw.CloseOClaw(),
+//                                    new SleepAction(0.2),
+//                                    iclaw.OpenIClaw(),
+//                                    new SleepAction(0.3),
+//                                    new ParallelAction(
+//                                            intake.SettoAfterTrasfer(),
+//                                            lift.liftUp()
 //                                    )
+//                                )
 //                            ),
+//                            oarm.LiftOArm(),
+//                            new SleepAction(0.5),
 //
-//                    bucket.dumpBucket(),
-//                    new SleepAction(0.65),
+//                            oclaw.OpenOClaw(),
+//                            new SleepAction(0.65),
+//
+//
 //                    // sample 1 cycle completes by now. Go to Hang Level 1.
 //
 //
-//                    new ParallelAction(
-//                            go_to_hang.build(),
-//                            bucket.restoreBucket(),
-//                            new SequentialAction(
-//                                    new SleepAction(0.2),
-//                                    lift.lifttoHang()
-//                            )
+//                            new ParallelAction(
+//                                    go_to_hang.build(),
+//                                    new SequentialAction(
+//                                        new SleepAction(0.2),
+//                                        lift.liftDown()
+//                                    )
 //
-//                    )
+//                            )
 
-
-
-                    )
+            )
 
             );
 
