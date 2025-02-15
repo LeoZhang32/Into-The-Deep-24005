@@ -311,6 +311,22 @@ public final class auto_SAMPLE_test3_LL extends LinearOpMode {
 
 
 
+        public class Intake_Vision implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                HSlideL.setPosition(pos.hslide_aim);
+                HSlideR.setPosition(1-pos.hslide_aim);
+                IArmL.setPosition(pos.intake_arm_trans);
+                IArmR.setPosition(1-pos.intake_arm_trans);
+                IArmC.setPosition(pos.intake_coax_trans);
+                IClaw.setPosition(pos.intake_claw_open); // aiming position
+                return false;
+            }
+        }
+
+        public Action SettoVision () {
+            return new Intake_Vision();
+        }
 
         public class Intake_Aim implements Action {
             @Override
@@ -352,8 +368,8 @@ public final class auto_SAMPLE_test3_LL extends LinearOpMode {
         public class Intake_AfterGrab implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                HSlideL.setPosition(pos.hslide_after_trans);
-                HSlideR.setPosition(1-pos.hslide_after_trans);
+                HSlideL.setPosition(pos.hslide_aim);
+                HSlideR.setPosition(1-pos.hslide_aim);
                 IArmL.setPosition(pos.intake_arm_trans);
                 IArmR.setPosition(1-pos.intake_arm_trans);
                 IArmC.setPosition(pos.intake_coax_trans);
@@ -367,10 +383,6 @@ public final class auto_SAMPLE_test3_LL extends LinearOpMode {
             return new Intake_AfterGrab();
         }
     }
-
-
-
-
 
 
     //IntakeClaw servo class
@@ -503,6 +515,7 @@ public final class auto_SAMPLE_test3_LL extends LinearOpMode {
         Actions.runBlocking(wrist.SettoWrist0());
         DigitalChannel limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+        ElapsedTime LLCorrectionTimer = new ElapsedTime();
 
 
         // drivetrain motors
@@ -512,6 +525,10 @@ public final class auto_SAMPLE_test3_LL extends LinearOpMode {
         BL = hardwareMap.dcMotor.get("BL");
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -570,31 +587,20 @@ public final class auto_SAMPLE_test3_LL extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(100);
+        telemetry.setMsTransmissionInterval(11);
+        limelight.pipelineSwitch(1);
+        limelight.start();
         while (opModeIsActive() && runtime.seconds() <= 0.01) {
-
-
             boolean switchPressed = !limitSwitch.getState(); // Inverted to show "pressed" as true
-
             // Display the state on the telemetry
             if (switchPressed) {
                 telemetry.addData("Limit Switch", "Pressed");
             } else {
                 telemetry.addData("Limit Switch", "Not Pressed");
             }
-
             telemetry.update();
-
-            limelight = hardwareMap.get(Limelight3A.class, "limelight");
-            limelight.setPollRateHz(100);
-            telemetry.setMsTransmissionInterval(11);
-            limelight.pipelineSwitch(0);
-            /*
-             * Starts polling for data.
-             */
-            limelight.start();
-
-            LLResult result = limelight.getLatestResult();
-
 
             Actions.runBlocking(new SequentialAction(
                     new ParallelAction(
@@ -606,94 +612,100 @@ public final class auto_SAMPLE_test3_LL extends LinearOpMode {
                     oclaw.OpenOClaw(),
                     new SleepAction(0.4),
                     // sample 0 cycle completes by now. sample 3 cycle starts below
-
                     new ParallelAction(
                             go_to_sample_3.build(),
                             oarm.LowerOArm(),
                             lift.liftDown()
                     ),
-
-                    intake.SettoAim(),
+                    intake.SettoVision(),
                     new SleepAction(0.6)
                     )
             );
-
-
-
-
-
-
-                    //add limelight movement here
-
-
-            if (result != null) {
-                if (result.isValid()) {
-                    telemetry.addData("tx", result.getTx());
-                    telemetry.addData("ty", result.getTy());
-                    List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                    if (result.getTx() < -10) {
-                        FL.setPower(-0.2);
-                        BR.setPower(-0.2);
-                        FR.setPower(0.2);
-                        BL.setPower(0.2);
-                    } else if (result.getTx() > 10) {
-                        FL.setPower(0.2);
-                        BR.setPower(0.2);
-                        FR.setPower(-0.2);
-                        BL.setPower(-0.2);
-                    } else {
-                        if (result.getTy() > 10) {
-                            FL.setPower(0.2);
-                            BR.setPower(0.2);
-                            FR.setPower(0.2);
-                            BL.setPower(0.2);
-                        } else if (result.getTy() < -10) {
-                            FL.setPower(-0.2);
-                            BR.setPower(-0.2);
-                            FR.setPower(-0.2);
-                            BL.setPower(-0.2);
+            //add limelight movement here
+            LLCorrectionTimer.reset();
+            while (opModeIsActive()) {
+                LLResult result = limelight.getLatestResult();
+                if (result != null) {
+                    if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 2) {
+                        telemetry.addData("tx", result.getTx());
+                        telemetry.addData("ty", result.getTy());
+                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+                        if (result.getTy() < -2) {
+                            FL.setPower(0.3);
+                            BR.setPower(0.3);
+                            FR.setPower(-0.3);
+                            BL.setPower(-0.3);
+                        } else if (result.getTy() > 2) {
+                            FL.setPower(-0.3);
+                            BR.setPower(-0.3);
+                            FR.setPower(0.3);
+                            BL.setPower(0.3);
                         } else {
-                            FL.setPower(0);
-                            BR.setPower(0);
-                            FR.setPower(0);
-                            BL.setPower(0);
+                            if (result.getTx() > 2) {
+                                FL.setPower(0.3);
+                                BR.setPower(0.3);
+                                FR.setPower(0.3);
+                                BL.setPower(0.3);
+                            } else if (result.getTx() < -2) {
+                                FL.setPower(-0.3);
+                                BR.setPower(-0.3);
+                                FR.setPower(-0.3);
+                                BL.setPower(-0.3);
+                            } else {
+                                FL.setPower(0);
+                                BR.setPower(0);
+                                FR.setPower(0);
+                                BL.setPower(0);
+                                telemetry.addData("limelight loop breaks", FL.getPower());
+                                telemetry.update();
+                                break;
+                            }
                         }
+                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 2) {
+                        Actions.runBlocking(
+                                go_to_sample_3.build()
+                        );
+                        break;
+                    } else {
+                        break;
                     }
+                } else {
+                    break;
                 }
-            }
-
-
-
-
+            };
+                    drive.updatePoseEstimate();
                     Actions.runBlocking(new SequentialAction(
-                    intake.SettoGrab(),
-                    new SleepAction(0.3)
+                            new SleepAction(0.4),
+                            intake.SettoAim(),
+                            new SleepAction(3),
+                            intake.SettoGrab(),
+                            new SleepAction(0.4),
+                            new ParallelAction(
+                                return_basket_3.build(),
+                                new SequentialAction(
+                                    intake.SettoAfterGrab(),
+                                    new SleepAction(1),
+                                    intake.SettoTrasfer(),
+                                    new SleepAction(1),
+                                    oclaw.CloseOClaw(),
+                                    new SleepAction(0.2),
+                                    iclaw.OpenIClaw(),
+                                    new SleepAction(0.3),
+                                    new ParallelAction(
+                                        intake.SettoAfterTrasfer(),
+                                        lift.liftUp()
+                                )
                             )
-                    );
-//
-//
-//                    new ParallelAction(
-//                        return_basket_3.build(),
-//                        new SequentialAction(
-//                            intake.SettoAfterGrab(),
-//                            new SleepAction(0.2),
-//                            intake.SettoTrasfer(),
-//                            new SleepAction(1),
-//                            oclaw.CloseOClaw(),
-//                            new SleepAction(0.2),
-//                            iclaw.OpenIClaw(),
-//                            new SleepAction(0.3),
-//                            new ParallelAction(
-//                                intake.SettoAfterTrasfer(),
-//                                lift.liftUp()
-//                            )
-//                        )
-//                    ),
-//                    oarm.LiftOArm(),
-//                    new SleepAction(0.7),
-//                    oclaw.OpenOClaw(),
-//                    new SleepAction(0.4),
-//
+                        ),
+
+                        oarm.LiftOArm(),
+                        new SleepAction(0.7),
+                        oclaw.OpenOClaw(),
+                        new SleepAction(0.4)
+                    ));
+
+
+
 //                            // sample 3 cycle completes by now. sample 2 cycle starts below
 //
 //                    new ParallelAction(
@@ -801,5 +813,6 @@ public final class auto_SAMPLE_test3_LL extends LinearOpMode {
 
         }
     }
-
 }
+
+
