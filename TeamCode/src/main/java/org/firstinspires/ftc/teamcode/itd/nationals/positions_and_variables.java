@@ -14,6 +14,7 @@ public class positions_and_variables {
 
 
     public double intake_coax_trans = 0.15;
+    public double intake_coax_aftertrans = 0;
     public double intake_coax_aim = 0.95;
     public double intake_coax_grab = 0.95;
     public double intake_coax_lift = 0.5;
@@ -36,6 +37,6 @@ public class positions_and_variables {
     public double outtake_arm_transfer = 0.97;
     public double outtake_arm_transfer_auto = 0.99;
     public double outtake_arm_sample = 0.45;
-    public double outtake_arm_specimenHold = 0.55;
+    public double outtake_arm_specimenHold = 0.3;
     public double outtake_arm_specimenScore = 0.45;
 }

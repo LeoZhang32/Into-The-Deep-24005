@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
 @TeleOp
-public class teleop_new extends LinearOpMode {
+public class teleop_new_specimen extends LinearOpMode {
     Boolean aaa;
     ElapsedTime transferTimer = new ElapsedTime();
     ElapsedTime grabTimer = new ElapsedTime();
@@ -120,6 +120,7 @@ public class teleop_new extends LinearOpMode {
             cycle_gamepad2.updateA(2);
             cycle_gamepad2.updateX(2);
             cycle_gamepad2.updateLB(3);
+            cycle_gamepad2.updateRB(5);
 
             slowModeOn = cycle_gamepad1.lbPressCount != 0;
 
@@ -178,12 +179,11 @@ public class teleop_new extends LinearOpMode {
                 extendoIn = true;
             }
             else if (cycle_gamepad1.xPressCount == 1){
-                HSlideL.setPosition(pos.hslide_after_trans);
-                HSlideR.setPosition(1-pos.hslide_after_trans);
-                IArmL.setPosition(pos.intake_arm_lift);
-                IArmR.setPosition(1-pos.intake_arm_lift);
-                IArmC.setPosition(pos.intake_coax_lift);
-                cycle_gamepad1.rbPressCount = 0;
+                HSlideL.setPosition(pos.hslide_trans);
+                HSlideR.setPosition(1-pos.hslide_trans);
+                IArmL.setPosition(pos.intake_arm_trans);
+                IArmR.setPosition(1-pos.intake_arm_trans);
+                IArmC.setPosition(pos.intake_coax_aftertrans);
                 extendoIn = false;
                 isTransferTimerRunning = false;
             }
@@ -194,6 +194,7 @@ public class teleop_new extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_aim);
                 IArmC.setPosition(pos.intake_coax_aim);
                 IClaw.setPosition(pos.intake_claw_open);
+                cycle_gamepad1.rbPressCount = 0;
                 isTransferTimerRunning = false;
                 extendoIn = false;
             }
@@ -220,7 +221,7 @@ public class teleop_new extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_lift);
                 IArmC.setPosition(pos.intake_coax_lift);
                 IClaw.setPosition(pos.intake_claw_close);
-//                cycle_gamepad1.rbPressCount = 0;
+                cycle_gamepad1.rbPressCount = 1;
                 isTransferTimerRunning = false;
                 extendoIn = false;
             }
@@ -245,7 +246,7 @@ public class teleop_new extends LinearOpMode {
             }
 
             //wrist movements
-            if (cycle_gamepad1.xPressCount == 1 || cycle_gamepad1.xPressCount == 2 || cycle_gamepad1.xPressCount == 3){
+            if (cycle_gamepad1.xPressCount == 2 || cycle_gamepad1.xPressCount == 3){
                 if (cycle_gamepad1.rbPressCount == 0){
                     IWrist.setPosition(pos.intake_wrist0);
                 }
@@ -259,7 +260,7 @@ public class teleop_new extends LinearOpMode {
                     IWrist.setPosition(pos.intake_wrist135);
                 }
             }
-            else if (cycle_gamepad1.xPressCount == 0 || cycle_gamepad1.xPressCount == 4){
+            else if (cycle_gamepad1.xPressCount == 0 || cycle_gamepad1.xPressCount == 1 || cycle_gamepad1.xPressCount == 4){
                 if (cycle_gamepad1.rbPressCount%2 == 1){
                     IWrist.setPosition(pos.intake_wrist180);
                 }
@@ -340,12 +341,12 @@ public class teleop_new extends LinearOpMode {
             }
 
 
-            if (gamepad2.right_bumper) {
-                if (!specscore_button_pressed) {
-                    specscore = !specscore;
-                }
-                specscore_button_pressed = true;
-            } else specscore_button_pressed = false;
+//            if (gamepad2.right_bumper) {
+//                if (!specscore_button_pressed) {
+//                    specscore = !specscore;
+//                }
+//                specscore_button_pressed = true;
+//            } else specscore_button_pressed = false;
 
             if (!limitSwitch.getState() && !auto_up && !auto_down && !manual_running) {
                 //if pressed
@@ -355,7 +356,7 @@ public class teleop_new extends LinearOpMode {
             V_SLIDES:
             if (gamepad2.dpad_up) {
                 manual_running = true;
-                if (VSlideF.getCurrentPosition() > 2850 || VSlideB.getCurrentPosition() > 2850) {
+                if (VSlideF.getCurrentPosition() > 2850 || VSlideB.getCurrentPosition() < -2850) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
                     telemetry.addData("viper slides", "over limit");
@@ -369,10 +370,11 @@ public class teleop_new extends LinearOpMode {
 
             } else if (gamepad2.dpad_down) {
                 manual_running = true;
-                if (!limitSwitch.getState()) {
+                if (!limitSwitch.getState() || VSlideF.getCurrentPosition() < 30 || VSlideB.getCurrentPosition() > -30) {
                     //if limit switch is pressed and dpad down
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
+                    cycle_gamepad2.rbPressCount = 0;
                     telemetry.addData("viper slides", "stopped");
                     telemetry.update();
                     break V_SLIDES;
@@ -414,7 +416,7 @@ public class teleop_new extends LinearOpMode {
                     telemetry.update();
                 }
 
-                if (VSlideF.getCurrentPosition() > 2750 || VSlideB.getCurrentPosition() > 2750) {
+                if (VSlideF.getCurrentPosition() > 2750 || VSlideB.getCurrentPosition() < -2750) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
                     cycle_gamepad2.xPressCount = 1;
@@ -455,22 +457,23 @@ public class teleop_new extends LinearOpMode {
                 }
 
 
-                if (VSlideF.getCurrentPosition() < 30 || VSlideB.getCurrentPosition() < 30) {
+                if (!limitSwitch.getState() || VSlideF.getCurrentPosition() < 30 || VSlideB.getCurrentPosition() > -30) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
                     auto_down = !auto_down;
+                    cycle_gamepad2.rbPressCount = 0;
                     telemetry.addData("Status", "position reached");
                     telemetry.update();
                 }
 
 
-            } else if (specscore) { //viper slide auto action down score
+            } else if (cycle_gamepad2.rbPressCount == 1) { //raise specimen up
 
                 manual_running = false;
                 VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                VSlideF.setPower(0.3);
-                VSlideB.setPower(0.3);
+                VSlideF.setPower(1);
+                VSlideB.setPower(1);
 
                 if ((VSlideF.isBusy()) || (VSlideB.isBusy()) || !isStopRequested()) {
 
@@ -479,7 +482,47 @@ public class teleop_new extends LinearOpMode {
                         // **ADDED: Stop the motors immediately**
                         VSlideF.setPower(0);
                         VSlideB.setPower(0);
-                        specscore = !specscore;
+                        cycle_gamepad2.rbPressCount = 0;
+//                            break; // **ADDED: Exit the loop on emergency stop**
+
+                    }
+
+                    // Let the drive team see that we're waiting on the motor
+                    telemetry.addData("Status", "Waiting to raise specimen up");
+                    telemetry.addData("VSlideF power", VSlideF.getPower());
+                    telemetry.addData("VSlideB power", VSlideB.getPower());
+                    telemetry.addData("VSlideF position", VSlideF.getCurrentPosition());
+                    telemetry.addData("VSlideF position", VSlideB.getCurrentPosition());
+                    telemetry.addData("is at target", !VSlideF.isBusy() && !VSlideB.isBusy());
+                    telemetry.update();
+                }
+
+
+                if (VSlideF.getCurrentPosition() > 1300 || VSlideB.getCurrentPosition() < -1300) {
+                    VSlideF.setPower(0);
+                    VSlideB.setPower(0);
+                    cycle_gamepad2.xPressCount = -2;
+                    cycle_gamepad2.rbPressCount = 2;
+                    telemetry.addData("Status", "position reached");
+                    telemetry.update();
+                }
+
+            } else if (cycle_gamepad2.rbPressCount == 3) { //viper slide auto action down score
+
+                manual_running = false;
+                VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                VSlideF.setPower(0.5);
+                VSlideB.setPower(0.5);
+
+                if ((VSlideF.isBusy()) || (VSlideB.isBusy()) || !isStopRequested()) {
+
+                    // Check for an emergency stop condition
+                    if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
+                        // **ADDED: Stop the motors immediately**
+                        VSlideF.setPower(0);
+                        VSlideB.setPower(0);
+                        cycle_gamepad2.rbPressCount = 2;
 //                            break; // **ADDED: Exit the loop on emergency stop**
 
                     }
@@ -495,10 +538,11 @@ public class teleop_new extends LinearOpMode {
                 }
 
 
-                if (VSlideF.getCurrentPosition() > 400 || VSlideB.getCurrentPosition() > 400) {
+                if (VSlideF.getCurrentPosition() > 1800 || VSlideB.getCurrentPosition() < -1800) { // specimen scored
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
-                    specscore = !specscore;
+                    cycle_gamepad2.rbPressCount = 4;
+                    cycle_gamepad2.aPressCount = 0;
                     telemetry.addData("Status", "specimen scored");
                     telemetry.update();
                 }
@@ -516,7 +560,7 @@ public class teleop_new extends LinearOpMode {
             telemetry.addData("Grab Timer Active", isGrabTimerRunning);
             telemetry.addData("Grab Timer Time", grabTimer.milliseconds());
             telemetry.addData("Gamepad1 xPressCount", cycle_gamepad1.xPressCount);
-            telemetry.addData("Gamepad1 aPressCount", cycle_gamepad1.aPressCount);
+            telemetry.addData("Gamepad1 rbPressCount", cycle_gamepad1.rbPressCount);
             telemetry.addData("Gamepad2 aPressCount", cycle_gamepad2.aPressCount);
             telemetry.addData("Gamepad2 xPressCount", cycle_gamepad2.xPressCount);
             telemetry.addData("VSlideF Position", VSlideF.getCurrentPosition());

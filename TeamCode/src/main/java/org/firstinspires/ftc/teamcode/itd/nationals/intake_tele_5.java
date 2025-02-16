@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.itd.nationals;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
+@Disabled
 @TeleOp
 public class intake_tele_5 extends LinearOpMode {
     ElapsedTime transferTimer = new ElapsedTime();
