@@ -618,7 +618,7 @@ public final class auto_SAMPLE_test5 extends LinearOpMode {
 
         //go to sample 1
         TrajectoryActionBuilder go_to_sample_1 = return_basket_2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(60, 47), (Math.toRadians(-63)));
+                .strafeToLinearHeading(new Vector2d(59, 47), (Math.toRadians(-63)));
 
         //return to basket 1
         TrajectoryActionBuilder return_basket_1 = go_to_sample_1.endTrajectory().fresh()
@@ -641,7 +641,7 @@ public final class auto_SAMPLE_test5 extends LinearOpMode {
         //return to basket 4
         TrajectoryActionBuilder return_basket_4 = go_to_sub_4a.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(35, 10), (Math.toRadians(-160)))
-                .strafeToLinearHeading(new Vector2d(58, 58), (Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(56, 58), (Math.toRadians(-135)));
 
         //go to submersible 5a
         TrajectoryActionBuilder go_to_sub_5a = return_basket_4.endTrajectory().fresh()
