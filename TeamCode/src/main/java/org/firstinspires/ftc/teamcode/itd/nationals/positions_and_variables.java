@@ -27,12 +27,14 @@ public class positions_and_variables {
     public double intake_wrist90 = 0.5;
     public double intake_wrist135 = 0.75;
     public double intake_wrist180 = 1.0;
-    public double intake_wrist_vision = 0.42;
+    public double intake_wrist_vision = 0.42; //this is to maximize limelight's field of view
+    public double intake_wrist153 = 0.85; //this is for grabbing sample 1 in auto
 
     public double outtake_claw_close = 0.37;
     public double outtake_claw_open = 0.7;
 
     public double outtake_arm_transfer = 0.97;
+    public double outtake_arm_transfer_auto = 0.99;
     public double outtake_arm_sample = 0.45;
     public double outtake_arm_specimenHold = 0.55;
     public double outtake_arm_specimenScore = 0.45;
