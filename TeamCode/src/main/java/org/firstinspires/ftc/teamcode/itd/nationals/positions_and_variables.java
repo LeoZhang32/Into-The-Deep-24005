@@ -36,7 +36,7 @@ public class positions_and_variables {
 
     public double outtake_arm_transfer = 0.97;
     public double outtake_arm_transfer_auto = 0.99;
-    public double outtake_arm_sample = 0.35;
-    public double outtake_arm_specimenHold = 0.19;
+    public double outtake_arm_sample = 0.37;
+    public double outtake_arm_specimenHold = 0.18;
     public double outtake_arm_specimenScore = 0.35;
 }

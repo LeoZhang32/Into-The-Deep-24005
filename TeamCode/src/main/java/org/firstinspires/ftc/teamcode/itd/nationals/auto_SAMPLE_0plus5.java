@@ -652,7 +652,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        while (opModeIsActive() && runtime.seconds() <= 0.1) {
+        while (opModeIsActive() && runtime.seconds() <= 0.1 && !isStopRequested()) {
             boolean switchPressed = !limitSwitch.getState(); // Inverted to show "pressed" as true
             // Display the state on the telemetry
             if (switchPressed) {
@@ -683,10 +683,10 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
             );
             //add limelight movement here
             LLCorrectionTimer.reset();
-            while (opModeIsActive()) {
+            while (opModeIsActive() && !isStopRequested()) {
                 LLResult result = limelight.getLatestResult();
                 if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 1) {
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
                         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
@@ -721,7 +721,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                                 break;
                             }
                         }
-                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
+                    } else if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() > 1) {
                         Actions.runBlocking(
                                 go_to_sample_3.build()
                         );
@@ -783,10 +783,10 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
             );
 //add limelight movement here
             LLCorrectionTimer.reset();
-            while (opModeIsActive()) {
+            while (opModeIsActive() && !isStopRequested()) {
                 LLResult result = limelight.getLatestResult();
                 if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 1) {
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
                         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
@@ -821,7 +821,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                                 break;
                             }
                         }
-                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
+                    } else if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() > 1) {
                         Actions.runBlocking(
                                 go_to_sample_2.build()
                         );
@@ -883,10 +883,10 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
             );
 //add limelight movement here
             LLCorrectionTimer.reset();
-            while (opModeIsActive()) {
+            while (opModeIsActive() && !isStopRequested()) {
                 LLResult result = limelight.getLatestResult();
                 if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() <= 1) {
+                    if (result.isValid() && result.getTa() > 0.001 && result.getTa() < 0.2 && LLCorrectionTimer.seconds() <= 1) {
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
                         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
@@ -921,7 +921,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                                 break;
                             }
                         }
-                    } else if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() > 1) {
+                    } else if (result.isValid() && result.getTa() > 0.001 && result.getTa() < 0.2 && LLCorrectionTimer.seconds() > 1) {
                         Actions.runBlocking(
                                 go_to_sample_1.build()
                         );
@@ -985,11 +985,11 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                     )
             ));
             //add limelight movement here
-//            new SleepAction(0.5);
+            new SleepAction(0.5);
 
             limelight.pipelineSwitch(2);
             LLCorrectionTimer.reset();
-            while (opModeIsActive()) {
+            while (opModeIsActive() && !isStopRequested()) {
                 LLResult result = limelight.getLatestResult();
                 if (result != null) {
                     if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
@@ -1048,7 +1048,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
             if (!sample4detected) {
                 limelight.pipelineSwitch(0);
                 LLCorrectionTimer.reset();
-                while (opModeIsActive()) {
+                while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
                     if (result != null) {
                         if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
@@ -1112,7 +1112,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                 ));
                 limelight.pipelineSwitch(2);
                 LLCorrectionTimer.reset();
-                while (opModeIsActive()) {
+                while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
                     if (result != null) {
                         if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
@@ -1172,7 +1172,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
             if (!sample4detected) {
                 limelight.pipelineSwitch(0);
                 LLCorrectionTimer.reset();
-                while (opModeIsActive()) {
+                while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
                     if (result != null) {
                         if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {

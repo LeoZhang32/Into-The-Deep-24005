@@ -17,6 +17,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -31,9 +32,10 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 import java.util.List;
 
 
-@Autonomous (name = "auto_SPECIMEN_test1")
+@Disabled
+@Autonomous (name = "auto_SPECIMEN_test2b")
 
-public final class auto_SPECIMEN_test1 extends LinearOpMode {
+public final class auto_SPECIMEN_test2b extends LinearOpMode {
     DcMotor FR;
     DcMotor FL;
     DcMotor BR;
@@ -640,59 +642,54 @@ public final class auto_SPECIMEN_test1 extends LinearOpMode {
 
         //score held specimen
         TrajectoryActionBuilder go_score_specimen_0 = drive.actionBuilder(beginPose)
-                .strafeToSplineHeading(new Vector2d(-10, 41), (Math.toRadians(90)));
+                .strafeToSplineHeading(new Vector2d(-10, 41.5), (Math.toRadians(90)));
 
-        //go to sample 4
-        TrajectoryActionBuilder go_to_sample_4 = go_score_specimen_0.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-50, 51), (Math.toRadians(-90.001)));
-
-        //go dump sample 4, pickup sample 5, dump sample 5
-        TrajectoryActionBuilder go_dump_sample_4 = go_to_sample_4.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-60, 51), (Math.toRadians(-90)));
-
-        //go to sample 6
-        TrajectoryActionBuilder go_to_sample_6 = go_dump_sample_4.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-60, 49), (Math.toRadians(-117)));
-
-        //go dump sample 6
-        TrajectoryActionBuilder go_dump_sample_6 = go_to_sample_6.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-60, 50), (Math.toRadians(-90)));
+        //nudge specimen 0
+        TrajectoryActionBuilder nudge_specimen_0 = go_score_specimen_0.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(-10, 38), (Math.toRadians(90)));
 
         //go to specimen 1 placed by human player
-        TrajectoryActionBuilder go_to_specimen_1 = go_dump_sample_6.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-28, 48), (Math.toRadians(135)));
+        TrajectoryActionBuilder go_to_specimen_1 = nudge_specimen_0.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(-10, 44), (Math.toRadians(90)))
+                .strafeToSplineHeading(new Vector2d(-30, 46), (Math.toRadians(135)));
 
         //go score specimen 1
         TrajectoryActionBuilder go_score_specimen_1 = go_to_specimen_1.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-7, 41.5), (Math.toRadians(90)));
+                .strafeToSplineHeading(new Vector2d(-8, 42), (Math.toRadians(90)));
+
+        //nudge specimen 1
+        TrajectoryActionBuilder nudge_specimen_1 = go_score_specimen_1.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(-8, 40), (Math.toRadians(90)));
+
+        //go push sample 4
+        TrajectoryActionBuilder go_to_sample_4 = nudge_specimen_1.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-32, 40), (Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-38, 15), (Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-48, 15), (Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-48, 58), (Math.toRadians(90)));
+
+        //go push sample 5
+        TrajectoryActionBuilder go_to_sample_5 = go_to_sample_4.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-48, 15), (Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-56, 15), (Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-56, 58), (Math.toRadians(90)));
 
         //go to specimen 2 placed by human player
-        TrajectoryActionBuilder go_to_specimen_2 = go_score_specimen_1.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-28, 48), (Math.toRadians(135)));
+        TrajectoryActionBuilder go_to_specimen_2 = go_to_sample_5.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-58, 46), (Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-30, 46), (Math.toRadians(135)));
 
         //go score specimen 2
         TrajectoryActionBuilder go_score_specimen_2 = go_to_specimen_2.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-4, 41.5), (Math.toRadians(90)));
+                .strafeToSplineHeading(new Vector2d(-6, 42), (Math.toRadians(90)));
 
-        //go to specimen 3 placed by human player
-        TrajectoryActionBuilder go_to_specimen_3 = go_score_specimen_2.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-28, 48), (Math.toRadians(135)));
-
-        //go score specimen 3
-        TrajectoryActionBuilder go_score_specimen_3 = go_to_specimen_3.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-1, 41.5), (Math.toRadians(90)));
-
-        //go to specimen 4 placed by human player
-        TrajectoryActionBuilder go_to_specimen_4 = go_score_specimen_3.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-28, 48), (Math.toRadians(135)));
-
-        //go score specimen 4
-        TrajectoryActionBuilder go_score_specimen_4 = go_to_specimen_4.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(2, 41.5), (Math.toRadians(90)));
+        //nudge specimen 2
+        TrajectoryActionBuilder nudge_specimen_2 = go_score_specimen_2.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(-6, 40), (Math.toRadians(90)));
 
         //go park
-        TrajectoryActionBuilder go_park = go_score_specimen_4.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(-48, 56), (Math.toRadians(170)));
+        TrajectoryActionBuilder go_park = nudge_specimen_2.endTrajectory().fresh()
+                .strafeToSplineHeading(new Vector2d(-30, 56), (Math.toRadians(160)));
 
 
 
@@ -715,26 +712,31 @@ public final class auto_SPECIMEN_test1 extends LinearOpMode {
                             go_score_specimen_0.build(),
                             lift.liftSpecimen()
                     ),
-                    new SleepAction(0.2),
                     lift.ScoreSpecimen(),
                     oclaw.OpenOClaw(),
-                    new SleepAction(0.2),
-
-                    // specimen 0 cycle completes by now. sample 4 cycle starts below.
+                    nudge_specimen_0.build(),
+                    // specimen 0 cycle completes by now. specimen 1 cycle starts below.
                     new ParallelAction(
-                            go_to_sample_4.build(),
-                            oarm.LowerOArm(),
-                            lift.liftDown(),
+                            go_to_specimen_1.build(),
+                            new SequentialAction(
+                                    new SleepAction(0.4),
+                                    oarm.LowerOArm()
+                            ),
+                            new SequentialAction(
+                                    new SleepAction(0.4),
+                                    lift.liftDown()
+                            ),
                             intake.SettoVision(),
                             wrist.SettoWrist_Vision()
                     )
-            ));
+                    ));
+
             //add limelight movement here
             LLCorrectionTimer.reset();
             while (opModeIsActive()) {
                 LLResult result = limelight.getLatestResult();
                 if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
+                    if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() <= 1) {
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
                         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
@@ -764,14 +766,14 @@ public final class auto_SPECIMEN_test1 extends LinearOpMode {
                                 BR.setPower(0);
                                 FR.setPower(0);
                                 BL.setPower(0);
-                                telemetry.addData("limelight loop sample 4 breaks", FL.getPower());
+                                telemetry.addData("limelight loop specimen 1 breaks", FL.getPower());
                                 telemetry.update();
                                 break;
                             }
                         }
-                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
+                    } else if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() > 1) {
                         Actions.runBlocking(
-                                go_to_sample_4.build()
+                                go_to_specimen_1.build()
                         );
                         break;
                     } else {
@@ -786,49 +788,60 @@ public final class auto_SPECIMEN_test1 extends LinearOpMode {
             BR.setPower(0);
             FR.setPower(0);
             BL.setPower(0);
-                    drive.updatePoseEstimate();
-                    Actions.runBlocking(new SequentialAction(
+            drive.updatePoseEstimate();
+            Actions.runBlocking(new SequentialAction(
+                    new ParallelAction(
+                            intake.SettoAim(),
+                            wrist.SettoWrist0()
+                    ),
+                    new SleepAction(0.4),
+                    intake.SettoGrab(),
+                    new SleepAction(0.3),
+                    new ParallelAction(
                             new ParallelAction(
-                                    intake.SettoAim(),
-                                    wrist.SettoWrist0()
+                                    new SleepAction(1),
+                                    go_score_specimen_1.build()
                             ),
-                            new SleepAction(0.4),
-                            intake.SettoGrab(),
-                            new SleepAction(0.3),
-                            new ParallelAction(
-                                go_dump_sample_4.build(),
-//                                lift.liftDown(),
-                                new SequentialAction(
+                            new SequentialAction(
                                     intake.SettoAfterGrab(),
-                                    new SleepAction(0.6),
+                                    new SleepAction(0.2),
+                                    wrist.SettoWrist180(),
+                                    new SleepAction(0.2),
                                     intake.SettoTrasfer(),
                                     new SleepAction(0.6),
                                     oclaw.CloseOClaw(),
                                     new SleepAction(0.3),
                                     iclaw.OpenIClaw(),
                                     new ParallelAction(
-                                        intake.SettoAfterTrasfer(),
-                                        oarm.ExtendOArm()
+                                            intake.SettoAfterTrasfer(),
+                                            oarm.ExtendOArm()
                                     )
-                                )
-                            ),
-                            new SleepAction(1),
+                            )
+                    ),
+                    new SleepAction(0.3),
+                    lift.ScoreSpecimen(),
+                    oclaw.OpenOClaw(),
+                    nudge_specimen_1.build(),
+                    // specimen 1 cycle completes by now. sample 4 cycle starts below.
 
-
-                    // sample 4 cycle completes by now. sample 5 cycle starts below
-
-                            new ParallelAction(
-                                new SequentialAction(
-                                    oclaw.OpenOClaw(),
-                                    new SleepAction(0.4),
-                                    oarm.LowerOArm()
-                                ),
-                                intake.SettoVision(),
-                                wrist.SettoWrist_Vision()
-                            ),
-                            new SleepAction(1.5)
+                    new ParallelAction(
+                            go_to_sample_4.build(),
+                            oarm.LowerOArm(),
+                            lift.liftDown()
+                    ),
+                    // sample 4 cycle completes by now. sample 5 cycle starts below.
+                    go_to_sample_5.build(),
+                    // sample 5 cycle completes by now. specimen 2 cycle starts below.
+                    new ParallelAction(
+                            go_to_specimen_2.build(),
+                            new SequentialAction(
+                                    new SleepAction(1.4),
+                                    intake.SettoVision(),
+                                    wrist.SettoWrist_Vision()
+                            )
+                    ),
+                    new SleepAction(1)
                     ));
-
 
             //add limelight movement here
             LLCorrectionTimer.reset();
@@ -898,204 +911,10 @@ public final class auto_SPECIMEN_test1 extends LinearOpMode {
                     intake.SettoGrab(),
                     new SleepAction(0.3),
                     new ParallelAction(
-                            go_dump_sample_4.build(),
-                            new SequentialAction(
-                                    intake.SettoAfterGrab(),
-                                    new SleepAction(0.6),
-                                    intake.SettoTrasfer(),
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                            intake.SettoAfterTrasfer(),
-                                            oarm.ExtendOArm()
-                                    )
-                            )
-                    ),
-                    new SleepAction(1),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.4)
-            ));
-
-            // sample 5 cycle completes by now. sample 6 cycle starts below
-                    Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            go_to_sample_6.build(),
-                            oarm.LowerOArm(),
-                            intake.SettoVision(),
-                            wrist.SettoWrist_Vision()
-                    ),
-                    new SleepAction(1.5)
-                    ));
-//add limelight movement here
-            LLCorrectionTimer.reset();
-            while (opModeIsActive()) {
-                LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
-                        telemetry.addData("tx", result.getTx());
-                        telemetry.addData("ty", result.getTy());
-                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                        if (result.getTy() < -2) {
-                            FL.setPower(0.3);
-                            BR.setPower(0.3);
-                            FR.setPower(-0.3);
-                            BL.setPower(-0.3);
-                        } else if (result.getTy() > 2) {
-                            FL.setPower(-0.3);
-                            BR.setPower(-0.3);
-                            FR.setPower(0.3);
-                            BL.setPower(0.3);
-                        } else {
-                            if (result.getTx() > 2) {
-                                FL.setPower(0.3);
-                                BR.setPower(0.3);
-                                FR.setPower(0.3);
-                                BL.setPower(0.3);
-                            } else if (result.getTx() < -2) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else {
-                                FL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                BL.setPower(0);
-                                telemetry.addData("limelight loop sample 6 breaks", FL.getPower());
-                                telemetry.update();
-                                break;
-                            }
-                        }
-                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
-                        Actions.runBlocking(
-                                go_to_sample_6.build()
-                        );
-                        break;
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            };
-            //limelight correction done
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-
-            drive.updatePoseEstimate();
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            intake.SettoAim(),
-                            wrist.SettoWrist153()
-                    ),
-                    new SleepAction(0.4),
-                    intake.SettoGrab(),
-                    new SleepAction(0.3),
-                    new ParallelAction(
-                            go_dump_sample_6.build(),
-                            new SequentialAction(
-                                    intake.SettoAfterGrab(),
-                                    new SleepAction(0.2),
-                                    wrist.SettoWrist0(),
-                                    new SleepAction(0.2),
-                                    intake.SettoTrasfer(),
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                            intake.SettoAfterTrasfer(),
-                                            oarm.ExtendOArm()
-                                    )
-                            )
-                    ),
-                    new SleepAction(1),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.4)
-            ));
-
-            // sample 6 cycle completes by now. specimen 1 cycle starts below.
-            Actions.runBlocking(new SequentialAction(
                             new ParallelAction(
-                                    go_to_specimen_1.build(),
-                                    oarm.LowerOArm(),
-                                    intake.SettoVision(),
-                                    wrist.SettoWrist_Vision()
-                            )
-                    )
-            );
-//add limelight movement here
-            LLCorrectionTimer.reset();
-            while (opModeIsActive()) {
-                LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() <= 1) {
-                        telemetry.addData("tx", result.getTx());
-                        telemetry.addData("ty", result.getTy());
-                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                        if (result.getTy() < -2) {
-                            FL.setPower(0.3);
-                            BR.setPower(0.3);
-                            FR.setPower(-0.3);
-                            BL.setPower(-0.3);
-                        } else if (result.getTy() > 2) {
-                            FL.setPower(-0.3);
-                            BR.setPower(-0.3);
-                            FR.setPower(0.3);
-                            BL.setPower(0.3);
-                        } else {
-                            if (result.getTx() > 2) {
-                                FL.setPower(0.3);
-                                BR.setPower(0.3);
-                                FR.setPower(0.3);
-                                BL.setPower(0.3);
-                            } else if (result.getTx() < -2) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else {
-                                FL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                BL.setPower(0);
-                                telemetry.addData("limelight loop specimen 1 breaks", FL.getPower());
-                                telemetry.update();
-                                break;
-                            }
-                        }
-                    } else if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() > 1) {
-                        Actions.runBlocking(
-                                go_to_specimen_1.build()
-                        );
-                        break;
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            };
-            //limelight correction done
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            drive.updatePoseEstimate();
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            intake.SettoAim(),
-                            wrist.SettoWrist0()
-                    ),
-                    new SleepAction(0.4),
-                    intake.SettoGrab(),
-                    new SleepAction(0.3),
-                    new ParallelAction(
-                            go_score_specimen_1.build(),
+                                    new SleepAction(1),
+                                    go_score_specimen_2.build()
+                            ),
                             new SequentialAction(
                                     intake.SettoAfterGrab(),
                                     new SleepAction(0.2),
@@ -1108,319 +927,16 @@ public final class auto_SPECIMEN_test1 extends LinearOpMode {
                                     iclaw.OpenIClaw(),
                                     new ParallelAction(
                                             intake.SettoAfterTrasfer(),
-                                            lift.liftSpecimen(),
                                             oarm.ExtendOArm()
                                     )
                             )
                     ),
-                    new SleepAction(0.2),
-                    lift.ScoreSpecimen(),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.2),
-
-                    // specimen 1 cycle completes by now. specimen 2 cycle starts below
-                    new ParallelAction(
-                        go_to_specimen_2.build(),
-                        oarm.LowerOArm(),
-                        lift.liftDown(),
-                        intake.SettoVision(),
-                        wrist.SettoWrist_Vision()
-
-                    )
-            ));
-            //add limelight movement here
-            LLCorrectionTimer.reset();
-            while (opModeIsActive()) {
-                LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() <= 1) {
-                        telemetry.addData("tx", result.getTx());
-                        telemetry.addData("ty", result.getTy());
-                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                        if (result.getTy() < -2) {
-                            FL.setPower(0.3);
-                            BR.setPower(0.3);
-                            FR.setPower(-0.3);
-                            BL.setPower(-0.3);
-                        } else if (result.getTy() > 2) {
-                            FL.setPower(-0.3);
-                            BR.setPower(-0.3);
-                            FR.setPower(0.3);
-                            BL.setPower(0.3);
-                        } else {
-                            if (result.getTx() > 2) {
-                                FL.setPower(0.3);
-                                BR.setPower(0.3);
-                                FR.setPower(0.3);
-                                BL.setPower(0.3);
-                            } else if (result.getTx() < -2) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else {
-                                FL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                BL.setPower(0);
-                                telemetry.addData("limelight loop specimen 1 breaks", FL.getPower());
-                                telemetry.update();
-                                break;
-                            }
-                        }
-                    } else if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() > 1) {
-                        Actions.runBlocking(
-                                go_to_specimen_2.build()
-                        );
-                        break;
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            };
-            //limelight correction done
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            drive.updatePoseEstimate();
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            intake.SettoAim(),
-                            wrist.SettoWrist0()
-                    ),
-                    new SleepAction(0.4),
-                    intake.SettoGrab(),
                     new SleepAction(0.3),
-                    new ParallelAction(
-                            go_score_specimen_2.build(),
-                            new SequentialAction(
-                                    intake.SettoAfterGrab(),
-                                    new SleepAction(0.2),
-                                    wrist.SettoWrist180(),
-                                    new SleepAction(0.2),
-                                    intake.SettoTrasfer(),
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                            intake.SettoAfterTrasfer(),
-                                            lift.liftSpecimen(),
-                                            oarm.ExtendOArm()
-                                    )
-                            )
-                    ),
-                    new SleepAction(0.2),
                     lift.ScoreSpecimen(),
                     oclaw.OpenOClaw(),
-                    new SleepAction(0.2),
+                    nudge_specimen_2.build(),
 
-                    // specimen 2 cycle completes by now. specimen 3 cycle starts below
-
-                    new ParallelAction(
-                            go_to_specimen_3.build(),
-                            oarm.LowerOArm(),
-                            lift.liftDown(),
-                            intake.SettoVision(),
-                            wrist.SettoWrist_Vision()
-
-                    )
-            ));
-            //add limelight movement here
-            LLCorrectionTimer.reset();
-            while (opModeIsActive()) {
-                LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() <= 1) {
-                        telemetry.addData("tx", result.getTx());
-                        telemetry.addData("ty", result.getTy());
-                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                        if (result.getTy() < -2) {
-                            FL.setPower(0.3);
-                            BR.setPower(0.3);
-                            FR.setPower(-0.3);
-                            BL.setPower(-0.3);
-                        } else if (result.getTy() > 2) {
-                            FL.setPower(-0.3);
-                            BR.setPower(-0.3);
-                            FR.setPower(0.3);
-                            BL.setPower(0.3);
-                        } else {
-                            if (result.getTx() > 2) {
-                                FL.setPower(0.3);
-                                BR.setPower(0.3);
-                                FR.setPower(0.3);
-                                BL.setPower(0.3);
-                            } else if (result.getTx() < -2) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else {
-                                FL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                BL.setPower(0);
-                                telemetry.addData("limelight loop specimen 1 breaks", FL.getPower());
-                                telemetry.update();
-                                break;
-                            }
-                        }
-                    } else if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() > 1) {
-                        Actions.runBlocking(
-                                go_to_specimen_3.build()
-                        );
-                        break;
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            };
-            //limelight correction done
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            drive.updatePoseEstimate();
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            intake.SettoAim(),
-                            wrist.SettoWrist0()
-                    ),
-                    new SleepAction(0.4),
-                    intake.SettoGrab(),
-                    new SleepAction(0.3),
-                    new ParallelAction(
-                            go_score_specimen_3.build(),
-                            new SequentialAction(
-                                    intake.SettoAfterGrab(),
-                                    new SleepAction(0.2),
-                                    wrist.SettoWrist180(),
-                                    new SleepAction(0.2),
-                                    intake.SettoTrasfer(),
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                            intake.SettoAfterTrasfer(),
-                                            lift.liftSpecimen(),
-                                            oarm.ExtendOArm()
-                                    )
-                            )
-                    ),
-                    new SleepAction(0.2),
-                    lift.ScoreSpecimen(),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.2),
-
-                    // specimen 3 cycle completes by now. specimen 4 cycle starts below
-
-                    new ParallelAction(
-                            go_to_specimen_4.build(),
-                            oarm.LowerOArm(),
-                            lift.liftDown(),
-                            intake.SettoVision(),
-                            wrist.SettoWrist_Vision()
-
-                    )
-            ));
-            //add limelight movement here
-            LLCorrectionTimer.reset();
-            while (opModeIsActive()) {
-                LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() <= 1) {
-                        telemetry.addData("tx", result.getTx());
-                        telemetry.addData("ty", result.getTy());
-                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                        if (result.getTy() < -2) {
-                            FL.setPower(0.3);
-                            BR.setPower(0.3);
-                            FR.setPower(-0.3);
-                            BL.setPower(-0.3);
-                        } else if (result.getTy() > 2) {
-                            FL.setPower(-0.3);
-                            BR.setPower(-0.3);
-                            FR.setPower(0.3);
-                            BL.setPower(0.3);
-                        } else {
-                            if (result.getTx() > 2) {
-                                FL.setPower(0.3);
-                                BR.setPower(0.3);
-                                FR.setPower(0.3);
-                                BL.setPower(0.3);
-                            } else if (result.getTx() < -2) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else {
-                                FL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                BL.setPower(0);
-                                telemetry.addData("limelight loop specimen 1 breaks", FL.getPower());
-                                telemetry.update();
-                                break;
-                            }
-                        }
-                    } else if (result.isValid() && result.getTa() > 0.01 && result.getTa() < 0.1 && LLCorrectionTimer.seconds() > 1) {
-                        Actions.runBlocking(
-                                go_to_specimen_4.build()
-                        );
-                        break;
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            };
-            //limelight correction done
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            drive.updatePoseEstimate();
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            intake.SettoAim(),
-                            wrist.SettoWrist0()
-                    ),
-                    new SleepAction(0.4),
-                    intake.SettoGrab(),
-                    new SleepAction(0.3),
-                    new ParallelAction(
-                            go_score_specimen_4.build(),
-                            new SequentialAction(
-                                    intake.SettoAfterGrab(),
-                                    new SleepAction(0.2),
-                                    wrist.SettoWrist180(),
-                                    new SleepAction(0.2),
-                                    intake.SettoTrasfer(),
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                            intake.SettoAfterTrasfer(),
-                                            lift.liftSpecimen(),
-                                            oarm.ExtendOArm()
-                                    )
-                            )
-                    ),
-                    new SleepAction(0.2),
-                    lift.ScoreSpecimen(),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.2),
-
-                    // specimen 4 cycle completes by now. go park
+                    // specimen 2 cycle completes by now. go park
                     new ParallelAction(
                             go_park.build(),
                             oarm.LowerOArm(),
