@@ -31,9 +31,9 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 import java.util.List;
 
 
-@Autonomous (name = "auto_SAMPLE_0plus5")
+@Autonomous (name = "auto_SAMPLE_0plus5_red")
 
-public final class auto_SAMPLE_0plus5 extends LinearOpMode {
+public final class auto_SAMPLE_0plus5_Red extends LinearOpMode {
     DcMotor FR;
     DcMotor FL;
     DcMotor BR;
@@ -646,7 +646,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
         //go to submersible 5a
         TrajectoryActionBuilder go_to_sub_5a = return_basket_4.endTrajectory().fresh()
                 .strafeToSplineHeading(new Vector2d(35,10), (Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(25,10), (Math.toRadians(0)));
+                .strafeToLinearHeading(new Vector2d(24,10), (Math.toRadians(0)));
 
 
         waitForStart();
@@ -1044,9 +1044,9 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
             BR.setPower(0);
             FR.setPower(0);
             BL.setPower(0);
-            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 0 for red or pipeline 2 for blue.
+            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 4 for red or pipeline 6 for blue.
             if (!sample4detected) {
-                limelight.pipelineSwitch(0);
+                limelight.pipelineSwitch(4);
                 LLCorrectionTimer.reset();
                 while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
@@ -1168,9 +1168,9 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
             BR.setPower(0);
             FR.setPower(0);
             BL.setPower(0);
-            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 0 for red or pipeline 2 for blue.
+            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 4 for red or pipeline 6 for blue.
             if (!sample4detected) {
-                limelight.pipelineSwitch(0);
+                limelight.pipelineSwitch(4);
                 LLCorrectionTimer.reset();
                 while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
