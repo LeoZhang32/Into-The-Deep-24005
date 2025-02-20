@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.nationals;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import androidx.annotation.NonNull;
 
@@ -25,12 +25,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+import org.firstinspires.ftc.teamcode.itd.nationals.positions_and_variables;
 
 
 @Disabled
-@Autonomous (name = "auto_SAMPLE_test2")
+@Autonomous (name = "auto_SAMPLE_test1")
 
-public final class auto_SAMPLE_test2 extends LinearOpMode {
+public final class auto_SAMPLE_test1 extends LinearOpMode {
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -44,13 +45,13 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
         public Lift(HardwareMap hardwareMap) {
             VSlideF = hardwareMap.get(DcMotorEx.class, "VSlideF");
             VSlideF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            VSlideF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             VSlideF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideF.setDirection(DcMotorSimple.Direction.REVERSE);
 
             VSlideB = hardwareMap.get(DcMotorEx.class, "VSlideB");
             VSlideB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            VSlideB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             VSlideB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             VSlideB.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -60,42 +61,42 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
              }
 
 
-//        public class Liftspecimen0Up implements Action {
-//            private boolean initialized = false;
-//
-//            @Override
-//            public boolean run(@NonNull TelemetryPacket packet) {
-//
-//                if (!initialized) {
-//
-//                    VSlideF.setPower(0.5);
-//                    VSlideB.setPower(0.5);
-//                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
-//                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
-//                    telemetry.addData("front Power", VSlideF.getPower());
-//                    telemetry.addData("back Power", VSlideB.getPower());
-//                    telemetry.update();
-//
-//                    initialized = true;
-//                }
-//
-//                double pos_VSF = VSlideF.getCurrentPosition();
-//                packet.put("liftPosF", pos_VSF);
-//                double pos_VSB = VSlideB.getCurrentPosition();
-//                packet.put("liftPosB", pos_VSB);
-//                if (pos_VSF < 2050.0) {
-//                    return true;
-//                } else {
-//                    VSlideF.setPower(0);
-//                    VSlideB.setPower(0);
-//
-//                    return false;
-//                }
-//            }
-//        }
-//        public Action liftspecimen0Up() {
-//            return new Liftspecimen0Up();
-//        }
+        public class Liftspecimen0Up implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                if (!initialized) {
+
+                    VSlideF.setPower(0.5);
+                    VSlideB.setPower(0.5);
+                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
+                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
+                    telemetry.addData("front Power", VSlideF.getPower());
+                    telemetry.addData("back Power", VSlideB.getPower());
+                    telemetry.update();
+
+                    initialized = true;
+                }
+
+                double pos_VSF = VSlideF.getCurrentPosition();
+                packet.put("liftPosF", pos_VSF);
+                double pos_VSB = VSlideB.getCurrentPosition();
+                packet.put("liftPosB", pos_VSB);
+                if (pos_VSF < 2050.0) {
+                    return true;
+                } else {
+                    VSlideF.setPower(0);
+                    VSlideB.setPower(0);
+
+                    return false;
+                }
+            }
+        }
+        public Action liftspecimen0Up() {
+            return new Liftspecimen0Up();
+        }
 
 
 
@@ -109,13 +110,9 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
 
                 if (!initialized) {
 
-                    VSlideF.setPower(0.2);
-                    VSlideB.setPower(0.2);
-                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
-                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
-                    telemetry.addData("front Power", VSlideF.getPower());
-                    telemetry.addData("back Power", VSlideB.getPower());
-                    telemetry.update();
+                    VSlideF.setPower(0.5);
+                    VSlideB.setPower(0.5);
+
                     initialized = true;
                 }
 
@@ -123,11 +120,17 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-                if (pos_VSF < 1000 && pos_VSB > -1000) {
+                if (pos_VSF < 2750) {
+                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
+                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
+                    telemetry.addData("front Power", VSlideF.getPower());
+                    telemetry.addData("back Power", VSlideB.getPower());
+                    telemetry.update();
                     return true;
                 } else {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
+
                     return false;
                 }
             }
@@ -143,13 +146,8 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    VSlideF.setPower(-0.2);
-                    VSlideB.setPower(-0.2);
-                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
-                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
-                    telemetry.addData("front Power", VSlideF.getPower());
-                    telemetry.addData("back Power", VSlideB.getPower());
-                    telemetry.update();
+                    VSlideF.setPower(-0.5);
+                    VSlideB.setPower(-0.5);
                     initialized = true;
                 }
 
@@ -157,14 +155,20 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
                 packet.put("liftPosF", pos_VSF);
                 double pos_VSB = VSlideB.getCurrentPosition();
                 packet.put("liftPosB", pos_VSB);
-//                boolean switchPressed = limitSwitch.getState();
-                if (pos_VSF > 50 && pos_VSB < -50 && limitSwitch.getState()) {
-                    return true;
-                }
-                else {
+                boolean switchPressed = limitSwitch.getState();
+                if (pos_VSF < 50) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
                     return false;
+                }
+                else {
+                    telemetry.addData("front Position", VSlideF.getCurrentPosition());
+                    telemetry.addData("back Position", VSlideB.getCurrentPosition());
+                    telemetry.addData("front Power", VSlideF.getPower());
+                    telemetry.addData("back Power", VSlideB.getPower());
+//                    telemetry.addData("limit switch", "not pressed");
+                    telemetry.update();
+                    return true;
                 }
             }
         }
@@ -477,12 +481,6 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
         Actions.runBlocking(wrist.SettoWrist0());
 
 
-        DigitalChannel limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
-        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
-
-
-
-
         //score held sample
         TrajectoryActionBuilder go_score_sample_0 = drive.actionBuilder(beginPose)
 
@@ -539,25 +537,74 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() <= 0.01) {
 
-            boolean switchPressed = !limitSwitch.getState(); // Inverted to show "pressed" as true
-
-            // Display the state on the telemetry
-            if (switchPressed) {
-                telemetry.addData("Limit Switch", "Pressed");
-            } else {
-                telemetry.addData("Limit Switch", "Not Pressed");
-            }
-
-            telemetry.update();
-
-            // Optional: Add some delay to prevent too frequent updates in telemetry
-            sleep(100);
-
             Actions.runBlocking(new SequentialAction(
+                    new ParallelAction(
+                            go_score_sample_0.build(),
+                            lift.liftUp()
+                    ),
+                    oarm.LiftOArm(),
+                    new SleepAction(0.3),
+                    oclaw.OpenOClaw(),
+                    new SleepAction(0.4),
+                    // sample 0 cycle completes by now. sample 3 cycle starts below
 
-                    lift.liftUp(),
-                    new SleepAction(1),
-                    lift.liftDown()
+                    new ParallelAction(
+                            go_to_sample_3.build(),
+                            oarm.LowerOArm(),
+                            lift.liftDown()
+                    ),
+
+                    intake.SettoAim(),
+                    new SleepAction(0.6),
+                    intake.SettoGrab(),
+                    new SleepAction(0.3),
+
+
+                    new ParallelAction(
+                        return_basket_3.build(),
+                        new SequentialAction(
+                            intake.SettoTrasfer(),
+                            new SleepAction(1),
+                            oclaw.CloseOClaw(),
+                            new SleepAction(0.2),
+                            iclaw.OpenIClaw(),
+                            new SleepAction(0.3),
+                            new ParallelAction(
+                                intake.SettoAfterTrasfer(),
+                                lift.liftUp()
+                            )
+                        )
+                    ),
+                    oarm.LiftOArm(),
+                    new SleepAction(0.5),
+
+                    oclaw.OpenOClaw(),
+                    new SleepAction(0.65),
+                    new ParallelAction(
+                            go_to_sample_2.build(),
+                            oarm.LowerOArm(),
+                            lift.liftDown()
+                    ),
+                    intake.SettoAim(),
+                    new SleepAction(0.6),
+                    intake.SettoGrab(),
+                    new SleepAction(0.3),
+                    new ParallelAction(
+                        return_basket_2.build(),
+                        new SequentialAction(
+                            intake.SettoTrasfer(),
+                            new SleepAction(1),
+                            oclaw.CloseOClaw(),
+                            new SleepAction(0.2),
+                            iclaw.OpenIClaw(),
+                            new SleepAction(0.3),
+                            new ParallelAction(
+                                    intake.SettoAfterTrasfer(),
+                                    lift.liftUp()
+                            )
+                        )
+                    )
+
 
 
 
@@ -647,6 +694,7 @@ public final class auto_SAMPLE_test2 extends LinearOpMode {
                     )
 
             );
+
 
 
         }

@@ -70,7 +70,7 @@ public class teleop_new extends LinearOpMode {
         IArmR = hardwareMap.get(Servo.class, "IArmR");
         IArmC = hardwareMap.get(Servo.class, "IArmC");
         IWrist = hardwareMap.get(Servo.class, "IWrist");
-        IWrist.scaleRange(0.0, 0.6);
+        IWrist.scaleRange(0.2, 0.76);
         IClaw = hardwareMap.get(Servo.class, "IClaw");
         HSlideL = hardwareMap.get(Servo.class, "HSlideL");
         HSlideR = hardwareMap.get(Servo.class, "HSlideR");

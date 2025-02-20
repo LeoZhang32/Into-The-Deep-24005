@@ -472,7 +472,7 @@ public final class auto_SAMPLE_0plus5_Red extends LinearOpMode {
 
         public IntakeWrist (HardwareMap hardwareMap) {
             IWrist = hardwareMap.get(Servo.class, "IWrist");
-            IWrist.scaleRange(0.0, 0.6);
+            IWrist.scaleRange(0.2, 0.76);
         }
 
 

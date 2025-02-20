@@ -4,6 +4,7 @@ public class positions_and_variables {
 
     public double hslide_trans = 0.35;
     public double hslide_after_trans = 0.3;
+    public double hslide_after_spectrans = 0.25;
     public double hslide_aim = 0.05;
 
     public double intake_arm_vision = 0.2;
@@ -15,8 +16,8 @@ public class positions_and_variables {
 
     public double intake_coax_trans = 0.15;
     public double intake_coax_aftertrans = 0;
-    public double intake_coax_aim = 0.95;
-    public double intake_coax_grab = 0.95;
+    public double intake_coax_aim = 0.96;
+    public double intake_coax_grab = 0.96;
     public double intake_coax_lift = 0.5;
     public double intake_coax_vision = 0.7;
 
@@ -31,10 +32,10 @@ public class positions_and_variables {
     public double intake_wrist_vision = 0.42; //this is to maximize limelight's field of view
     public double intake_wrist153 = 0.85; //this is for grabbing sample 1 in auto
 
-    public double outtake_claw_close = 0.37;
-    public double outtake_claw_open = 0.7;
+    public double outtake_claw_close = 0.57; //small servo 0.37
+    public double outtake_claw_open = 0.77; //small servo 0.7
 
-    public double outtake_arm_transfer = 0.97;
+    public double outtake_arm_transfer = 0.99;
     public double outtake_arm_transfer_auto = 0.99;
     public double outtake_arm_sample = 0.37;
     public double outtake_arm_specimenHold = 0.18;

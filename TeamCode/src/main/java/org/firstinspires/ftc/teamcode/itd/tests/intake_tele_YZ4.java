@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.nationals;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -8,10 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.itd.nationals.CycleGamepad;
+import org.firstinspires.ftc.teamcode.itd.nationals.positions_and_variables;
+
 
 @Disabled
 @TeleOp
-public class intake_tele_YZ2_2 extends LinearOpMode {
+public class intake_tele_YZ4 extends LinearOpMode {
     ElapsedTime transferTimer = new ElapsedTime();
     ElapsedTime grabTimer = new ElapsedTime();
     boolean isTransferTimerRunning = false; // Track if timer is running
@@ -56,9 +59,9 @@ public class intake_tele_YZ2_2 extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
-            cycle_gamepad1.updateX(4);
+            cycle_gamepad1.updateX(5);
             cycle_gamepad1.updateRB(4);
-            cycle_gamepad1.updateA(2);
+//            cycle_gamepad1.updateA(2);
 
             cycle_gamepad2.updateA(2);
             cycle_gamepad2.updateX(2);
@@ -72,25 +75,34 @@ public class intake_tele_YZ2_2 extends LinearOpMode {
                 IArmL.setPosition(pos.intake_arm_trans);
                 IArmR.setPosition(1-pos.intake_arm_trans);
                 IArmC.setPosition(pos.intake_coax_trans);
-                cycle_gamepad1.aPressCount = 1;
+                IClaw.setPosition(pos.intake_claw_close);
                 extendoIn = true;
             }
             else if (cycle_gamepad1.xPressCount == 1){
+                HSlideL.setPosition(pos.hslide_after_trans);
+                HSlideR.setPosition(1-pos.hslide_after_trans);
+                IArmL.setPosition(pos.intake_arm_lift);
+                IArmR.setPosition(1-pos.intake_arm_lift);
+                IArmC.setPosition(pos.intake_coax_lift);
+                extendoIn = false;
+                isTransferTimerRunning = false;
+            }
+            else if (cycle_gamepad1.xPressCount == 2){
                 HSlideL.setPosition(pos.hslide_aim);
                 HSlideR.setPosition(1-pos.hslide_aim);
                 IArmL.setPosition(pos.intake_arm_aim);
                 IArmR.setPosition(1-pos.intake_arm_aim);
                 IArmC.setPosition(pos.intake_coax_aim);
-                cycle_gamepad1.aPressCount = 0;
+                IClaw.setPosition(pos.intake_claw_open);
                 extendoIn = false;
             }
-            else if (cycle_gamepad1.xPressCount == 2){
+            else if (cycle_gamepad1.xPressCount == 3){
                 HSlideL.setPosition(pos.hslide_aim);
                 HSlideR.setPosition(1-pos.hslide_aim);
                 IArmL.setPosition(pos.intake_arm_grab);
                 IArmR.setPosition(1-pos.intake_arm_grab);
                 IArmC.setPosition(pos.intake_coax_grab);
-                cycle_gamepad1.aPressCount = 1;
+                IClaw.setPosition(pos.intake_claw_close);
                 extendoIn = false;
 
                 if (!isGrabTimerRunning) {
@@ -105,7 +117,7 @@ public class intake_tele_YZ2_2 extends LinearOpMode {
                 IArmL.setPosition(pos.intake_arm_lift);
                 IArmR.setPosition(1-pos.intake_arm_lift);
                 IArmC.setPosition(pos.intake_coax_lift);
-                cycle_gamepad1.aPressCount = 1;
+                IClaw.setPosition(pos.intake_claw_close);
                 extendoIn = false;
             }
 
@@ -116,15 +128,16 @@ public class intake_tele_YZ2_2 extends LinearOpMode {
                 if (grabTimer.milliseconds() >= 300) {
                     telemetry.addData("Grab Timer Expired", grabTimer.milliseconds());
 
-                    if (cycle_gamepad1.xPressCount == 2) {
-                        cycle_gamepad1.xPressCount = 3;
+                    if (cycle_gamepad1.xPressCount == 3) {
+                        cycle_gamepad1.xPressCount = 4;
+                        isGrabTimerRunning = false; // Stop tracking timer once done
                     }
-                    isGrabTimerRunning = false; // Stop tracking timer once done
+
                 }
             }
 
-            if (gamepad1.y && !isTransferTimerRunning) {
-                cycle_gamepad1.xPressCount = 1;
+            if (gamepad1.y) {
+                cycle_gamepad1.xPressCount = 2;
             }
 
             //wrist movements
@@ -142,22 +155,20 @@ public class intake_tele_YZ2_2 extends LinearOpMode {
             }
 
             //intake claw movement
-            if (!extendoIn) {
-                if (cycle_gamepad1.aPressCount == 1) {
-                    IClaw.setPosition(pos.intake_claw_close);
-                } else {
-                    IClaw.setPosition(pos.intake_claw_open);
-                }
-            }
+//            if (!extendoIn) {
+//                if (cycle_gamepad1.aPressCount == 1) {
+//                    IClaw.setPosition(pos.intake_claw_close);
+//                } else {
+//                    IClaw.setPosition(pos.intake_claw_open);
+//                }
+//            }
 
             //outtake claw movement
 
             if (cycle_gamepad2.aPressCount == 1) {
                 OClaw.setPosition(pos.outtake_claw_close);
-
                 if (!isTransferTimerRunning) {
-                    transferTimer.reset();
-                    isTransferTimerRunning = true;  // Indicate timer has started
+                    isTransferTimerRunning = true;
                 }
 
             }
@@ -171,6 +182,10 @@ public class intake_tele_YZ2_2 extends LinearOpMode {
                     IClaw.setPosition(pos.intake_claw_open);
                     cycle_gamepad1.aPressCount = 0;
                     isTransferTimerRunning = false; // Stop tracking timer once done
+                    if (cycle_gamepad1.xPressCount == 0) {
+                        cycle_gamepad1.xPressCount = 1;
+                    }
+
             }
 
             //outtake arm movement
@@ -182,6 +197,8 @@ public class intake_tele_YZ2_2 extends LinearOpMode {
             }
 
             telemetry.addData("extendo", extendoIn);
+            telemetry.addData("transfer Timer Active", isTransferTimerRunning);
+            telemetry.addData("transfer Timer Time", transferTimer.milliseconds());
             telemetry.addData("Grab Timer Active", isGrabTimerRunning);
             telemetry.addData("Grab Timer Time", grabTimer.milliseconds());
             telemetry.addData("Gamepad1 xPressCount", cycle_gamepad1.xPressCount);
@@ -191,6 +208,10 @@ public class intake_tele_YZ2_2 extends LinearOpMode {
             telemetry.addData("Gamepad2 aPressCount", cycle_gamepad2.aPressCount);
             telemetry.addData("Gamepad2 xPressCount", cycle_gamepad2.xPressCount);
             telemetry.update();
+            if (!isTransferTimerRunning) {
+                transferTimer.reset();
+                // Indicate timer has started
+            }
         }
     }
 }

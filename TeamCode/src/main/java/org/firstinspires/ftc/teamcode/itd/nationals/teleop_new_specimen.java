@@ -70,7 +70,7 @@ public class teleop_new_specimen extends LinearOpMode {
         IArmR = hardwareMap.get(Servo.class, "IArmR");
         IArmC = hardwareMap.get(Servo.class, "IArmC");
         IWrist = hardwareMap.get(Servo.class, "IWrist");
-        IWrist.scaleRange(0.0, 0.6);
+        IWrist.scaleRange(0.2, 0.76);
         IClaw = hardwareMap.get(Servo.class, "IClaw");
         HSlideL = hardwareMap.get(Servo.class, "HSlideL");
         HSlideR = hardwareMap.get(Servo.class, "HSlideR");
@@ -179,11 +179,12 @@ public class teleop_new_specimen extends LinearOpMode {
                 extendoIn = true;
             }
             else if (cycle_gamepad1.xPressCount == 1){
-                HSlideL.setPosition(pos.hslide_trans);
-                HSlideR.setPosition(1-pos.hslide_trans);
+                HSlideL.setPosition(pos.hslide_after_trans);
+                HSlideR.setPosition(1-pos.hslide_after_trans);
                 IArmL.setPosition(pos.intake_arm_trans);
                 IArmR.setPosition(1-pos.intake_arm_trans);
                 IArmC.setPosition(pos.intake_coax_aftertrans);
+                cycle_gamepad1.rbPressCount = 0;
                 extendoIn = false;
                 isTransferTimerRunning = false;
             }
@@ -194,7 +195,7 @@ public class teleop_new_specimen extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_aim);
                 IArmC.setPosition(pos.intake_coax_aim);
                 IClaw.setPosition(pos.intake_claw_open);
-                cycle_gamepad1.rbPressCount = 0;
+//                cycle_gamepad1.rbPressCount = 0;
                 isTransferTimerRunning = false;
                 extendoIn = false;
             }
