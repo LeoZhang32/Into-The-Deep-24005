@@ -21,7 +21,7 @@ public class positions_and_variables {
     public double intake_coax_lift = 0.5;
     public double intake_coax_vision = 0.7;
 
-    public double intake_claw_close = 0.64;
+    public double intake_claw_close = 0.65;
     public double intake_claw_open = 1;
 
     public double intake_wrist0 = 0.0;
@@ -32,8 +32,8 @@ public class positions_and_variables {
     public double intake_wrist_vision = 0.42; //this is to maximize limelight's field of view
     public double intake_wrist153 = 0.85; //this is for grabbing sample 1 in auto
 
-    public double outtake_claw_close = 0.57; //small servo 0.37
-    public double outtake_claw_open = 0.77; //small servo 0.7
+    public double outtake_claw_close = 0.55; //small servo 0.37
+    public double outtake_claw_open = 0.8; //small servo 0.7
 
     public double outtake_arm_transfer = 0.99;
     public double outtake_arm_transfer_auto = 0.99;

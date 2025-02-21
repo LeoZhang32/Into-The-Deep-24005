@@ -220,7 +220,7 @@ public class teleop_new extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_lift);
                 IArmC.setPosition(pos.intake_coax_lift);
                 IClaw.setPosition(pos.intake_claw_close);
-//                cycle_gamepad1.rbPressCount = 0;
+                cycle_gamepad1.rbPressCount = 0;
                 isTransferTimerRunning = false;
                 extendoIn = false;
             }
