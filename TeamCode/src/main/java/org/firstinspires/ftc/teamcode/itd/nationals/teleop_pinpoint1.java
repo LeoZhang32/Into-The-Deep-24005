@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.itd.nationals;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,11 +14,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.PinpointDrive;
 
 
 @TeleOp
-public class teleop_new_specimen extends LinearOpMode {
-    Boolean wristReset = true;
+public class teleop_pinpoint1 extends LinearOpMode {
+    GoBildaPinpointDriverRR pinpoint;
     ElapsedTime transferTimer = new ElapsedTime();
     ElapsedTime grabTimer = new ElapsedTime();
     boolean isTransferTimerRunning = false; // Track if timer is running
@@ -84,14 +87,16 @@ public class teleop_new_specimen extends LinearOpMode {
         BR = hardwareMap.dcMotor.get("BR");
         BL = hardwareMap.dcMotor.get("BL");
 
-        // Retrieve the IMU from the hardware map
+        pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class, "pinpoint");
+        pinpoint.recalibrateIMU();
+//        // Retrieve the IMU from the hardware map
         imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
+//        // Adjust the orientation parameters to match your robot
+//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+//                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+//        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+//        imu.initialize(parameters);
 
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -113,6 +118,7 @@ public class teleop_new_specimen extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
+
             cycle_gamepad1.updateX(5);
             cycle_gamepad1.updateRB(4);
             cycle_gamepad1.updateLB(2);
@@ -120,10 +126,10 @@ public class teleop_new_specimen extends LinearOpMode {
             cycle_gamepad2.updateA(2);
             cycle_gamepad2.updateX(2);
             cycle_gamepad2.updateLB(3);
-            cycle_gamepad2.updateRB(5);
 
             slowModeOn = cycle_gamepad1.lbPressCount != 0;
 
+            pinpoint.update();
             //drivetrain
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
@@ -133,20 +139,14 @@ public class teleop_new_specimen extends LinearOpMode {
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
             if (gamepad1.start) {
-                imu.resetYaw();
+                pinpoint.recalibrateIMU();
             }
 
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
-            // Rotate the movement direction counter to the bot's rotation
+            double botHeading = pinpoint.getHeading();
+            // Field-oriented adjustments
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-            rotX = rotX * 1.1;  // Counteract imperfect strafing
-
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
             double frontLeftPower = (rotY + rotX + rx) / denominator;
             double backLeftPower = (rotY - rotX + rx) / denominator;
@@ -179,11 +179,12 @@ public class teleop_new_specimen extends LinearOpMode {
                 extendoIn = true;
             }
             else if (cycle_gamepad1.xPressCount == 1){
-                HSlideL.setPosition(pos.hslide_trans);
-                HSlideR.setPosition(1-pos.hslide_trans);
-                IArmL.setPosition(pos.intake_arm_trans);
-                IArmR.setPosition(1-pos.intake_arm_trans);
-                IArmC.setPosition(pos.intake_coax_aftertrans);
+                HSlideL.setPosition(pos.hslide_after_trans);
+                HSlideR.setPosition(1-pos.hslide_after_trans);
+                IArmL.setPosition(pos.intake_arm_lift);
+                IArmR.setPosition(1-pos.intake_arm_lift);
+                IArmC.setPosition(pos.intake_coax_lift);
+                cycle_gamepad1.rbPressCount = 0;
                 extendoIn = false;
                 isTransferTimerRunning = false;
             }
@@ -194,10 +195,6 @@ public class teleop_new_specimen extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_aim);
                 IArmC.setPosition(pos.intake_coax_aim);
                 IClaw.setPosition(pos.intake_claw_open);
-                if (wristReset){
-                    cycle_gamepad1.rbPressCount = 0;
-                    wristReset = false;
-                }
                 isTransferTimerRunning = false;
                 extendoIn = false;
             }
@@ -208,7 +205,6 @@ public class teleop_new_specimen extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_grab);
                 IArmC.setPosition(pos.intake_coax_grab);
                 IClaw.setPosition(pos.intake_claw_close);
-                wristReset = true;
                 isTransferTimerRunning = false;
                 extendoIn = false;
 
@@ -225,7 +221,7 @@ public class teleop_new_specimen extends LinearOpMode {
                 IArmR.setPosition(1-pos.intake_arm_lift);
                 IArmC.setPosition(pos.intake_coax_lift);
                 IClaw.setPosition(pos.intake_claw_close);
-                cycle_gamepad1.rbPressCount = 1;
+//                cycle_gamepad1.rbPressCount = 0;
                 isTransferTimerRunning = false;
                 extendoIn = false;
             }
@@ -250,7 +246,7 @@ public class teleop_new_specimen extends LinearOpMode {
             }
 
             //wrist movements
-            if (cycle_gamepad1.xPressCount == 2 || cycle_gamepad1.xPressCount == 3){
+            if (cycle_gamepad1.xPressCount == 1 || cycle_gamepad1.xPressCount == 2 || cycle_gamepad1.xPressCount == 3){
                 if (cycle_gamepad1.rbPressCount == 0){
                     IWrist.setPosition(pos.intake_wrist0);
                 }
@@ -264,7 +260,7 @@ public class teleop_new_specimen extends LinearOpMode {
                     IWrist.setPosition(pos.intake_wrist135);
                 }
             }
-            else if (cycle_gamepad1.xPressCount == 0 || cycle_gamepad1.xPressCount == 1 || cycle_gamepad1.xPressCount == 4){
+            else if (cycle_gamepad1.xPressCount == 0 || cycle_gamepad1.xPressCount == 4){
                 if (cycle_gamepad1.rbPressCount%2 == 1){
                     IWrist.setPosition(pos.intake_wrist180);
                 }
@@ -345,12 +341,12 @@ public class teleop_new_specimen extends LinearOpMode {
             }
 
 
-//            if (gamepad2.right_bumper) {
-//                if (!specscore_button_pressed) {
-//                    specscore = !specscore;
-//                }
-//                specscore_button_pressed = true;
-//            } else specscore_button_pressed = false;
+            if (gamepad2.right_bumper) {
+                if (!specscore_button_pressed) {
+                    specscore = !specscore;
+                }
+                specscore_button_pressed = true;
+            } else specscore_button_pressed = false;
 
             if (!limitSwitch.getState() && !auto_up && !auto_down && !manual_running) {
                 //if pressed
@@ -360,7 +356,7 @@ public class teleop_new_specimen extends LinearOpMode {
             V_SLIDES:
             if (gamepad2.dpad_up) {
                 manual_running = true;
-                if (VSlideF.getCurrentPosition() > 2850 || VSlideB.getCurrentPosition() < -2850) {
+                if (VSlideF.getCurrentPosition() > 2850 || VSlideB.getCurrentPosition() > 2850) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
                     telemetry.addData("viper slides", "over limit");
@@ -374,11 +370,10 @@ public class teleop_new_specimen extends LinearOpMode {
 
             } else if (gamepad2.dpad_down) {
                 manual_running = true;
-                if (!limitSwitch.getState() || VSlideF.getCurrentPosition() < 30 || VSlideB.getCurrentPosition() > -30) {
+                if (!limitSwitch.getState()) {
                     //if limit switch is pressed and dpad down
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
-                    cycle_gamepad2.rbPressCount = 0;
                     telemetry.addData("viper slides", "stopped");
                     telemetry.update();
                     break V_SLIDES;
@@ -420,7 +415,7 @@ public class teleop_new_specimen extends LinearOpMode {
                     telemetry.update();
                 }
 
-                if (VSlideF.getCurrentPosition() > 2750 || VSlideB.getCurrentPosition() < -2750) {
+                if (VSlideF.getCurrentPosition() > 2750 || VSlideB.getCurrentPosition() > 2750) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
                     cycle_gamepad2.xPressCount = 1;
@@ -431,7 +426,6 @@ public class teleop_new_specimen extends LinearOpMode {
 
             } else if (auto_down) { //viper slide auto action down
                 cycle_gamepad2.xPressCount = 0;
-                cycle_gamepad2.aPressCount = 0;
                 manual_running = false;
                 VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -462,23 +456,22 @@ public class teleop_new_specimen extends LinearOpMode {
                 }
 
 
-                if (!limitSwitch.getState() || VSlideF.getCurrentPosition() < 30 || VSlideB.getCurrentPosition() > -30) {
+                if (VSlideF.getCurrentPosition() < 30 || VSlideB.getCurrentPosition() < 30) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
                     auto_down = !auto_down;
-                    cycle_gamepad2.rbPressCount = 0;
                     telemetry.addData("Status", "position reached");
                     telemetry.update();
                 }
 
 
-            } else if (cycle_gamepad2.rbPressCount == 1) { //raise specimen up
+            } else if (specscore) { //viper slide auto action down score
 
                 manual_running = false;
                 VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                VSlideF.setPower(1);
-                VSlideB.setPower(1);
+                VSlideF.setPower(0.3);
+                VSlideB.setPower(0.3);
 
                 if ((VSlideF.isBusy()) || (VSlideB.isBusy()) || !isStopRequested()) {
 
@@ -487,47 +480,7 @@ public class teleop_new_specimen extends LinearOpMode {
                         // **ADDED: Stop the motors immediately**
                         VSlideF.setPower(0);
                         VSlideB.setPower(0);
-                        cycle_gamepad2.rbPressCount = 0;
-//                            break; // **ADDED: Exit the loop on emergency stop**
-
-                    }
-
-                    // Let the drive team see that we're waiting on the motor
-                    telemetry.addData("Status", "Waiting to raise specimen up");
-                    telemetry.addData("VSlideF power", VSlideF.getPower());
-                    telemetry.addData("VSlideB power", VSlideB.getPower());
-                    telemetry.addData("VSlideF position", VSlideF.getCurrentPosition());
-                    telemetry.addData("VSlideF position", VSlideB.getCurrentPosition());
-                    telemetry.addData("is at target", !VSlideF.isBusy() && !VSlideB.isBusy());
-                    telemetry.update();
-                }
-
-
-                if (VSlideF.getCurrentPosition() > 1300 || VSlideB.getCurrentPosition() < -1300) {
-                    VSlideF.setPower(0);
-                    VSlideB.setPower(0);
-                    cycle_gamepad2.xPressCount = -2;
-                    cycle_gamepad2.rbPressCount = 2;
-                    telemetry.addData("Status", "position reached");
-                    telemetry.update();
-                }
-
-            } else if (cycle_gamepad2.rbPressCount == 3) { //viper slide auto action down score
-
-                manual_running = false;
-                VSlideF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                VSlideB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                VSlideF.setPower(0.5);
-                VSlideB.setPower(0.5);
-
-                if ((VSlideF.isBusy()) || (VSlideB.isBusy()) || !isStopRequested()) {
-
-                    // Check for an emergency stop condition
-                    if (gamepad2.start) { // **ADDED: Use right bumper for emergency stop**
-                        // **ADDED: Stop the motors immediately**
-                        VSlideF.setPower(0);
-                        VSlideB.setPower(0);
-                        cycle_gamepad2.rbPressCount = 2;
+                        specscore = !specscore;
 //                            break; // **ADDED: Exit the loop on emergency stop**
 
                     }
@@ -543,10 +496,10 @@ public class teleop_new_specimen extends LinearOpMode {
                 }
 
 
-                if (VSlideF.getCurrentPosition() > 1800 || VSlideB.getCurrentPosition() < -1800) { // specimen scored
+                if (VSlideF.getCurrentPosition() > 400 || VSlideB.getCurrentPosition() > 400) {
                     VSlideF.setPower(0);
                     VSlideB.setPower(0);
-                    cycle_gamepad2.rbPressCount = 4;
+                    specscore = !specscore;
                     telemetry.addData("Status", "specimen scored");
                     telemetry.update();
                 }
@@ -564,7 +517,7 @@ public class teleop_new_specimen extends LinearOpMode {
             telemetry.addData("Grab Timer Active", isGrabTimerRunning);
             telemetry.addData("Grab Timer Time", grabTimer.milliseconds());
             telemetry.addData("Gamepad1 xPressCount", cycle_gamepad1.xPressCount);
-            telemetry.addData("Gamepad1 rbPressCount", cycle_gamepad1.rbPressCount);
+            telemetry.addData("Gamepad1 aPressCount", cycle_gamepad1.aPressCount);
             telemetry.addData("Gamepad2 aPressCount", cycle_gamepad2.aPressCount);
             telemetry.addData("Gamepad2 xPressCount", cycle_gamepad2.xPressCount);
             telemetry.addData("VSlideF Position", VSlideF.getCurrentPosition());

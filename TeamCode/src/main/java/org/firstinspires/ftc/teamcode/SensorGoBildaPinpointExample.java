@@ -112,8 +112,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         This is recommended before you run your autonomous, as a bad initial calibration can cause
         an incorrect starting value for x, y, and heading.
          */
-        //odo.recalibrateIMU();
-        odo.resetPosAndIMU();
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("X offset", odo.getXOffset());
