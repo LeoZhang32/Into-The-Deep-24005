@@ -31,9 +31,9 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 import java.util.List;
 
 
-@Autonomous (name = "auto_SAMPLE_0plus5_red")
+@Autonomous (name = "auto_SAMPLE_0plus5_red_far")
 
-public final class auto_SAMPLE_0plus5_Red extends LinearOpMode {
+public final class auto_SAMPLE_0plus5_Red_Far extends LinearOpMode {
     DcMotor FR;
     DcMotor FL;
     DcMotor BR;
@@ -626,12 +626,12 @@ public final class auto_SAMPLE_0plus5_Red extends LinearOpMode {
 
         //go to submersible 4a
         TrajectoryActionBuilder go_to_sub_4a = return_basket_1.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(30,0), (Math.toRadians(-180)));
+                .strafeToSplineHeading(new Vector2d(30,-5), (Math.toRadians(-180)));
 
         //go to submersible 4b
         TrajectoryActionBuilder go_to_sub_4b = go_to_sub_4a.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(27,0), (Math.toRadians(-180)));
+                .strafeToLinearHeading(new Vector2d(27,-5), (Math.toRadians(-180)));
 //
 //        //return from submersible 4
 //        TrajectoryActionBuilder return_from_sub_4 = go_to_sub_4b.endTrajectory().fresh()

@@ -31,9 +31,9 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 import java.util.List;
 
 
-@Autonomous (name = "auto_SAMPLE_0plus5_blue")
+@Autonomous (name = "auto_SAMPLE_0plus5_red_close")
 
-public final class auto_SAMPLE_0plus5_Blue extends LinearOpMode {
+public final class auto_SAMPLE_0plus5_Red_Close extends LinearOpMode {
     DcMotor FR;
     DcMotor FL;
     DcMotor BR;
@@ -626,12 +626,12 @@ public final class auto_SAMPLE_0plus5_Blue extends LinearOpMode {
 
         //go to submersible 4a
         TrajectoryActionBuilder go_to_sub_4a = return_basket_1.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(30,0), (Math.toRadians(-180)));
+                .strafeToSplineHeading(new Vector2d(30,7), (Math.toRadians(-180)));
 
         //go to submersible 4b
         TrajectoryActionBuilder go_to_sub_4b = go_to_sub_4a.endTrajectory().fresh()
 
-                .strafeToLinearHeading(new Vector2d(27,0), (Math.toRadians(-180)));
+                .strafeToLinearHeading(new Vector2d(27,7), (Math.toRadians(-180)));
 //
 //        //return from submersible 4
 //        TrajectoryActionBuilder return_from_sub_4 = go_to_sub_4b.endTrajectory().fresh()
@@ -1044,9 +1044,9 @@ public final class auto_SAMPLE_0plus5_Blue extends LinearOpMode {
             BR.setPower(0);
             FR.setPower(0);
             BL.setPower(0);
-            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 4 for red vertical or pipeline 6 for blue vertical.
+            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 4 for red or pipeline 6 for blue.
             if (!sample4detected) {
-                limelight.pipelineSwitch(6);
+                limelight.pipelineSwitch(4);
                 LLCorrectionTimer.reset();
                 while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
@@ -1104,7 +1104,7 @@ public final class auto_SAMPLE_0plus5_Blue extends LinearOpMode {
             BR.setPower(0);
             FR.setPower(0);
             BL.setPower(0);
-            //limelight correction red/blue sample done. Switch to 4b position and yellow pipeline vertical.
+            //limelight correction red/blue sample done. Switch to 4b position and yellow pipeline.
             if (!sample4detected) {
                 drive.updatePoseEstimate();
                 Actions.runBlocking(new SequentialAction(
@@ -1168,9 +1168,9 @@ public final class auto_SAMPLE_0plus5_Blue extends LinearOpMode {
             BR.setPower(0);
             FR.setPower(0);
             BL.setPower(0);
-            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 4 for red vertical or pipeline 6 for blue vertical.
+            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 4 for red or pipeline 6 for blue.
             if (!sample4detected) {
-                limelight.pipelineSwitch(6);
+                limelight.pipelineSwitch(4);
                 LLCorrectionTimer.reset();
                 while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
