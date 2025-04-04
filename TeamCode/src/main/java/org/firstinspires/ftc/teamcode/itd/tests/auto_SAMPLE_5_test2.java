@@ -17,7 +17,6 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -33,9 +32,9 @@ import org.firstinspires.ftc.teamcode.itd.nationals.positions_and_variables;
 import java.util.List;
 
 
-@Autonomous (name = "auto_SAMPLE_5_test")
+@Autonomous (name = "auto_SAMPLE_5_test2")
 
-public final class auto_SAMPLE_5_test extends LinearOpMode {
+public final class auto_SAMPLE_5_test2 extends LinearOpMode {
     DcMotor FR;
     DcMotor FL;
     DcMotor BR;
@@ -669,11 +668,11 @@ public final class auto_SAMPLE_5_test extends LinearOpMode {
             LLCorrectionTimer.reset();
             while (opModeIsActive() && !isStopRequested()) {
                 LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    telemetry.addData("LLResult", result.isValid());
-                    telemetry.update();
+//                if (result != null) {
+//                    telemetry.addData("LLResult", result.isValid());
+//                    telemetry.update();
                     if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
-                        telemetry.addData("Target Found", true);
+                        telemetry.addData("Yellow Target Found", true);
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
                         telemetry.addData("ta", result.getTa());
@@ -707,7 +706,7 @@ public final class auto_SAMPLE_5_test extends LinearOpMode {
                                 BL.setPower(0);
                                 targetAligned = true;
                                 telemetry.addData("limelight loop 4a breaks - yellow pipeline", FL.getPower());
-                                telemetry.addData("target 4 is aligned", true);
+                                telemetry.addData("yellow target is aligned", true);
                                 telemetry.update();
                                 break;
                             }
@@ -718,53 +717,115 @@ public final class auto_SAMPLE_5_test extends LinearOpMode {
 //                        );
 //                        break;
                     } else {
-                        telemetry.addData("target is not aligned", false);
+                        telemetry.addData("yellow target is not aligned", false);
                         telemetry.update();
                         break;
                     }
-                } else {
-                    telemetry.addData("result = null", false);
-                    telemetry.update();
-                    break;
-                }
+//                } else {
+//                    telemetry.addData("result = null", false);
+//                    telemetry.update();
+//                    break;
+//                }
             };
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
 
-            if (targetAligned){ //added this condition, but not tested yet.
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            intake.SettoAim(),
-                            wrist.SettoWrist0()
-                    ),
-                    new SleepAction(1),
-                    intake.SettoGrab(),
-                    new SleepAction(0.3),
-                    intake.SettoAfterGrab(),
-                    new SleepAction(0.6),
-                    intake.SettoTrasfer(),
-                    new SleepAction(0.6),
-                    new ParallelAction(
+            if (!targetAligned){
+
+                limelight.pipelineSwitch(6);
+                LLCorrectionTimer.reset();
+                while (opModeIsActive() && !isStopRequested()) {
+                    LLResult result = limelight.getLatestResult();
+//                if (result != null) {
+//                    telemetry.addData("LLResult", result.isValid());
+//                    telemetry.update();
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
+                        telemetry.addData("Red Target Found", true);
+                        telemetry.addData("tx", result.getTx());
+                        telemetry.addData("ty", result.getTy());
+                        telemetry.addData("ta", result.getTa());
+                        telemetry.update();
+                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+                        if (result.getTy() < -2) { //move right
+                            FL.setPower(0.3);
+                            BR.setPower(0.3);
+                            FR.setPower(-0.3);
+                            BL.setPower(-0.3);
+                        } else if (result.getTy() > 2) { //move left
+                            FL.setPower(-0.3);
+                            BR.setPower(-0.3);
+                            FR.setPower(0.3);
+                            BL.setPower(0.3);
+                        } else {
+                            if (result.getTx() > 2) { //move forward
+                                FL.setPower(0.3);
+                                BR.setPower(0.3);
+                                FR.setPower(0.3);
+                                BL.setPower(0.3);
+                            } else if (result.getTx() < -2) { //move backward
+                                FL.setPower(-0.3);
+                                BR.setPower(-0.3);
+                                FR.setPower(-0.3);
+                                BL.setPower(-0.3);
+                            } else {
+                                FL.setPower(0);
+                                BR.setPower(0);
+                                FR.setPower(0);
+                                BL.setPower(0);
+                                targetAligned = true;
+                                telemetry.addData("limelight loop 4b breaks - red pipeline", FL.getPower());
+                                telemetry.addData("red target is aligned", true);
+                                telemetry.update();
+                                break;
+                            }
+                        }
+//                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
+//                        Actions.runBlocking(
+//                                go_to_sub_4a.build()
+//                        );
+//                        break;
+                    } else {
+                        telemetry.addData("red target is not aligned", false);
+                        telemetry.update();
+                        break;
+                    }
+//                } else {
+//                    telemetry.addData("result = null", false);
+//                    telemetry.update();
+//                    break;
+//                }
+                }
+        } else {
+
+                Actions.runBlocking(new SequentialAction(
+                                new ParallelAction(
+                                        intake.SettoAim(),
+                                        wrist.SettoWrist0()
+                                ),
+                                new SleepAction(1),
+                                intake.SettoGrab(),
+                                new SleepAction(0.3),
+                                intake.SettoAfterGrab(),
+                                new SleepAction(0.6),
+                                intake.SettoTrasfer(),
+                                new SleepAction(0.6),
+                                new ParallelAction(
 //                            return_basket_4.build(),
-                            new SequentialAction(
+                                        new SequentialAction(
 
 
 
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                            intake.SettoAfterTrasfer()
+                                                new SleepAction(0.6),
+                                                oclaw.CloseOClaw(),
+                                                new SleepAction(0.3),
+                                                iclaw.OpenIClaw(),
+                                                new ParallelAction(
+                                                        intake.SettoAfterTrasfer()
 //                                            lift.liftUp()
-                                    )
-                            )
-                    ),
-                    new SleepAction(0.2),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.2)
+                                                )
+                                        )
+                                ),
+                                new SleepAction(0.2),
+                                oclaw.OpenOClaw(),
+                                new SleepAction(0.2)
 
 //            // sample 4 cycle completes by now. sample 5 cycle starts below
 //                    new ParallelAction(
@@ -777,14 +838,13 @@ public final class auto_SAMPLE_5_test extends LinearOpMode {
 //                            )
 //                    )
 
-        )
+                        )
 
 
-            );
+                );
 
-        } else {
-                telemetry.addData("target is not aligned, so not action taken", false);
-                telemetry.update();
+
+
             };
 
 
