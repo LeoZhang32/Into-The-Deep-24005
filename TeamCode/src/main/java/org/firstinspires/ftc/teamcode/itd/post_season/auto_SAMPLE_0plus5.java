@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.nationals;
+package org.firstinspires.ftc.teamcode.itd.post_season;
 
 import androidx.annotation.NonNull;
 
@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+import org.firstinspires.ftc.teamcode.itd.nationals.positions_and_variables;
 
 import java.util.List;
 
@@ -642,8 +643,8 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
 
         //return to basket 4
         TrajectoryActionBuilder return_basket_4 = go_to_sub_4d.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(35, 0), (Math.toRadians(-160)))
-                .strafeToLinearHeading(new Vector2d(58, 58), (Math.toRadians(-135)));
+                .strafeToLinearHeading(new Vector2d(35, 10), (Math.toRadians(-160)))
+                .strafeToLinearHeading(new Vector2d(57, 57), (Math.toRadians(-135)));
 
         //go to submersible 5a
         TrajectoryActionBuilder go_to_sub_5a = return_basket_4.endTrajectory().fresh()
@@ -674,7 +675,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                             go_score_sample_0.build(),
                             lift.liftUp()
                     ),
-                    new SleepAction(0.2),
+                    new SleepAction(0.1),
                     oclaw.OpenOClaw(),
                     new SleepAction(0.2),
 
@@ -771,7 +772,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                                 )
                             )
                         ),
-                        new SleepAction(0.2),
+                        new SleepAction(0.1),
                         oclaw.OpenOClaw(),
                         new SleepAction(0.2)
                     ));
@@ -872,7 +873,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                                     )
                             )
                     ),
-                    new SleepAction(0.2),
+                    new SleepAction(0.1),
                     oclaw.OpenOClaw(),
                     new SleepAction(0.2)
             ));
@@ -973,7 +974,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                                     )
                             )
                     ),
-                    new SleepAction(0.2),
+                    new SleepAction(0.1),
                     oclaw.OpenOClaw(),
                     new SleepAction(0.2),
                     // sample 1 cycle completes by now. sample 4 (submersible) starts now.
@@ -993,7 +994,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                     )
             ));
             //add limelight movement here
-            new SleepAction(0.5);
+//            new SleepAction(0.5);
 
 
 
@@ -1001,7 +1002,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
             LLCorrectionTimer.reset();
             while (opModeIsActive() && !isStopRequested()) {
                 LLResult result = limelight.getLatestResult();
-                if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
+                if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 1) {
                     telemetry.addData("target 4a found", true);
                     telemetry.addData("tx", result.getTx());
                     telemetry.addData("ty", result.getTy());
@@ -1059,7 +1060,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                 LLCorrectionTimer.reset();
                 while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
-                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 1) {
                         telemetry.addData("target 4b found", true);
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
@@ -1119,7 +1120,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                 LLCorrectionTimer.reset();
                 while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
-                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 1) {
                         telemetry.addData("target 4c found", true);
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
@@ -1181,7 +1182,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                 while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
 
-                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 1) {
                         telemetry.addData("target 4d found", true);
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
@@ -1243,7 +1244,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                         new ParallelAction(
                                 go_to_sub_5b.build(),
                                 new SequentialAction(
-                                        new SleepAction(2),
+                                        new SleepAction(1),
                                         oarm.LiftOArm()
                                 )
                         )
@@ -1261,15 +1262,12 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                                 new SleepAction(0.4),
                                 intake.SettoGrab(),
                                 new SleepAction(0.3),
-                                intake.SettoAfterGrab(),
-                                new SleepAction(0.6),
-                                intake.SettoTrasfer(),
                                 new ParallelAction(
                                         return_basket_4.build(),
                                         new SequentialAction(
-
-
-
+                                                intake.SettoAfterGrab(),
+                                                new SleepAction(0.6),
+                                                intake.SettoTrasfer(),
                                                 new SleepAction(0.6),
                                                 oclaw.CloseOClaw(),
                                                 new SleepAction(0.3),
@@ -1280,7 +1278,7 @@ public final class auto_SAMPLE_0plus5 extends LinearOpMode {
                                                 )
                                         )
                                 ),
-                                new SleepAction(0.2),
+                                new SleepAction(0.1),
                                 oclaw.OpenOClaw(),
                                 new SleepAction(0.2),
 

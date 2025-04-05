@@ -17,6 +17,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -31,6 +32,7 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 import java.util.List;
 
 
+@Disabled
 @Autonomous (name = "auto_SAMPLE_0plus5_blue_close")
 
 public final class auto_SAMPLE_0plus5_Blue_Close extends LinearOpMode {
