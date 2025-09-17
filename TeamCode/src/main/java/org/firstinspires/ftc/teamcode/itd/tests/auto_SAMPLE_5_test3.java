@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.itd.nationals;
+package org.firstinspires.ftc.teamcode.itd.tests;
 
 import androidx.annotation.NonNull;
 
@@ -27,13 +27,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+import org.firstinspires.ftc.teamcode.itd.nationals.positions_and_variables;
 
 import java.util.List;
 
 
-@Autonomous (name = "auto_SAMPLE_0plus5_red_close")
+@Autonomous (name = "auto_SAMPLE_5_test3")
 
-public final class auto_SAMPLE_0plus5_Red_Close extends LinearOpMode {
+public final class auto_SAMPLE_5_test3 extends LinearOpMode {
     DcMotor FR;
     DcMotor FL;
     DcMotor BR;
@@ -41,7 +42,7 @@ public final class auto_SAMPLE_0plus5_Red_Close extends LinearOpMode {
     Limelight3A limelight;
     private final ElapsedTime runtime = new ElapsedTime();
     positions_and_variables pos = new positions_and_variables();
-    boolean sample4detected = false;
+    boolean targetAligned = false;
 
     public class Lift {
         private final DcMotorEx VSlideF;
@@ -559,7 +560,7 @@ public final class auto_SAMPLE_0plus5_Red_Close extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Pose2d beginPose = new Pose2d(40, 63.5, (Math.toRadians(-90)));
+        Pose2d beginPose = new Pose2d(0, 0, (Math.toRadians(180)));
         PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
         Lift lift = new Lift(hardwareMap);
         OuttakeClaw oclaw = new OuttakeClaw(hardwareMap);
@@ -569,7 +570,7 @@ public final class auto_SAMPLE_0plus5_Red_Close extends LinearOpMode {
         IntakeWrist wrist = new IntakeWrist(hardwareMap);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        Actions.runBlocking(oclaw.CloseOClaw());
+        Actions.runBlocking(oclaw.OpenOClaw());
         Actions.runBlocking(oarm.LowerOArm());
         Actions.runBlocking(intake.SettoAfterTrasfer());
         Actions.runBlocking(iclaw.OpenIClaw());
@@ -596,423 +597,64 @@ public final class auto_SAMPLE_0plus5_Red_Close extends LinearOpMode {
         ElapsedTime LLCorrectionTimer = new ElapsedTime();
 
 
-        //score held sample
-        TrajectoryActionBuilder go_score_sample_0 = drive.actionBuilder(beginPose)
-                .strafeToSplineHeading(new Vector2d(58, 58), (Math.toRadians(-135)));
+        //go to target 2
+        TrajectoryActionBuilder go_to_target_2 = drive.actionBuilder(beginPose)
+                .strafeToSplineHeading(new Vector2d(0,-5), (Math.toRadians(180)));
 
-        //go to sample 3
-        TrajectoryActionBuilder go_to_sample_3 = go_score_sample_0.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(50, 49), (Math.toRadians(-90)));
+        //go to target 3
+        TrajectoryActionBuilder go_to_target_3 = go_to_target_2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0,-10), (Math.toRadians(180)));
 
-        //return to basket
-        TrajectoryActionBuilder return_basket_3 = go_to_sample_3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(58, 58), (Math.toRadians(-135)));
-
-        //go to sample 2
-        TrajectoryActionBuilder go_to_sample_2 = return_basket_3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(58, 48), Math.toRadians(-86));
-
-        //return to basket
-        TrajectoryActionBuilder return_basket_2 = go_to_sample_2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(58, 58), (Math.toRadians(-135)));
-
-        //go to sample 1
-        TrajectoryActionBuilder go_to_sample_1 = return_basket_2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(60, 47), (Math.toRadians(-63)));
-
-        //return to basket 1
-        TrajectoryActionBuilder return_basket_1 = go_to_sample_1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(58, 58), (Math.toRadians(-135)));
-
-        //go to submersible 4a
-        TrajectoryActionBuilder go_to_sub_4a = return_basket_1.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(30,7), (Math.toRadians(-180)));
-
-        //go to submersible 4b
-        TrajectoryActionBuilder go_to_sub_4b = go_to_sub_4a.endTrajectory().fresh()
-
-                .strafeToLinearHeading(new Vector2d(27,7), (Math.toRadians(-180)));
-//
-//        //return from submersible 4
-//        TrajectoryActionBuilder return_from_sub_4 = go_to_sub_4b.endTrajectory().fresh()
-//
-//                .strafeToSplineHeading(new Vector2d(40,12), (Math.toRadians(-180)));
-
-        //return to basket 4
-        TrajectoryActionBuilder return_basket_4 = go_to_sub_4a.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(35, 0), (Math.toRadians(-160)))
-                .strafeToLinearHeading(new Vector2d(58, 58), (Math.toRadians(-135)));
-
-        //go to submersible 5a
-        TrajectoryActionBuilder go_to_sub_5a = return_basket_4.endTrajectory().fresh()
-                .strafeToSplineHeading(new Vector2d(35,10), (Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(24,10), (Math.toRadians(0)));
+        //go to target 4
+        TrajectoryActionBuilder go_to_target_4 = go_to_target_3.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0,-15), (Math.toRadians(180)));
 
 
         waitForStart();
         runtime.reset();
 
-        while (opModeIsActive() && runtime.seconds() <= 0.1 && !isStopRequested()) {
-            boolean switchPressed = !limitSwitch.getState(); // Inverted to show "pressed" as true
-            // Display the state on the telemetry
-            if (switchPressed) {
-                telemetry.addData("Limit Switch", "Pressed");
-            } else {
-                telemetry.addData("Limit Switch", "Not Pressed");
-            }
-            telemetry.update();
+        while (opModeIsActive() && runtime.seconds() <= 0.1) {
+
 
             Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            go_score_sample_0.build(),
-                            lift.liftUp()
-                    ),
-                    new SleepAction(0.2),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.2),
-
-                    // sample 0 cycle completes by now. sample 3 cycle starts below
-                    new ParallelAction(
-                            go_to_sample_3.build(),
-                            oarm.LowerOArm(),
-                            lift.lifttoMiddle(),
-                            intake.SettoVision(),
-                            wrist.SettoWrist_Vision()
-                    )
-                    )
-            );
-            //add limelight movement here
-            LLCorrectionTimer.reset();
-            while (opModeIsActive() && !isStopRequested()) {
-                LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 1) {
-                        telemetry.addData("tx", result.getTx());
-                        telemetry.addData("ty", result.getTy());
-                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                        if (result.getTy() < -2) {
-                            FL.setPower(0.3);
-                            BR.setPower(0.3);
-                            FR.setPower(-0.3);
-                            BL.setPower(-0.3);
-                        } else if (result.getTy() > 2) {
-                            FL.setPower(-0.3);
-                            BR.setPower(-0.3);
-                            FR.setPower(0.3);
-                            BL.setPower(0.3);
-                        } else {
-                            if (result.getTx() > 2) {
-                                FL.setPower(0.3);
-                                BR.setPower(0.3);
-                                FR.setPower(0.3);
-                                BL.setPower(0.3);
-                            } else if (result.getTx() < -2) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else {
-                                FL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                BL.setPower(0);
-                                telemetry.addData("limelight loop 3 breaks", FL.getPower());
-                                telemetry.update();
-                                break;
-                            }
-                        }
-                    } else if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() > 1) {
-                        Actions.runBlocking(
-                                go_to_sample_3.build()
-                        );
-                        break;
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            };
-            //limelight correction done
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-                    drive.updatePoseEstimate();
-                    Actions.runBlocking(new SequentialAction(
-                            new ParallelAction(
-                                    intake.SettoAim(),
-                                    wrist.SettoWrist0()
-                            ),
-                            new SleepAction(0.4),
-                            intake.SettoGrab(),
-                            new SleepAction(0.3),
-                            new ParallelAction(
-                                return_basket_3.build(),
-                                lift.liftDown(),
-                                new SequentialAction(
-                                    intake.SettoAfterGrab(),
-                                    new SleepAction(0.6),
-                                    intake.SettoTrasfer(),
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                        intake.SettoAfterTrasfer(),
-                                        lift.liftUp()
-                                )
-                            )
-                        ),
-                        new SleepAction(0.2),
-                        oclaw.OpenOClaw(),
-                        new SleepAction(0.2)
-                    ));
-
-                    // sample 3 cycle completes by now. sample 2 cycle starts below
-
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            go_to_sample_2.build(),
-                            oarm.LowerOArm(),
-                            lift.lifttoMiddle(),
-                            intake.SettoVision(),
-                            wrist.SettoWrist_Vision()
-                    )
-                    )
-            );
-//add limelight movement here
-            LLCorrectionTimer.reset();
-            while (opModeIsActive() && !isStopRequested()) {
-                LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 1) {
-                        telemetry.addData("tx", result.getTx());
-                        telemetry.addData("ty", result.getTy());
-                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                        if (result.getTy() < -2) {
-                            FL.setPower(0.3);
-                            BR.setPower(0.3);
-                            FR.setPower(-0.3);
-                            BL.setPower(-0.3);
-                        } else if (result.getTy() > 2) {
-                            FL.setPower(-0.3);
-                            BR.setPower(-0.3);
-                            FR.setPower(0.3);
-                            BL.setPower(0.3);
-                        } else {
-                            if (result.getTx() > 2) {
-                                FL.setPower(0.3);
-                                BR.setPower(0.3);
-                                FR.setPower(0.3);
-                                BL.setPower(0.3);
-                            } else if (result.getTx() < -2) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else {
-                                FL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                BL.setPower(0);
-                                telemetry.addData("limelight loop 2 breaks", FL.getPower());
-                                telemetry.update();
-                                break;
-                            }
-                        }
-                    } else if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() > 1) {
-                        Actions.runBlocking(
-                                go_to_sample_2.build()
-                        );
-                        break;
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            };
-            //limelight correction done
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-
-            drive.updatePoseEstimate();
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            intake.SettoAim(),
-                            wrist.SettoWrist0()
-                    ),
-                    new SleepAction(0.4),
-                    intake.SettoGrab(),
-                    new SleepAction(0.3),
-                    new ParallelAction(
-                            return_basket_2.build(),
-                            lift.liftDown(),
-                            new SequentialAction(
-                                    intake.SettoAfterGrab(),
-                                    new SleepAction(0.6),
-                                    intake.SettoTrasfer(),
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                            intake.SettoAfterTrasfer(),
-                                            lift.liftUp()
-                                    )
-                            )
-                    ),
-                    new SleepAction(0.2),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.2)
+                new ParallelAction(
+                    intake.SettoVision(),
+                    wrist.SettoWrist_Vision(),
+                    oclaw.OpenOClaw()
+                ),
+                    new SleepAction(2)
             ));
-
-            // sample 2 cycle completes by now. sample 1 cycle starts below
-            Actions.runBlocking(new SequentialAction(
-                            new ParallelAction(
-                                    go_to_sample_1.build(),
-                                    oarm.LowerOArm(),
-                                    lift.lifttoMiddle(),
-                                    intake.SettoVision(),
-                                    wrist.SettoWrist_Vision()
-                            )
-                    )
-            );
-//add limelight movement here
-            LLCorrectionTimer.reset();
-            while (opModeIsActive() && !isStopRequested()) {
-                LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.001 && result.getTa() < 0.2 && LLCorrectionTimer.seconds() <= 1) {
-                        telemetry.addData("tx", result.getTx());
-                        telemetry.addData("ty", result.getTy());
-                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                        if (result.getTy() < -2) {
-                            FL.setPower(0.3);
-                            BR.setPower(0.3);
-                            FR.setPower(-0.3);
-                            BL.setPower(-0.3);
-                        } else if (result.getTy() > 2) {
-                            FL.setPower(-0.3);
-                            BR.setPower(-0.3);
-                            FR.setPower(0.3);
-                            BL.setPower(0.3);
-                        } else {
-                            if (result.getTx() > 2) {
-                                FL.setPower(0.3);
-                                BR.setPower(0.3);
-                                FR.setPower(0.3);
-                                BL.setPower(0.3);
-                            } else if (result.getTx() < -2) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else {
-                                FL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                BL.setPower(0);
-                                telemetry.addData("limelight loop 1 breaks", FL.getPower());
-                                telemetry.update();
-                                break;
-                            }
-                        }
-                    } else if (result.isValid() && result.getTa() > 0.001 && result.getTa() < 0.2 && LLCorrectionTimer.seconds() > 1) {
-                        Actions.runBlocking(
-                                go_to_sample_1.build()
-                        );
-                        break;
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            };
-            //limelight correction done
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            drive.updatePoseEstimate();
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            intake.SettoAim(),
-                            wrist.SettoWrist153()
-                    ),
-                    new SleepAction(0.4),
-                    intake.SettoGrab(),
-                    new SleepAction(0.3),
-                    new ParallelAction(
-                            return_basket_1.build(),
-                            lift.liftDown(),
-                            new SequentialAction(
-                                    intake.SettoAfterGrab(),
-                                    new SleepAction(0.2),
-                                    wrist.SettoWrist0(),
-                                    new SleepAction(0.2),
-                                    intake.SettoTrasfer(),
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                            intake.SettoAfterTrasfer(),
-                                            lift.liftUp()
-                                    )
-                            )
-                    ),
-                    new SleepAction(0.2),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.2),
-                    // sample 1 cycle completes by now. sample 4 cycle starts below
-                    new ParallelAction(
-                        go_to_sub_4a.build(),
-                        oarm.LowerOArm(),
-                        lift.liftDown(),
-                        new SequentialAction(
-                                new SleepAction(1),
-                                new ParallelAction(
-                                        intake.SettoVision(),
-                                        wrist.SettoWrist_Vision()
-                                )
-                        ),
-                        new SleepAction(0.5)
-                    )
-            ));
-            //add limelight movement here
-            new SleepAction(0.5);
-
             limelight.pipelineSwitch(2);
             LLCorrectionTimer.reset();
             while (opModeIsActive() && !isStopRequested()) {
                 LLResult result = limelight.getLatestResult();
-                if (result != null) {
-                    if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
+//                if (result != null) {
+//                    telemetry.addData("LLResult", result.isValid());
+//                    telemetry.update();
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
+                        telemetry.addData("target 1 found", true);
                         telemetry.addData("tx", result.getTx());
                         telemetry.addData("ty", result.getTy());
+                        telemetry.addData("ta", result.getTa());
+                        telemetry.update();
                         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                        if (result.getTy() < -1) {
+                        if (result.getTy() < -2) { //move right
                             FL.setPower(0.3);
                             BR.setPower(0.3);
                             FR.setPower(-0.3);
                             BL.setPower(-0.3);
-                        } else if (result.getTy() > 1) {
+                        } else if (result.getTy() > 2) { //move left
                             FL.setPower(-0.3);
                             BR.setPower(-0.3);
                             FR.setPower(0.3);
                             BL.setPower(0.3);
                         } else {
-                            if (result.getTx() > 1) {
+                            if (result.getTx() > 2) { //move forward
                                 FL.setPower(0.3);
                                 BR.setPower(0.3);
                                 FR.setPower(0.3);
                                 BL.setPower(0.3);
-                            } else if (result.getTx() < -1) {
+                            } else if (result.getTx() < -2) { //move backward
                                 FL.setPower(-0.3);
                                 BR.setPower(-0.3);
                                 FR.setPower(-0.3);
@@ -1022,259 +664,304 @@ public final class auto_SAMPLE_0plus5_Red_Close extends LinearOpMode {
                                 BR.setPower(0);
                                 FR.setPower(0);
                                 BL.setPower(0);
-                                telemetry.addData("limelight loop 4a breaks - yellow pipeline", FL.getPower());
+                                targetAligned = true;
+                                telemetry.addData("limelight loop target 1 breaks", FL.getPower());
+                                telemetry.addData("target 1 is aligned", true);
                                 telemetry.update();
-                                sample4detected = true;
                                 break;
                             }
                         }
-                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
-                        Actions.runBlocking(
-                                go_to_sub_4a.build()
-                        );
-                        break;
+//                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
+//                        Actions.runBlocking(
+//                                go_to_sub_4a.build()
+//                        );
+//                        break;
                     } else {
+                        telemetry.addData("target 1 is not aligned", false);
+                        telemetry.update();
                         break;
                     }
-                } else {
-                    break;
-                }
+//                } else {
+//                    telemetry.addData("result = null", false);
+//                    telemetry.update();
+//                    break;
+//                }
             };
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 4 for red or pipeline 6 for blue.
-            if (!sample4detected) {
-                limelight.pipelineSwitch(4);
-                LLCorrectionTimer.reset();
-                while (opModeIsActive() && !isStopRequested()) {
-                    LLResult result = limelight.getLatestResult();
-                    if (result != null) {
-                        if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
-                            telemetry.addData("tx", result.getTx());
-                            telemetry.addData("ty", result.getTy());
-                            List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                            if (result.getTy() < -1) {
-                                FL.setPower(0.3);
-                                BR.setPower(0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else if (result.getTy() > 1) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
-                                FR.setPower(0.3);
-                                BL.setPower(0.3);
-                            } else {
-                                if (result.getTx() > 1) {
-                                    FL.setPower(0.3);
-                                    BR.setPower(0.3);
-                                    FR.setPower(0.3);
-                                    BL.setPower(0.3);
-                                } else if (result.getTx() < -1) {
-                                    FL.setPower(-0.3);
-                                    BR.setPower(-0.3);
-                                    FR.setPower(-0.3);
-                                    BL.setPower(-0.3);
-                                } else {
-                                    FL.setPower(0);
-                                    BR.setPower(0);
-                                    FR.setPower(0);
-                                    BL.setPower(0);
-                                    telemetry.addData("limelight loop 4a breaks - 2nd pipeline", FL.getPower());
-                                    telemetry.update();
-                                    sample4detected = true;
-                                    break;
-                                }
-                            }
-                        } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
-                            Actions.runBlocking(
-                                    go_to_sub_4a.build()
-                            );
-                            break;
-                        } else {
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
-                }
-            };
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            //limelight correction red/blue sample done. Switch to 4b position and yellow pipeline.
-            if (!sample4detected) {
+
+            if (!targetAligned){
                 drive.updatePoseEstimate();
                 Actions.runBlocking(new SequentialAction(
-                        go_to_sub_4b.build()
+                        go_to_target_2.build()
                 ));
                 limelight.pipelineSwitch(2);
                 LLCorrectionTimer.reset();
                 while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
-                    if (result != null) {
-                        if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
-                            telemetry.addData("tx", result.getTx());
-                            telemetry.addData("ty", result.getTy());
-                            List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                            if (result.getTy() < -1) {
+//                if (result != null) {
+//                    telemetry.addData("LLResult", result.isValid());
+//                    telemetry.update();
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
+                        telemetry.addData("target 2 found", true);
+                        telemetry.addData("tx", result.getTx());
+                        telemetry.addData("ty", result.getTy());
+                        telemetry.addData("ta", result.getTa());
+                        telemetry.update();
+                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+                        if (result.getTy() < -2) { //move right
+                            FL.setPower(0.3);
+                            BR.setPower(0.3);
+                            FR.setPower(-0.3);
+                            BL.setPower(-0.3);
+                        } else if (result.getTy() > 2) { //move left
+                            FL.setPower(-0.3);
+                            BR.setPower(-0.3);
+                            FR.setPower(0.3);
+                            BL.setPower(0.3);
+                        } else {
+                            if (result.getTx() > 2) { //move forward
                                 FL.setPower(0.3);
                                 BR.setPower(0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else if (result.getTy() > 1) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
                                 FR.setPower(0.3);
                                 BL.setPower(0.3);
+                            } else if (result.getTx() < -2) { //move backward
+                                FL.setPower(-0.3);
+                                BR.setPower(-0.3);
+                                FR.setPower(-0.3);
+                                BL.setPower(-0.3);
                             } else {
-                                if (result.getTx() > 1) {
-                                    FL.setPower(0.3);
-                                    BR.setPower(0.3);
-                                    FR.setPower(0.3);
-                                    BL.setPower(0.3);
-                                } else if (result.getTx() < -1) {
-                                    FL.setPower(-0.3);
-                                    BR.setPower(-0.3);
-                                    FR.setPower(-0.3);
-                                    BL.setPower(-0.3);
-                                } else {
-                                    FL.setPower(0);
-                                    BR.setPower(0);
-                                    FR.setPower(0);
-                                    BL.setPower(0);
-                                    telemetry.addData("limelight loop 4b breaks - yellow pipeline", FL.getPower());
-                                    telemetry.update();
-                                    sample4detected = true;
-                                    break;
-                                }
+                                FL.setPower(0);
+                                BR.setPower(0);
+                                FR.setPower(0);
+                                BL.setPower(0);
+                                targetAligned = true;
+                                telemetry.addData("limelight loop target 2 breaks", FL.getPower());
+                                telemetry.addData("target 2 is aligned", true);
+                                telemetry.update();
+                                break;
                             }
-                        } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
-                            Actions.runBlocking(
-                                    go_to_sub_4b.build()
-                            );
-                            break;
-                        } else {
-                            break;
                         }
+//                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
+//                        Actions.runBlocking(
+//                                go_to_sub_4a.build()
+//                        );
+//                        break;
                     } else {
+                        telemetry.addData("target 2 is not aligned", false);
+                        telemetry.update();
                         break;
                     }
+//                } else {
+//                    telemetry.addData("result = null", false);
+//                    telemetry.update();
+//                    break;
+//                }
                 }
-            };
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            //limelight correction yellow sample done. If no yellow sample detected, switch to pipeline 4 for red or pipeline 6 for blue.
-            if (!sample4detected) {
-                limelight.pipelineSwitch(4);
+        }
+
+
+
+
+            if (!targetAligned){
+                drive.updatePoseEstimate();
+                Actions.runBlocking(new SequentialAction(
+                        go_to_target_3.build()
+                ));
+                limelight.pipelineSwitch(2);
                 LLCorrectionTimer.reset();
                 while (opModeIsActive() && !isStopRequested()) {
                     LLResult result = limelight.getLatestResult();
-                    if (result != null) {
-                        if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() <= 1) {
-                            telemetry.addData("tx", result.getTx());
-                            telemetry.addData("ty", result.getTy());
-                            List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-                            if (result.getTy() < -1) {
+//                if (result != null) {
+//                    telemetry.addData("LLResult", result.isValid());
+//                    telemetry.update();
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
+                        telemetry.addData("target 3 found", true);
+                        telemetry.addData("tx", result.getTx());
+                        telemetry.addData("ty", result.getTy());
+                        telemetry.addData("ta", result.getTa());
+                        telemetry.update();
+                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+                        if (result.getTy() < -2) { //move right
+                            FL.setPower(0.3);
+                            BR.setPower(0.3);
+                            FR.setPower(-0.3);
+                            BL.setPower(-0.3);
+                        } else if (result.getTy() > 2) { //move left
+                            FL.setPower(-0.3);
+                            BR.setPower(-0.3);
+                            FR.setPower(0.3);
+                            BL.setPower(0.3);
+                        } else {
+                            if (result.getTx() > 2) { //move forward
                                 FL.setPower(0.3);
                                 BR.setPower(0.3);
-                                FR.setPower(-0.3);
-                                BL.setPower(-0.3);
-                            } else if (result.getTy() > 1) {
-                                FL.setPower(-0.3);
-                                BR.setPower(-0.3);
                                 FR.setPower(0.3);
                                 BL.setPower(0.3);
+                            } else if (result.getTx() < -2) { //move backward
+                                FL.setPower(-0.3);
+                                BR.setPower(-0.3);
+                                FR.setPower(-0.3);
+                                BL.setPower(-0.3);
                             } else {
-                                if (result.getTx() > 1) {
-                                    FL.setPower(0.3);
-                                    BR.setPower(0.3);
-                                    FR.setPower(0.3);
-                                    BL.setPower(0.3);
-                                } else if (result.getTx() < -1) {
-                                    FL.setPower(-0.3);
-                                    BR.setPower(-0.3);
-                                    FR.setPower(-0.3);
-                                    BL.setPower(-0.3);
-                                } else {
-                                    FL.setPower(0);
-                                    BR.setPower(0);
-                                    FR.setPower(0);
-                                    BL.setPower(0);
-                                    telemetry.addData("limelight loop 4b breaks - 2nd pipeline", FL.getPower());
-                                    telemetry.update();
-                                    sample4detected = true;
-                                    break;
-                                }
+                                FL.setPower(0);
+                                BR.setPower(0);
+                                FR.setPower(0);
+                                BL.setPower(0);
+                                targetAligned = true;
+                                telemetry.addData("limelight loop target 3 breaks", FL.getPower());
+                                telemetry.addData("target 3 is aligned", true);
+                                telemetry.update();
+                                break;
                             }
-                        } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
-                            Actions.runBlocking(
-                                    go_to_sub_4b.build()
-                            );
-                            break;
-                        } else {
-                            break;
                         }
+//                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
+//                        Actions.runBlocking(
+//                                go_to_sub_4a.build()
+//                        );
+//                        break;
                     } else {
+                        telemetry.addData("target 3 is not aligned", false);
+                        telemetry.update();
                         break;
                     }
+//                } else {
+//                    telemetry.addData("result = null", false);
+//                    telemetry.update();
+//                    break;
+//                }
                 }
+            }
+
+
+
+
+
+            if (!targetAligned){
+                drive.updatePoseEstimate();
+                Actions.runBlocking(new SequentialAction(
+                        go_to_target_4.build()
+                ));
+                limelight.pipelineSwitch(2);
+                LLCorrectionTimer.reset();
+                while (opModeIsActive() && !isStopRequested()) {
+                    LLResult result = limelight.getLatestResult();
+//                if (result != null) {
+//                    telemetry.addData("LLResult", result.isValid());
+//                    telemetry.update();
+                    if (result.isValid() && result.getTa() > 0.001 && LLCorrectionTimer.seconds() <= 3) {
+                        telemetry.addData("target 4 found", true);
+                        telemetry.addData("tx", result.getTx());
+                        telemetry.addData("ty", result.getTy());
+                        telemetry.addData("ta", result.getTa());
+                        telemetry.update();
+                        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+                        if (result.getTy() < -2) { //move right
+                            FL.setPower(0.3);
+                            BR.setPower(0.3);
+                            FR.setPower(-0.3);
+                            BL.setPower(-0.3);
+                        } else if (result.getTy() > 2) { //move left
+                            FL.setPower(-0.3);
+                            BR.setPower(-0.3);
+                            FR.setPower(0.3);
+                            BL.setPower(0.3);
+                        } else {
+                            if (result.getTx() > 2) { //move forward
+                                FL.setPower(0.3);
+                                BR.setPower(0.3);
+                                FR.setPower(0.3);
+                                BL.setPower(0.3);
+                            } else if (result.getTx() < -2) { //move backward
+                                FL.setPower(-0.3);
+                                BR.setPower(-0.3);
+                                FR.setPower(-0.3);
+                                BL.setPower(-0.3);
+                            } else {
+                                FL.setPower(0);
+                                BR.setPower(0);
+                                FR.setPower(0);
+                                BL.setPower(0);
+                                targetAligned = true;
+                                telemetry.addData("limelight loop target 4 breaks", FL.getPower());
+                                telemetry.addData("target 4 is aligned", true);
+                                telemetry.update();
+                                break;
+                            }
+                        }
+//                    } else if (result.isValid() && result.getTa() > 0.01 && LLCorrectionTimer.seconds() > 1) {
+//                        Actions.runBlocking(
+//                                go_to_sub_4a.build()
+//                        );
+//                        break;
+                    } else {
+                        telemetry.addData("target 4 is not aligned", false);
+                        telemetry.update();
+                        break;
+                    }
+//                } else {
+//                    telemetry.addData("result = null", false);
+//                    telemetry.update();
+//                    break;
+//                }
+                }
+            }
+
+
+
+
+
+            if (targetAligned) {
+
+                Actions.runBlocking(new SequentialAction(
+                                new ParallelAction(
+                                        intake.SettoAim(),
+                                        wrist.SettoWrist0()
+                                ),
+                                new SleepAction(1),
+                                intake.SettoGrab(),
+                                new SleepAction(0.3),
+                                intake.SettoAfterGrab(),
+                                new SleepAction(0.6),
+                                intake.SettoTrasfer(),
+                                new SleepAction(0.6),
+                                new ParallelAction(
+//                            return_basket_4.build(),
+                                        new SequentialAction(
+
+
+
+                                                new SleepAction(0.6),
+                                                oclaw.CloseOClaw(),
+                                                new SleepAction(0.3),
+                                                iclaw.OpenIClaw(),
+                                                new ParallelAction(
+                                                        intake.SettoAfterTrasfer()
+//                                            lift.liftUp()
+                                                )
+                                        )
+                                ),
+                                new SleepAction(0.2),
+                                oclaw.OpenOClaw(),
+                                new SleepAction(0.2)
+
+//            // sample 4 cycle completes by now. sample 5 cycle starts below
+//                    new ParallelAction(
+//                        go_to_sub_5a.build(),
+//                        oarm.LowerOArm(),
+//                        lift.liftDown(),
+//                            new SequentialAction(
+//                                    new SleepAction(2),
+//                                    oarm.LiftOArm()
+//                            )
+//                    )
+
+                        )
+
+
+                );
+
+
+
             };
-            FL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            BL.setPower(0);
-            //limelight correction 4b position red/blue pipeline completes.
-            drive.updatePoseEstimate();
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            intake.SettoAim(),
-                            wrist.SettoWrist0()
-                    ),
-                    new SleepAction(0.4),
-                    intake.SettoGrab(),
-                    new SleepAction(0.3),
-                    intake.SettoAfterGrab(),
-                    new SleepAction(0.6),
-                    intake.SettoTrasfer(),
-                    new ParallelAction(
-                            return_basket_4.build(),
-                            new SequentialAction(
-
-
-
-                                    new SleepAction(0.6),
-                                    oclaw.CloseOClaw(),
-                                    new SleepAction(0.3),
-                                    iclaw.OpenIClaw(),
-                                    new ParallelAction(
-                                            intake.SettoAfterTrasfer(),
-                                            lift.liftUp()
-                                    )
-                            )
-                    ),
-                    new SleepAction(0.2),
-                    oclaw.OpenOClaw(),
-                    new SleepAction(0.2),
-
-            // sample 4 cycle completes by now. sample 5 cycle starts below
-                    new ParallelAction(
-                        go_to_sub_5a.build(),
-                        oarm.LowerOArm(),
-                        lift.liftDown(),
-                            new SequentialAction(
-                                    new SleepAction(2),
-                                    oarm.LiftOArm()
-                            )
-                    )
-
-        ));
-
-
 
 
         }
