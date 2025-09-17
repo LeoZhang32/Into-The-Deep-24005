@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Disabled
 @TeleOp
 public class test1 extends LinearOpMode{
+    DcMotor a;
+    Servo b;
     DcMotor frontRight;
     DcMotor frontLeft;
     DcMotor backRight;
@@ -51,6 +53,8 @@ public class test1 extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         // drivetrain motors
+        b = hardwareMap.get(Servo.class, "b");
+        a = hardwareMap.get(DcMotor.class, "a");
         frontRight = hardwareMap.dcMotor.get("frontRight");
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
@@ -123,6 +127,9 @@ public class test1 extends LinearOpMode{
             backLeft.setPower(backLeftPower * 0.75);
             frontRight.setPower(frontRightPower * 0.75);
             backRight.setPower(backRightPower * 0.75);
+
+            if (gamepad1.b) b.setPosition(1);
+            else b.setPosition(0);
 
             //viper slides
             if (gamepad1.dpad_up) {
