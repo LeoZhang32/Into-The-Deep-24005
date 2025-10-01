@@ -6,14 +6,20 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class timtutorial extends LinearOpMode {
 DcMotor Tim;
+DcMotor Ryan;
+Servo Trigger;
 
     @Override
     public void runOpMode() throws InterruptedException {
         Tim = hardwareMap.get(DcMotor.class, "abc");
+        Ryan = hardwareMap.get(DcMotor.class, "def");
+        Trigger = hardwareMap.get(Servo.class, "trigger");
+
         waitForStart();
         if (isStopRequested()) return;
 
@@ -24,14 +30,21 @@ DcMotor Tim;
             else if (gamepad1.b){
                 Tim.setPower(-1);
             }
-            else if (gamepad1.x){
-                Tim.setPower(0.5);
+            if (gamepad1.x){
+                Ryan.setPower(0.7);
             }
             else if (gamepad1.y){
-                Tim.setPower(-0.5);
+                Ryan.setPower(0.8);
+            }
+            else if (gamepad1.right_bumper){
+                Ryan.setPower(0.6);
+            }
+            else if (gamepad1.left_bumper){
+                Ryan.setPower(0.5);
             }
             else {
                 Tim.setPower(0);
+                Ryan.setPower(0);
             }
         }
     }
