@@ -43,6 +43,13 @@ Servo Trigger;
             else if (gamepad1.left_bumper){
                 Ryan.setPower(0.5);
             }
+            else if (gamepad1.dpad_up){
+                Ryan.setPower(1.0);
+            }
+            else if (gamepad1.dpad_down){
+                Ryan.setPower(0.9);
+            }
+
             else {
                 Ryan.setPower(0);
             }
