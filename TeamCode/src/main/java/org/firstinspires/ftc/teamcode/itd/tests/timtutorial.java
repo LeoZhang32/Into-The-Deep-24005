@@ -30,6 +30,7 @@ Servo Trigger;
             else if (gamepad1.b){
                 Tim.setPower(-1);
             }
+            else Tim.setPower(0);
             if (gamepad1.x){
                 Ryan.setPower(0.7);
             }
@@ -43,7 +44,6 @@ Servo Trigger;
                 Ryan.setPower(0.5);
             }
             else {
-                Tim.setPower(0);
                 Ryan.setPower(0);
             }
         }
