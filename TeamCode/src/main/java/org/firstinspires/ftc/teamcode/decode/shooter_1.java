@@ -29,7 +29,7 @@ boolean isTriggerTimerRunning = false; // Track if timer is running
         if (isStopRequested()) return;
 
         while (!isStopRequested() && opModeIsActive()) {
-            cycle_gamepad1.updateX(6);
+            cycle_gamepad1.updateX(5);
 
             if (cycle_gamepad1.xPressCount == 0){
                 intake.setPower(0);
@@ -59,7 +59,7 @@ boolean isTriggerTimerRunning = false; // Track if timer is running
                 isTriggerTimerRunning = false;
             }
 
-            else if (cycle_gamepad1.xPressCount == 4){
+            else {
                 intake.setPower(1);
                 outtake.setPower(0.8);
                 trigger.setPosition(1);
@@ -69,12 +69,6 @@ boolean isTriggerTimerRunning = false; // Track if timer is running
                     isTriggerTimerRunning = true; // Indicate timer has started
                     telemetry.addData("trigger Timer Started", triggerTimer.milliseconds());
                 }
-            }
-            else {
-                intake.setPower(0);
-                outtake.setPower(0);
-                trigger.setPosition(0.7);
-                isTriggerTimerRunning = false;
             }
 
             //trigger action timer
