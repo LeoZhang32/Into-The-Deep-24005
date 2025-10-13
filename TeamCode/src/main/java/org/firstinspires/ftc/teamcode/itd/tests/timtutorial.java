@@ -12,13 +12,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class timtutorial extends LinearOpMode {
 DcMotor Tim;
 DcMotor Ryan;
-Servo Trigger;
+//Servo Trigger;
 
     @Override
     public void runOpMode() throws InterruptedException {
         Tim = hardwareMap.get(DcMotor.class, "abc");
         Ryan = hardwareMap.get(DcMotor.class, "def");
-        Trigger = hardwareMap.get(Servo.class, "trigger");
+//        Trigger = hardwareMap.get(Servo.class, "trigger");
 
         waitForStart();
         if (isStopRequested()) return;
