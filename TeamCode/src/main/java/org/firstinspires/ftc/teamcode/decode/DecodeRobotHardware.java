@@ -174,7 +174,7 @@ public class DecodeRobotHardware {
         }
         else shooter.setPower(0);
         shooterVelocity = shooter.getVelocity(AngleUnit.DEGREES);
-        velocityValid = shooterVelocity >= 120;
+        velocityValid = shooterVelocity >= 140;
         if (velocityValid) trigger.setPosition(0.68);
         else trigger.setPosition(1);
         myOpMode.telemetry.update();

@@ -30,7 +30,7 @@ public class teleop_hardwareclasstest1 extends LinearOpMode {
             slowModeOn = cycle_gampepad1.lbPressCount != 0;
 
             robot.driveRobot(drive_y, drive_x, turn, slowModeOn, imuReset);
-            robot.shooterCycle(gamepad1.x);
+            robot.shooterCycle(gamepad1.right_bumper);
             robot.intakeAction(gamepad1.a, gamepad1.b);
         }
     }
