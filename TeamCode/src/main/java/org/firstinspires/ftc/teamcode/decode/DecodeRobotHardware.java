@@ -72,6 +72,7 @@ public class DecodeRobotHardware {
     private DcMotorEx shooter = null;
     private DcMotorEx intake =null;
     private Servo trigger = null;
+    private Servo gate = null;
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public DecodeRobotHardware (LinearOpMode opmode) {
@@ -107,6 +108,7 @@ public class DecodeRobotHardware {
         shooter = myOpMode.hardwareMap.get(DcMotorEx.class, "def");
 
         trigger = myOpMode.hardwareMap.get(Servo.class, "trigger");
+        gate = myOpMode.hardwareMap.get(Servo.class, "gate");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -165,18 +167,20 @@ public class DecodeRobotHardware {
      */
     public void shooterCycle (boolean shooterInput){
         boolean velocityValid = false;
+        boolean velocityValid2 = false;
         double shooterVelocity = 0;
-
+        shooterVelocity = shooter.getVelocity(AngleUnit.DEGREES);
         if (shooterInput){
-            shooter.setPower(0.7);
-            myOpMode.telemetry.addData("velocity",shooterVelocity);
-
+            shooter.setPower(0.55);
         }
         else shooter.setPower(0);
-        shooterVelocity = shooter.getVelocity(AngleUnit.DEGREES);
+        myOpMode.telemetry.addData("velocity",shooterVelocity);
         velocityValid = shooterVelocity >= 140;
         if (velocityValid) trigger.setPosition(0.68);
         else trigger.setPosition(1);
+        velocityValid2 = shooterVelocity >= 138;
+        if (velocityValid2) gate.setPosition(0.65);
+        else gate.setPosition(0.98);
         myOpMode.telemetry.update();
     }
 
