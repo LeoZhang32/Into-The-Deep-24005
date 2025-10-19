@@ -9,6 +9,7 @@ public class teleop_hardwareclasstest1 extends LinearOpMode {
 
     Boolean slowModeOn = false;
     Boolean imuReset = false;
+    Boolean outtakeOn = false;
 
     @Override
     public void runOpMode() {
@@ -24,6 +25,10 @@ public class teleop_hardwareclasstest1 extends LinearOpMode {
             imuReset = gamepad1.start;
             cycle_gampepad1.updateLB(2);
             cycle_gampepad1.updateX(6);
+            cycle_gampepad1.updateRB(2);
+
+            outtakeOn = cycle_gampepad1.rbPressCount == 1;
+
             drive_y = -gamepad1.left_stick_y;
             drive_x = gamepad1.left_stick_x;
             turn  =  gamepad1.right_stick_x * 0.7;
@@ -31,7 +36,7 @@ public class teleop_hardwareclasstest1 extends LinearOpMode {
 
             robot.driveRobot(drive_y, drive_x, turn, slowModeOn, imuReset);
 //            robot.shooterCycle(gamepad1.right_bumper);
-            robot.intakeOuttakeAction(gamepad1.a, gamepad1.b, gamepad1.right_bumper);
+            robot.intakeOuttakeAction(gamepad1.a, gamepad1.b, outtakeOn);
         }
     }
 }

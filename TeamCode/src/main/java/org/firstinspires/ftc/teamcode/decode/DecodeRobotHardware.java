@@ -188,9 +188,9 @@ public class DecodeRobotHardware {
      *
      * @param intakeInInput -intake button
      * @param intakeOutInput -reverse intake button
-     * @param outtakeInput -outtake button
+     * @param outtakeOn -outtake button
      */
-    public void intakeOuttakeAction(boolean intakeInInput, boolean intakeOutInput, boolean outtakeInput){
+    public void intakeOuttakeAction(boolean intakeInInput, boolean intakeOutInput, boolean outtakeOn){
         double shooterVelocity = 0;
         shooterVelocity = shooter.getVelocity(AngleUnit.DEGREES);
         myOpMode.telemetry.addData("velocity",shooterVelocity);
@@ -199,11 +199,11 @@ public class DecodeRobotHardware {
         boolean velocityValid = false;
         boolean velocityValid2 = false;
 
-        velocityValid = shooterVelocity >= 140;
+        velocityValid = shooterVelocity >= 145;
         if (velocityValid) trigger.setPosition(0.68);
-        else trigger.setPosition(1);
+        else trigger.setPosition(0.95);
 
-        velocityValid2 = shooterVelocity >= 138;
+        velocityValid2 = shooterVelocity >= 143;
         if (velocityValid2) gate.setPosition(0.65);
         else gate.setPosition(0.98);
 
@@ -211,11 +211,11 @@ public class DecodeRobotHardware {
         else if (intakeOutInput) intake.setPower(-1);
         else intake.setPower(0);
 
-        if (!outtakeInput){
-            shooter.setPower(0.3);
+        if (!outtakeOn){
+            shooter.setPower(0);
         }
         else {
-            shooter.setPower(0.55);
+            shooter.setPower(0.6);
         }
     }
 }
