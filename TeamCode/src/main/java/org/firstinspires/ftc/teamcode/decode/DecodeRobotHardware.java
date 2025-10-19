@@ -166,32 +166,56 @@ public class DecodeRobotHardware {
      * @param shooterInput -shooter button
      */
     public void shooterCycle (boolean shooterInput){
-        boolean velocityValid = false;
-        boolean velocityValid2 = false;
-        double shooterVelocity = 0;
-        shooterVelocity = shooter.getVelocity(AngleUnit.DEGREES);
-        if (shooterInput){
-            shooter.setPower(0.55);
-        }
-        else shooter.setPower(0);
-        myOpMode.telemetry.addData("velocity",shooterVelocity);
-        velocityValid = shooterVelocity >= 140;
-        if (velocityValid) trigger.setPosition(0.68);
-        else trigger.setPosition(1);
-        velocityValid2 = shooterVelocity >= 138;
-        if (velocityValid2) gate.setPosition(0.65);
-        else gate.setPosition(0.98);
-        myOpMode.telemetry.update();
+//        boolean velocityValid = false;
+//        boolean velocityValid2 = false;
+//        double shooterVelocity = 0;
+//        shooterVelocity = shooter.getVelocity(AngleUnit.DEGREES);
+//        if (shooterInput){
+//            shooter.setPower(0.55);
+//        }
+//        else shooter.setPower(0);
+//        myOpMode.telemetry.addData("velocity",shooterVelocity);
+//        velocityValid = shooterVelocity >= 140;
+//        if (velocityValid) trigger.setPosition(0.68);
+//        else trigger.setPosition(1);
+//        velocityValid2 = shooterVelocity >= 138;
+//        if (velocityValid2) gate.setPosition(0.65);
+//        else gate.setPosition(0.98);
+//        myOpMode.telemetry.update();
     }
 
     /**
      *
      * @param intakeInInput -intake button
      * @param intakeOutInput -reverse intake button
+     * @param outtakeInput -outtake button
      */
-    public void intakeAction(boolean intakeInInput, boolean intakeOutInput){
+    public void intakeOuttakeAction(boolean intakeInInput, boolean intakeOutInput, boolean outtakeInput){
+        double shooterVelocity = 0;
+        shooterVelocity = shooter.getVelocity(AngleUnit.DEGREES);
+        myOpMode.telemetry.addData("velocity",shooterVelocity);
+        myOpMode.telemetry.update();
+
+        boolean velocityValid = false;
+        boolean velocityValid2 = false;
+
+        velocityValid = shooterVelocity >= 140;
+        if (velocityValid) trigger.setPosition(0.68);
+        else trigger.setPosition(1);
+
+        velocityValid2 = shooterVelocity >= 138;
+        if (velocityValid2) gate.setPosition(0.65);
+        else gate.setPosition(0.98);
+
         if (intakeInInput) intake.setPower(1);
         else if (intakeOutInput) intake.setPower(-1);
         else intake.setPower(0);
+
+        if (!outtakeInput){
+            shooter.setPower(0.3);
+        }
+        else {
+            shooter.setPower(0.55);
+        }
     }
 }

@@ -36,13 +36,13 @@ public class shooter_2 extends LinearOpMode {
         while (!isStopRequested() && opModeIsActive()) {
 
             if (gamepad1.x){
-                outtake.setPower(0.7);
+                outtake.setPower(0.75);
                 telemetry.addData("velocity",shooterVelocity);
 
             }
             else outtake.setPower(0);
             shooterVelocity = outtake.getVelocity(AngleUnit.DEGREES);
-            velocityValid = shooterVelocity >= 120;
+            velocityValid = shooterVelocity >= 130;
             if (velocityValid) trigger.setPosition(0.75);
             else trigger.setPosition(0.95);
             telemetry.update();
