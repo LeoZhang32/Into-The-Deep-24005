@@ -91,7 +91,7 @@ import java.util.concurrent.TimeUnit;
 public class DriveToApril extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = .0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 24; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
