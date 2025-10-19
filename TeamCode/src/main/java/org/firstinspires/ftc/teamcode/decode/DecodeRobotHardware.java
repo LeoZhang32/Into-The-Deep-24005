@@ -29,14 +29,21 @@
 
 package org.firstinspires.ftc.teamcode.decode;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -45,6 +52,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -88,9 +96,12 @@ public class DecodeRobotHardware {
     private DcMotorEx intake =null;
     private Servo trigger = null;
     private Servo gate = null;
+    private Servo light = null;
+    private NormalizedColorSensor colorSensor;
+    private View relativeLayout;
 
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 24.0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 80.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -107,6 +118,7 @@ public class DecodeRobotHardware {
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    final float[] hsvValues = new float[3];
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public DecodeRobotHardware (LinearOpMode opmode) { myOpMode = opmode; }
@@ -117,7 +129,7 @@ public class DecodeRobotHardware {
      * <p>
      * All of the hardware devices are accessed via the hardware map, and initialized.
      */
-    public void init()    {
+    public void init() {
         aprilTag = new AprilTagProcessor.Builder().build();
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
@@ -142,7 +154,7 @@ public class DecodeRobotHardware {
         }
 
 
-        if (visionPortal.getCameraState() != null){
+        if (visionPortal.getCameraState() != null) {
             if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
                 while (!myOpMode.isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
                     myOpMode.sleep(20);
@@ -151,7 +163,7 @@ public class DecodeRobotHardware {
         }
 
         // Set camera controls unless we are stopping.
-        if (!myOpMode.isStopRequested()){
+        if (!myOpMode.isStopRequested()) {
             ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
             if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
                 exposureControl.setMode(ExposureControl.Mode.Manual);
@@ -170,26 +182,35 @@ public class DecodeRobotHardware {
         imu = myOpMode.hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-        FL  = myOpMode.hardwareMap.get(DcMotor.class, "FL");
+        FL = myOpMode.hardwareMap.get(DcMotor.class, "FL");
         FR = myOpMode.hardwareMap.get(DcMotor.class, "FR");
-        BL  = myOpMode.hardwareMap.get(DcMotor.class, "BL");
+        BL = myOpMode.hardwareMap.get(DcMotor.class, "BL");
         BR = myOpMode.hardwareMap.get(DcMotor.class, "BR");
 
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake = myOpMode.hardwareMap.get(DcMotorEx.class, "abc");
-        shooter = myOpMode.hardwareMap.get(DcMotorEx.class, "def");
+        intake = myOpMode.hardwareMap.get(DcMotorEx.class, "intake");
+        shooter = myOpMode.hardwareMap.get(DcMotorEx.class, "shooter");
 
         trigger = myOpMode.hardwareMap.get(Servo.class, "trigger");
         gate = myOpMode.hardwareMap.get(Servo.class, "gate");
+        light = myOpMode.hardwareMap.get(Servo.class, "light");
+//        light.setPosition(0);
 
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
+
+        colorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+
+        int relativeLayoutId = myOpMode.hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", myOpMode.hardwareMap.appContext.getPackageName());
+        relativeLayout = ((Activity) myOpMode.hardwareMap.appContext).findViewById(relativeLayoutId);
+
+
+            // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -296,17 +317,17 @@ public class DecodeRobotHardware {
             Drive_x = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
             myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", Drive_y, Drive_x, Turn);
-            double leftFrontPower    =  -(Drive_x -Drive_y -Turn);
-            double rightFrontPower   =  -(Drive_x +Drive_y +Turn);
-            double leftBackPower     =  -(Drive_x +Drive_y -Turn);
-            double rightBackPower    =  -(Drive_x -Drive_y +Turn);
+            double leftFrontPower    =  Drive_x -Drive_y -Turn;
+            double rightFrontPower   =  Drive_x +Drive_y +Turn;
+            double leftBackPower     =  Drive_x +Drive_y -Turn;
+            double rightBackPower    =  Drive_x -Drive_y +Turn;
 
             // Normalize wheel powers to be less than 1.0
             double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
 
-            if (max < -1.0) {
+            if (max > 1.0) {
                 leftFrontPower /= max;
                 rightFrontPower /= max;
                 leftBackPower /= max;
@@ -334,12 +355,32 @@ public class DecodeRobotHardware {
         myOpMode.telemetry.addData("velocity",shooterVelocity);
         myOpMode.telemetry.update();
 
+        float gain = 2;
+        String samplecolor = "aaa";
+
         boolean velocityValid = false;
         boolean velocityValid2 = false;
 
         velocityValid = shooterVelocity >= 145;
-        if (velocityValid) trigger.setPosition(0.68);
-        else trigger.setPosition(0.95);
+        if (velocityValid) {
+            trigger.setPosition(0.68);
+            light.setPosition(0.277); //red color
+            samplecolor = "red";
+        }
+        else {
+            trigger.setPosition(0.95);
+            if (hsvValues[0] >= 120 && hsvValues[0] <= 180) {
+                samplecolor = "green";
+                light.setPosition(0.5);
+            } else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
+                samplecolor = "purple";
+                light.setPosition(0.722);
+            }
+            else {
+                samplecolor = "null";
+                light.setPosition(0);
+            }
+        }
 
         velocityValid2 = shooterVelocity >= 143;
         if (velocityValid2) gate.setPosition(0.65);
@@ -355,5 +396,62 @@ public class DecodeRobotHardware {
         else {
             shooter.setPower(0.6);
         }
+
+        // Explain basic gain information via telemetry
+        // Show the gain value via telemetry
+        myOpMode.telemetry.addData("Gain", gain);
+
+        // Tell the sensor our desired gain value (normally you would do this during initialization,
+        // not during the loop)
+        colorSensor.setGain(gain);
+
+        // Get the normalized colors from the sensor
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
+
+        /* Use telemetry to display feedback on the driver station. We show the red, green, and blue
+         * normalized values from the sensor (in the range of 0 to 1), as well as the equivalent
+         * HSV (hue, saturation and value) values. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
+         * for an explanation of HSV color. */
+
+        // Update the hsvValues array by passing it to Color.colorToHSV()
+        Color.colorToHSV(colors.toColor(), hsvValues);
+
+        myOpMode.telemetry.addLine()
+                .addData("Red", "%.3f", colors.red)
+                .addData("Green", "%.3f", colors.green)
+                .addData("Blue", "%.3f", colors.blue);
+        myOpMode.telemetry.addLine()
+                .addData("Hue", "%.3f", hsvValues[0])
+                .addData("Saturation", "%.3f", hsvValues[1])
+                .addData("Value", "%.3f", hsvValues[2]);
+        myOpMode.telemetry.addData("Alpha", "%.3f", colors.alpha);
+
+        /* If this color sensor also has a distance sensor, display the measured distance.
+         * Note that the reported distance is only useful at very close range, and is impacted by
+         * ambient light and surface reflectivity. */
+        if (colorSensor instanceof DistanceSensor) {
+            myOpMode.telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
+        }
+
+
+        myOpMode.telemetry.addData("light emitted", samplecolor);
+        myOpMode.telemetry.update();
+        //            if (sample_color){
+        //                sample.setPosition(1);
+        //              myOpmode.telemetry.addData("sample_color", "true");
+        //            }
+        //            else {
+        //                sample.setPosition(0.4);
+        //              myOpmode.telemetry.addData("sample_color", "false");
+        //            }
+        // Change the Robot Controller's background color to match the color detected by the color sensor.
+        relativeLayout.post(new Runnable() {
+            public void run() {
+                relativeLayout.setBackgroundColor(Color.HSVToColor(hsvValues));
+            }
+        });
+
     }
 }
+
+
