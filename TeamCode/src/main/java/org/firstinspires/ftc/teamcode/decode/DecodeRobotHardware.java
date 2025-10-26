@@ -101,19 +101,24 @@ public class DecodeRobotHardware {
     private View relativeLayout;
 
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 80.0; //  this is how close the camera should get to the target (inches)
+
+    final double DESIRED_DISTANCE = 50.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
+
     final double SPEED_GAIN  =  0.05  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0) pr 0.02
     final double STRAFE_GAIN =  0.03 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0) pr 0.015
     final double TURN_GAIN   =  0.02  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0) pr 0.01
 
+
+
+
     final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
-    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
+    public static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
   // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
@@ -316,6 +321,11 @@ public class DecodeRobotHardware {
             Turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
             Drive_x = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
+//            Drive_y = -Drive_y;  // forward/back reversed
+//            Turn    = -Turn;     // turning direction reversed
+//            Drive_x = -Drive_x; // Drive_x unchanged (usually)
+
+
             myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", Drive_y, Drive_x, Turn);
             double leftFrontPower    =  Drive_x -Drive_y -Turn;
             double rightFrontPower   =  Drive_x +Drive_y +Turn;
@@ -361,26 +371,26 @@ public class DecodeRobotHardware {
         boolean velocityValid = false;
         boolean velocityValid2 = false;
 
-        velocityValid = shooterVelocity >= 145;
-        if (velocityValid) {
-            trigger.setPosition(0.68);
-            light.setPosition(0.277); //red color
-            samplecolor = "red";
-        }
-        else {
-            trigger.setPosition(0.95);
-            if (hsvValues[0] >= 120 && hsvValues[0] <= 180) {
-                samplecolor = "green";
-                light.setPosition(0.5);
-            } else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
-                samplecolor = "purple";
-                light.setPosition(0.722);
-            }
-            else {
-                samplecolor = "null";
-                light.setPosition(0);
-            }
-        }
+//        velocityValid = shooterVelocity >= 145;
+//        if (velocityValid) {
+//            trigger.setPosition(0.68);
+//            light.setPosition(0.277); //red color
+//            samplecolor = "red";
+//        }
+//        else {
+//            trigger.setPosition(0.95);
+//            if (hsvValues[0] >= 120 && hsvValues[0] <= 180) {
+//                samplecolor = "green";
+//                light.setPosition(0.5);
+//            } else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
+//                samplecolor = "purple";
+//                light.setPosition(0.722);
+//            }
+//            else {
+//                samplecolor = "null";
+//                light.setPosition(0);
+//            }
+//        }
 
         velocityValid2 = shooterVelocity >= 143;
         if (velocityValid2) gate.setPosition(0.65);
@@ -416,31 +426,31 @@ public class DecodeRobotHardware {
         // Update the hsvValues array by passing it to Color.colorToHSV()
         Color.colorToHSV(colors.toColor(), hsvValues);
 
-        myOpMode.telemetry.addLine()
-                .addData("Red", "%.3f", colors.red)
-                .addData("Green", "%.3f", colors.green)
-                .addData("Blue", "%.3f", colors.blue);
-        myOpMode.telemetry.addLine()
-                .addData("Hue", "%.3f", hsvValues[0])
-                .addData("Saturation", "%.3f", hsvValues[1])
-                .addData("Value", "%.3f", hsvValues[2]);
-        myOpMode.telemetry.addData("Alpha", "%.3f", colors.alpha);
+//        myOpMode.telemetry.addLine()
+//                .addData("Red", "%.3f", colors.red)
+//                .addData("Green", "%.3f", colors.green)
+//                .addData("Blue", "%.3f", colors.blue);
+//        myOpMode.telemetry.addLine()
+//                .addData("Hue", "%.3f", hsvValues[0])
+//                .addData("Saturation", "%.3f", hsvValues[1])
+//                .addData("Value", "%.3f", hsvValues[2]);
+//        myOpMode.telemetry.addData("Alpha", "%.3f", colors.alpha);
 
         /* If this color sensor also has a distance sensor, display the measured distance.
          * Note that the reported distance is only useful at very close range, and is impacted by
          * ambient light and surface reflectivity. */
-        if (colorSensor instanceof DistanceSensor) {
-            myOpMode.telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
-        }
-
-
-        myOpMode.telemetry.addData("light emitted", samplecolor);
-        myOpMode.telemetry.update();
-        //            if (sample_color){
-        //                sample.setPosition(1);
-        //              myOpmode.telemetry.addData("sample_color", "true");
-        //            }
-        //            else {
+//        if (colorSensor instanceof DistanceSensor) {
+//            myOpMode.telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
+//        }
+//
+//
+//        myOpMode.telemetry.addData("light emitted", samplecolor);
+//        myOpMode.telemetry.update();
+//        //            if (sample_color){
+//        //                sample.setPosition(1);
+//        //              myOpmode.telemetry.addData("sample_color", "true");
+//        //            }
+//        //            else {
         //                sample.setPosition(0.4);
         //              myOpmode.telemetry.addData("sample_color", "false");
         //            }
