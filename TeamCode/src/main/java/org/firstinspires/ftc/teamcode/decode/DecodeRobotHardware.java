@@ -100,29 +100,28 @@ public class DecodeRobotHardware {
     private NormalizedColorSensor colorSensor;
     private View relativeLayout;
 
-    // Adjust these numbers to suit your robot.
 
-    final double DESIRED_DISTANCE = 50.0; //  this is how close the camera should get to the target (inches)
+    // Adjust these numbers to suit your robot.
+    final double DESIRED_DISTANCE = 60; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-
     final double SPEED_GAIN  =  0.05  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0) pr 0.02
     final double STRAFE_GAIN =  0.03 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0) pr 0.015
     final double TURN_GAIN   =  0.02  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0) pr 0.01
 
-
-
-
     final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
-    public static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-  // Choose the tag you want to approach or set to -1 for ANY tag.
+
+    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
+    private static final int DESIRED_TAG_ID = 24;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
-    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag  //  Clip the turn speed to this max value (adjust for your robot)
+    double drive, strafe, turn = 0;
+
     final float[] hsvValues = new float[3];
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
@@ -135,16 +134,12 @@ public class DecodeRobotHardware {
      * All of the hardware devices are accessed via the hardware map, and initialized.
      */
     public void init() {
+// Create the AprilTag processor by using a builder.
         aprilTag = new AprilTagProcessor.Builder().build();
 
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
-        // eg: Some typical detection data using a Logitech C920 WebCam
-        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
-        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
-        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
-        // Note: Decimation can be changed on-the-fly to adapt during a match.
         aprilTag.setDecimation(2);
+
         // Create the vision portal by using a builder.
         if (USE_WEBCAM) {
             visionPortal = new VisionPortal.Builder()
@@ -157,7 +152,36 @@ public class DecodeRobotHardware {
                     .addProcessor(aprilTag)
                     .build();
         }
+        if (USE_WEBCAM){
+            if (visionPortal == null) {
+                return;
+            }
 
+            // Make sure camera is streaming before we try to set the exposure controls
+            if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                myOpMode.telemetry.addData("Camera", "Waiting");
+                myOpMode.telemetry.update();
+                while (!myOpMode.isStopRequested() &&(visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                    myOpMode.sleep(20);
+                }
+                myOpMode.telemetry.addData("Camera", "Ready");
+                myOpMode.telemetry.update();
+            }
+
+            // Set camera controls unless we are stopping.
+            if (!myOpMode.isStopRequested()) {
+                ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+                if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                    exposureControl.setMode(ExposureControl.Mode.Manual);
+                    myOpMode.sleep(50);
+                }
+                exposureControl.setExposure((long) 1, TimeUnit.MILLISECONDS);
+                myOpMode.sleep(20);
+                GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+                gainControl.setGain(250);
+                myOpMode.sleep(20);
+            }
+        }
 
         if (visionPortal.getCameraState() != null) {
             if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
@@ -180,7 +204,13 @@ public class DecodeRobotHardware {
             gainControl.setGain(250);
             myOpMode.sleep(20);
         }
-
+        // Wait for driver to press start
+        myOpMode.telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
+        myOpMode.telemetry.addData("Drive Mode", "Robot-Centric (Press START for Field-Centric)");
+        myOpMode.telemetry.addData("Slow Mode", "OFF (Press DPAD UP to toggle)");
+        myOpMode.telemetry.addData("Controls", "LB: Auto to Tag | START/SELECT: Mode | DPAD UP: Slow");
+        myOpMode.telemetry.addData(">", "Touch Play to start OpMode");
+        myOpMode.telemetry.update();
 
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         // Retrieve the IMU from the hardware map
@@ -206,7 +236,7 @@ public class DecodeRobotHardware {
         trigger = myOpMode.hardwareMap.get(Servo.class, "trigger");
         gate = myOpMode.hardwareMap.get(Servo.class, "gate");
         light = myOpMode.hardwareMap.get(Servo.class, "light");
-//        light.setPosition(0);
+        light.setPosition(0);
 
 
         colorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
@@ -271,9 +301,6 @@ public class DecodeRobotHardware {
      *  @param desiredTagID Tag ID
      **/
     public void driveToApril (boolean autoInput, double desiredTagID){
-        double Drive_x = 0;
-        double Drive_y = 0;
-        double Turn = 0;
         boolean targetFound = false;
         desiredTag  = null;
 
@@ -283,7 +310,7 @@ public class DecodeRobotHardware {
             // Look to see if we have size info on this tag.
             if (detection.metadata != null) {
                 //  Check to see if we want to track towards this tag.
-                if ((desiredTagID < 0) || (detection.id == desiredTagID)) {
+                if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
                     // Yes, we want to use this tag.
                     targetFound = true;
                     desiredTag = detection;
@@ -310,27 +337,21 @@ public class DecodeRobotHardware {
         }
 
         // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
-        if (targetFound && autoInput) {
+        if (autoInput && targetFound) {
+
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
             double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
             double  headingError    = desiredTag.ftcPose.bearing;
             double  yawError        = desiredTag.ftcPose.yaw;
 
             // Use the speed and turn "gains" to calculate how we want the robot to move.
-            Drive_y  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            Turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-            Drive_x = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-//            Drive_y = -Drive_y;  // forward/back reversed
-//            Turn    = -Turn;     // turning direction reversed
-//            Drive_x = -Drive_x; // Drive_x unchanged (usually)
-
-
-            myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", Drive_y, Drive_x, Turn);
-            double leftFrontPower    =  Drive_x -Drive_y -Turn;
-            double rightFrontPower   =  Drive_x +Drive_y +Turn;
-            double leftBackPower     =  Drive_x +Drive_y -Turn;
-            double rightBackPower    =  Drive_x -Drive_y +Turn;
+            drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+            double leftFrontPower    =  drive - strafe - turn;
+            double rightFrontPower   =  drive + strafe + turn;
+            double leftBackPower     =  drive + strafe - turn;
+            double rightBackPower    =  drive - strafe + turn;
 
             // Normalize wheel powers to be less than 1.0
             double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
@@ -349,8 +370,14 @@ public class DecodeRobotHardware {
             FR.setPower(rightFrontPower);
             BL.setPower(leftBackPower);
             BR.setPower(rightBackPower);
+            myOpMode.telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
         }
-        myOpMode.telemetry.update();
+        else {
+            FL.setPower(0);
+            FR.setPower(0);
+            BL.setPower(0);
+            BR.setPower(0);
+        }
     }
 
     /**
@@ -366,31 +393,31 @@ public class DecodeRobotHardware {
         myOpMode.telemetry.update();
 
         float gain = 2;
-        String samplecolor = "aaa";
+        String lightcolor;
 
         boolean velocityValid = false;
         boolean velocityValid2 = false;
 
-//        velocityValid = shooterVelocity >= 145;
-//        if (velocityValid) {
-//            trigger.setPosition(0.68);
-//            light.setPosition(0.277); //red color
-//            samplecolor = "red";
-//        }
-//        else {
-//            trigger.setPosition(0.95);
-//            if (hsvValues[0] >= 120 && hsvValues[0] <= 180) {
-//                samplecolor = "green";
-//                light.setPosition(0.5);
-//            } else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
-//                samplecolor = "purple";
-//                light.setPosition(0.722);
-//            }
-//            else {
-//                samplecolor = "null";
-//                light.setPosition(0);
-//            }
-//        }
+        velocityValid = shooterVelocity >= 145;
+        if (velocityValid) {
+            trigger.setPosition(0.68);
+            light.setPosition(0.277); //red color
+            lightcolor = "red";
+        }
+        else {
+            trigger.setPosition(0.95);
+            if (hsvValues[0] >= 120 && hsvValues[0] <= 180) {
+                lightcolor = "green";
+                light.setPosition(0.5);
+            } else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
+                lightcolor = "purple";
+                light.setPosition(0.722);
+            }
+            else {
+                lightcolor = "null";
+                light.setPosition(0);
+            }
+        }
 
         velocityValid2 = shooterVelocity >= 143;
         if (velocityValid2) gate.setPosition(0.65);
@@ -426,34 +453,26 @@ public class DecodeRobotHardware {
         // Update the hsvValues array by passing it to Color.colorToHSV()
         Color.colorToHSV(colors.toColor(), hsvValues);
 
-//        myOpMode.telemetry.addLine()
-//                .addData("Red", "%.3f", colors.red)
-//                .addData("Green", "%.3f", colors.green)
-//                .addData("Blue", "%.3f", colors.blue);
-//        myOpMode.telemetry.addLine()
-//                .addData("Hue", "%.3f", hsvValues[0])
-//                .addData("Saturation", "%.3f", hsvValues[1])
-//                .addData("Value", "%.3f", hsvValues[2]);
-//        myOpMode.telemetry.addData("Alpha", "%.3f", colors.alpha);
+        myOpMode.telemetry.addLine()
+                .addData("Red", "%.3f", colors.red)
+                .addData("Green", "%.3f", colors.green)
+                .addData("Blue", "%.3f", colors.blue);
+        myOpMode.telemetry.addLine()
+                .addData("Hue", "%.3f", hsvValues[0])
+                .addData("Saturation", "%.3f", hsvValues[1])
+                .addData("Value", "%.3f", hsvValues[2]);
+        myOpMode.telemetry.addData("Alpha", "%.3f", colors.alpha);
 
         /* If this color sensor also has a distance sensor, display the measured distance.
          * Note that the reported distance is only useful at very close range, and is impacted by
          * ambient light and surface reflectivity. */
-//        if (colorSensor instanceof DistanceSensor) {
-//            myOpMode.telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
-//        }
-//
-//
-//        myOpMode.telemetry.addData("light emitted", samplecolor);
-//        myOpMode.telemetry.update();
-//        //            if (sample_color){
-//        //                sample.setPosition(1);
-//        //              myOpmode.telemetry.addData("sample_color", "true");
-//        //            }
-//        //            else {
-        //                sample.setPosition(0.4);
-        //              myOpmode.telemetry.addData("sample_color", "false");
-        //            }
+        if (colorSensor instanceof DistanceSensor) {
+            myOpMode.telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
+        }
+
+
+        myOpMode.telemetry.addData("light emitted", lightcolor);
+        myOpMode.telemetry.update();
         // Change the Robot Controller's background color to match the color detected by the color sensor.
         relativeLayout.post(new Runnable() {
             public void run() {
