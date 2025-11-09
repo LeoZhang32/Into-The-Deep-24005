@@ -33,14 +33,13 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -92,17 +91,20 @@ public class DecodeRobotHardware {
     private DcMotor BL   = null;
     private DcMotor BR  = null;
     private IMU imu = null;
-    private DcMotorEx shooter = null;
+    private DcMotorEx shooterTop = null;
+    private DcMotorEx shooterBottom = null;
     private DcMotorEx intake =null;
+    private CRServo intakeCR = null;
     private Servo trigger = null;
     private Servo gate = null;
     private Servo light = null;
+    private DcMotorEx lift = null;
     private NormalizedColorSensor colorSensor;
     private View relativeLayout;
 
 
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 60; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 48; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -206,8 +208,6 @@ public class DecodeRobotHardware {
         }
         // Wait for driver to press start
         myOpMode.telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
-        myOpMode.telemetry.addData("Drive Mode", "Robot-Centric (Press START for Field-Centric)");
-        myOpMode.telemetry.addData("Slow Mode", "OFF (Press DPAD UP to toggle)");
         myOpMode.telemetry.addData("Controls", "LB: Auto to Tag | START/SELECT: Mode | DPAD UP: Slow");
         myOpMode.telemetry.addData(">", "Touch Play to start OpMode");
         myOpMode.telemetry.update();
@@ -225,29 +225,31 @@ public class DecodeRobotHardware {
         FR = myOpMode.hardwareMap.get(DcMotor.class, "FR");
         BL = myOpMode.hardwareMap.get(DcMotor.class, "BL");
         BR = myOpMode.hardwareMap.get(DcMotor.class, "BR");
-
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         intake = myOpMode.hardwareMap.get(DcMotorEx.class, "intake");
-        shooter = myOpMode.hardwareMap.get(DcMotorEx.class, "shooter");
+        shooterTop = myOpMode.hardwareMap.get(DcMotorEx.class, "shooterTop");
+        shooterBottom = myOpMode.hardwareMap.get(DcMotorEx.class, "shooterBottom");
+        shooterBottom.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeCR = myOpMode.hardwareMap.get(CRServo.class, "intakeCR");
+        intakeCR.setDirection(CRServo.Direction.REVERSE);
 
         trigger = myOpMode.hardwareMap.get(Servo.class, "trigger");
         gate = myOpMode.hardwareMap.get(Servo.class, "gate");
         light = myOpMode.hardwareMap.get(Servo.class, "light");
         light.setPosition(0);
 
+        lift = myOpMode.hardwareMap.get(DcMotorEx.class, "lift");
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         colorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
         int relativeLayoutId = myOpMode.hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", myOpMode.hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) myOpMode.hardwareMap.appContext).findViewById(relativeLayoutId);
 
-
-            // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -384,11 +386,12 @@ public class DecodeRobotHardware {
      *
      * @param intakeInInput -intake button
      * @param intakeOutInput -reverse intake button
+     * @param intakeCRIn - intake servo in button
      * @param outtakeOn -outtake button
      */
-    public void intakeOuttakeAction(boolean intakeInInput, boolean intakeOutInput, boolean outtakeOn){
+    public void intakeOuttakeAction(boolean intakeInInput, boolean intakeCRIn, boolean intakeOutInput, boolean outtakeOn){
         double shooterVelocity = 0;
-        shooterVelocity = shooter.getVelocity(AngleUnit.DEGREES);
+        shooterVelocity = shooterTop.getVelocity(AngleUnit.DEGREES);
         myOpMode.telemetry.addData("velocity",shooterVelocity);
         myOpMode.telemetry.update();
 
@@ -398,40 +401,74 @@ public class DecodeRobotHardware {
         boolean velocityValid = false;
         boolean velocityValid2 = false;
 
-        velocityValid = shooterVelocity >= 145;
+        velocityValid = shooterVelocity >= 140;
         if (velocityValid) {
             trigger.setPosition(0.68);
             light.setPosition(0.277); //red color
             lightcolor = "red";
         }
-        else {
-            trigger.setPosition(0.95);
-            if (hsvValues[0] >= 120 && hsvValues[0] <= 180) {
+        else if (hsvValues[0] >= 120 && hsvValues[0] <= 180) {
                 lightcolor = "green";
+                trigger.setPosition(0.95);
                 light.setPosition(0.5);
-            } else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
+        }
+        else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
                 lightcolor = "purple";
+                trigger.setPosition(0.95);
                 light.setPosition(0.722);
+        }
+        else {
+            lightcolor = "null";
+            trigger.setPosition(0.95);
+            light.setPosition(0);
+        }
+
+//        velocityValid2 = shooterVelocity >= 143;
+//        if (velocityValid2) gate.setPosition(0.65);
+//        else gate.setPosition(0.98);
+
+//        if (intakeCRIn){
+//            intakeCR.setPower(1);
+//        }
+//        else if (intakeInInput){
+//            intake.setPower(1);
+//        }
+//        else if (intakeOutInput){
+//            intake.setPower(-1);
+//            intakeCR.setPower(-1);
+//        }
+//        else {
+//            intake.setPower(0);
+//            intakeCR.setPower(0);
+//        }
+
+        if (intakeOutInput){
+            intake.setPower(-1);
+            intakeCR.setPower(-1);
+        }
+        else {
+            if (intakeCRIn){
+                intakeCR.setPower(1);
             }
             else {
-                lightcolor = "null";
-                light.setPosition(0);
+                intakeCR.setPower(0);
+            }
+            if (intakeInInput){
+                intake.setPower(1);
+            }
+            else {
+                intake.setPower(0);
             }
         }
 
-        velocityValid2 = shooterVelocity >= 143;
-        if (velocityValid2) gate.setPosition(0.65);
-        else gate.setPosition(0.98);
-
-        if (intakeInInput) intake.setPower(1);
-        else if (intakeOutInput) intake.setPower(-1);
-        else intake.setPower(0);
 
         if (!outtakeOn){
-            shooter.setPower(0);
+            shooterTop.setPower(0);
+            shooterBottom.setPower(0);
         }
         else {
-            shooter.setPower(0.6);
+            shooterTop.setPower(0.65);
+            shooterBottom.setPower(0.65);
         }
 
         // Explain basic gain information via telemetry
@@ -480,6 +517,24 @@ public class DecodeRobotHardware {
             }
         });
 
+    }
+    /***
+     * @param liftUpInput input for upwards
+     * @param liftDownInput input for downwards
+     *
+     * */
+    public void liftAction(boolean liftUpInput, boolean liftDownInput){
+        if (liftUpInput){
+            lift.setPower(1);
+        }
+        else if (liftDownInput){
+            lift.setPower(-1);
+        }
+        else {
+            lift.setPower(0);
+        }
+        myOpMode.telemetry.addData("lift encoder", lift.getCurrentPosition());
+        myOpMode.telemetry.update();
     }
 }
 

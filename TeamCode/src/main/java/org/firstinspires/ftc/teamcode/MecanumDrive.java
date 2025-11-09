@@ -64,12 +64,12 @@ public class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
-        public double lateralInPerTick = 0.6693817140603336; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
-        public double trackWidthTicks = 10.62795;
+        public double lateralInPerTick = 0.7545736812979547666667; //avg lateralInPerTick
+        public double trackWidthTicks = 13.539911372758029;
 
-        // feedforward parameters (in tick units)
-        public double kS = 0.8921066637331831;
-        public double kV = 0.15534103671279115;
+        // feedforward parameters (in tick units) avg kV = 0.140391718664841026667 avg kS = 1.5253672305515611
+        public double kS = 1.5253672305515611;
+        public double kV = 0.140391718664841026667;
         public double kA = 0.039;
 
         // path profile parameters (in inches)
@@ -229,8 +229,8 @@ public class MecanumDrive {
 
         // TODO: reverse motor directions if needed
         //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html

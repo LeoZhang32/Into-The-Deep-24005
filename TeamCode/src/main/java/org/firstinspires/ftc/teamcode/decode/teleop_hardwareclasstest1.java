@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.decode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+@Disabled
 @TeleOp(name="Robot Hardware Class Teleop Test1")
 public class teleop_hardwareclasstest1 extends LinearOpMode {
     DecodeRobotHardware robot = new DecodeRobotHardware(this);
@@ -36,7 +37,7 @@ public class teleop_hardwareclasstest1 extends LinearOpMode {
 
             robot.driveRobot(drive_y, drive_x, turn, slowModeOn, imuReset);
 //            robot.shooterCycle(gamepad1.right_bumper);
-            robot.intakeOuttakeAction(gamepad1.a, gamepad1.b, outtakeOn);
+//            robot.intakeOuttakeAction(gamepad1.a, gamepad1.b, outtakeOn);
         }
     }
 }

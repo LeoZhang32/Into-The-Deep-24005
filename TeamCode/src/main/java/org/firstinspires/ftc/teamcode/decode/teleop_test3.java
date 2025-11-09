@@ -11,7 +11,8 @@ public class teleop_test3 extends LinearOpMode {
     Boolean imuReset = false;
     Boolean shooterOn = false;
     Boolean intakeForward = false;
-    Boolean intakeBackward = true;
+    Boolean intakeBackward = false;
+    Boolean intakeServoForward = false;
     Boolean autoAlignOn = false;
 
     @Override
@@ -45,7 +46,10 @@ public class teleop_test3 extends LinearOpMode {
             shooterOn = cycle_gamepad2.rbPressCount != 0;
             intakeForward = gamepad1.a || gamepad2.a;
             intakeBackward = gamepad1.b || gamepad2.b;
-            robot.intakeOuttakeAction(intakeForward, intakeBackward,shooterOn);
+            intakeServoForward = gamepad2.right_trigger >=0.5;
+            robot.intakeOuttakeAction(intakeForward, intakeServoForward,intakeBackward,shooterOn);
+
+            robot.liftAction(gamepad2.dpad_up,gamepad2.dpad_down);
         }
     }
 }
