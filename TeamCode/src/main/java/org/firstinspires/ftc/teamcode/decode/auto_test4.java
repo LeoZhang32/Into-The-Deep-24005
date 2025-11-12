@@ -24,11 +24,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Autonomous (name = "auto_test4")
@@ -40,6 +46,9 @@ public final class auto_test4 extends LinearOpMode {
     DcMotor BL;
     Limelight3A limelight;
     private final ElapsedTime runtime = new ElapsedTime();
+
+    private static final boolean USE_WEBCAM = true;
+    private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
     private static final int DESIRED_TAG_ID21 = 21;
     private static final int DESIRED_TAG_ID22 = 22;
@@ -131,8 +140,8 @@ public final class auto_test4 extends LinearOpMode {
 
                 @Override
                 public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                    shooterTop.setPower(0.65);
-                    shooterBottom.setPower(0.65);
+                    shooterTop.setPower(0.6);
+                    shooterBottom.setPower(0.6);
                     return false;
                 }
             }
@@ -205,7 +214,7 @@ public final class auto_test4 extends LinearOpMode {
 
 
 
-        Pose2d beginPose = new Pose2d(-38, 52, Math.toRadians(90));
+        Pose2d beginPose = new Pose2d(-40.5, 57, Math.toRadians(90));
         PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
@@ -233,61 +242,100 @@ public final class auto_test4 extends LinearOpMode {
         ElapsedTime LLCorrectionTimer = new ElapsedTime();
         ElapsedTime ShooterTimer = new ElapsedTime();
 
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        aprilTag.setDecimation(2);
+
+        // Create the vision portal by using a builder.
+        if (USE_WEBCAM) {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessor(aprilTag)
+                    .build();
+        } else {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(aprilTag)
+                    .build();
+        }
+        if (USE_WEBCAM){
+            if (visionPortal == null) {
+                return;
+            }
+
+            // Make sure camera is streaming before we try to set the exposure controls
+            if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                telemetry.addData("Camera", "Waiting");
+                telemetry.update();
+                while (!isStopRequested() &&(visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                    sleep(20);
+                }
+                telemetry.addData("Camera", "Ready");
+                telemetry.update();
+            }
+
+            // Set camera controls unless we are stopping.
+            if (!isStopRequested()) {
+                ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+                if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                    exposureControl.setMode(ExposureControl.Mode.Manual);
+                    sleep(50);
+                }
+                exposureControl.setExposure((long) 1, TimeUnit.MILLISECONDS);
+                sleep(20);
+                GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+                gainControl.setGain(250);
+                sleep(20);
+            }
+        }
+
+        if (visionPortal.getCameraState() != null) {
+            if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                    sleep(20);
+                }
+            }
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested()) {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure(6, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(250);
+            sleep(20);
+        }
+
+        telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.update();
+
 
 
 
         //score held artifacts
         TrajectoryActionBuilder go_shoot_held_artifacts = drive.actionBuilder(beginPose)
-                .strafeToSplineHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
+                .strafeToSplineHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
 
         //go scan obelisk
         TrajectoryActionBuilder go_scan_obelisk = go_shoot_held_artifacts.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 12), (Math.toRadians(-165)));
-
-
-
-        //After Scan, if April Tag shows PGP, then follow this sequence:
-        //first PGP, then PPG
-
-
-
-        // go to PGP
-        TrajectoryActionBuilder go_from_obelisk_to_PGP = go_scan_obelisk.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12, 24), (Math.toRadians(-90)));
-//
-//        //go collect PGP
-//        TrajectoryActionBuilder go_collect_PGP = go_from_obelisk_to_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(12, 48), Math.toRadians(-90));
-//
-//        //go shoot PPG
-//        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
-
-//        //go to PGP
-//        TrajectoryActionBuilder go_from_shoot_to_PGP = go_shoot_PPG.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-12, 24), (Math.toRadians(-90)));
-//
-//        //go collect PGP
-//        TrajectoryActionBuilder go_collect_PGP = go_from_shoot_to_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-12, 48), Math.toRadians(-90));
-//
-//        //go shoot PGP
-//        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
-//
-//        //LEAVE
-//        TrajectoryActionBuilder go_leave = go_shoot_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(0, 48), (Math.toRadians(180)));
+                .strafeToLinearHeading(new Vector2d(-10, 14), (Math.toRadians(-175)));
 
 
 
 
-        //After Scan, if April Tag shows PPG, then follow this sequence:
-        //first PPG, then PGP
+
+        //After Scan, if it is April Tag 23 (PPG), then follow this sequence: PPG
 
         // go to PPG
         TrajectoryActionBuilder go_from_obelisk_to_PPG = go_scan_obelisk.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 24), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(-12, 28), (Math.toRadians(-90)));
 
         //go collect PPG
         TrajectoryActionBuilder go_collect_PPG = go_from_obelisk_to_PPG.endTrajectory().fresh()
@@ -295,23 +343,56 @@ public final class auto_test4 extends LinearOpMode {
 
         //go shoot PPG
         TrajectoryActionBuilder go_shoot_PPG = go_collect_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
-
-        //go to PGP
-        TrajectoryActionBuilder go_from_shoot_to_PGP = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12, 24), (Math.toRadians(-90)));
-
-        //go collect PGP
-        TrajectoryActionBuilder go_collect_PGP = go_from_shoot_to_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12, 48), Math.toRadians(-90));
-
-        //go shoot PGP
-        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
+                .strafeToLinearHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
 
         //LEAVE
-        TrajectoryActionBuilder go_leave = go_shoot_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0, 48), (Math.toRadians(180)));
+        TrajectoryActionBuilder go_leave_PPG = go_shoot_PPG.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0, 18), (Math.toRadians(135)));
+
+
+
+
+
+        //After Scan, if it is April Tag 22 (PGP), then follow this sequence: PGP
+
+        // go to PGP
+        TrajectoryActionBuilder go_from_obelisk_to_PGP = go_scan_obelisk.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(12, 28), (Math.toRadians(-90)));
+
+        //go collect PGP
+        TrajectoryActionBuilder go_collect_PGP = go_from_obelisk_to_PGP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(12, 56), Math.toRadians(-90));
+
+        //go shoot PPG
+        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(12, 36), (Math.toRadians(180)))
+                .strafeToLinearHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
+
+        //LEAVE
+        TrajectoryActionBuilder go_leave_PGP = go_shoot_PGP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0, 18), (Math.toRadians(135)));
+
+
+
+
+
+        //After Scan, if it is April Tag 21 (GPP), then follow this sequence: GPP
+
+        // go to GPP
+        TrajectoryActionBuilder go_from_obelisk_to_GPP = go_scan_obelisk.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(36, 28), (Math.toRadians(-90)));
+
+        //go collect GPP
+        TrajectoryActionBuilder go_collect_GPP = go_from_obelisk_to_GPP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(36, 56), Math.toRadians(-90));
+
+        //go shoot GPP
+        TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
+
+        //LEAVE
+        TrajectoryActionBuilder go_leave_GPP = go_shoot_GPP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0, 18), (Math.toRadians(135)));
 
 
         waitForStart();
@@ -319,36 +400,38 @@ public final class auto_test4 extends LinearOpMode {
 
         while (opModeIsActive() && runtime.seconds() <= 0.1 && !isStopRequested()) {
             Actions.runBlocking(new SequentialAction(
-                    go_shoot_held_artifacts.build(),
                     outtake.OuttakeRun(),
-                    new SleepAction(1.5),
+                    go_shoot_held_artifacts.build(),
+                    new SleepAction(0.5),
                     trigger.OpenTrigger(),
-                    new SleepAction(1),
+                    new SleepAction(0.5),
                     //first artifact
                     intake.IntakeRun(),
                     intake.IntakeCRRun(),
-                    new SleepAction(0.6),
+                    new SleepAction(0.4),
                     intake.IntakeStop(),
-                    new SleepAction(1.2),
+                    new SleepAction(0.8),
                     //second artifact
                     intake.IntakeRun(),
                     intake.IntakeCRRun(),
-                    new SleepAction(0.8),
+                    new SleepAction(0.7),
                     intake.IntakeStop(),
-                    new SleepAction(1.2),
+                    new SleepAction(0.8),
                     //third artifact
                     intake.IntakeRun(),
                     intake.IntakeCRRun(),
                     new SleepAction(1),
                     intake.IntakeStop(),
-                    new SleepAction(1),
+                    new SleepAction(0.4),
                     trigger.CloseTrigger(),
-                    new SleepAction(1.2),
+//                    new SleepAction(1.2),
+                    outtake.OuttakeStop(),
                     go_scan_obelisk.build()
+//                    new SleepAction(0.1)
             )
             );
 
-            while (opModeIsActive() && !isStopRequested()) {
+
                 List<AprilTagDetection> currentDetections = aprilTag.getDetections();
                 for (AprilTagDetection detection : currentDetections) {
                     // Look to see if we have size info on this tag.
@@ -382,22 +465,19 @@ public final class auto_test4 extends LinearOpMode {
                     }
                 }
 
-            }
-
-            if (target21Found = true) { //GPP
 
 
-            } else if  (target22Found = true) { //PGP
-
+            if (target21Found == true) { //GPP
 
                 Actions.runBlocking(new SequentialAction(
-                                go_from_obelisk_to_PGP.build(),
+                                go_from_obelisk_to_GPP.build(),
                                 new ParallelAction(
-                                        go_collect_PGP.build(),
+                                        go_collect_GPP.build(),
                                         intake.IntakeRun()
                                 ),
-                                new SleepAction(1.5),
-                                go_shoot_PGP.build(),
+                                new SleepAction(2),
+                                intake.IntakeStop(),
+                                go_shoot_GPP.build(),
                                 outtake.OuttakeRun(),
                                 new SleepAction(1.5),
                                 trigger.OpenTrigger(),
@@ -421,10 +501,52 @@ public final class auto_test4 extends LinearOpMode {
                                 intake.IntakeStop(),
                                 new SleepAction(1),
                                 trigger.CloseTrigger(),
-                                new SleepAction(1.2)
+                                new SleepAction(1.2),
+                                outtake.OuttakeStop(),
+                                go_leave_GPP.build()
                         )
                 );
-            } else if  (target23Found = true) { //PPG
+
+            } else if  (target22Found == true) { //PGP
+
+
+                Actions.runBlocking(new SequentialAction(
+                        go_from_obelisk_to_PGP.build(),
+                                intake.IntakeRun(),
+                                go_collect_PGP.build(),
+                        outtake.OuttakeRun(),
+                                new SleepAction(0.6),
+                                intake.IntakeStop(),
+
+                                go_shoot_PGP.build(),
+                                new SleepAction(0.5),
+                                trigger.OpenTrigger(),
+                                new SleepAction(0.5),
+                                //first artifact
+                                intake.IntakeRun(),
+                                intake.IntakeCRRun(),
+                                new SleepAction(0.4),
+                                intake.IntakeStop(),
+                                new SleepAction(0.8),
+                                //second artifact
+                                intake.IntakeRun(),
+                                intake.IntakeCRRun(),
+                                new SleepAction(0.7),
+                                intake.IntakeStop(),
+                                new SleepAction(0.8),
+                                //third artifact
+                                intake.IntakeRun(),
+                                intake.IntakeCRRun(),
+                                new SleepAction(1),
+                                intake.IntakeStop(),
+                                new SleepAction(0.4),
+                                trigger.CloseTrigger(),
+//                                new SleepAction(1.2),
+                                outtake.OuttakeStop(),
+                                go_leave_PGP.build()
+                        )
+                );
+            } else if  (target23Found == true) { //PPG
 
 
                 Actions.runBlocking(new SequentialAction(
@@ -433,7 +555,8 @@ public final class auto_test4 extends LinearOpMode {
                                 go_collect_PPG.build(),
                                 intake.IntakeRun()
                         ),
-                        new SleepAction(1.5),
+                        new SleepAction(2),
+                        intake.IntakeStop(),
                         go_shoot_PPG.build(),
                         outtake.OuttakeRun(),
                         new SleepAction(1.5),
@@ -458,17 +581,51 @@ public final class auto_test4 extends LinearOpMode {
                         intake.IntakeStop(),
                         new SleepAction(1),
                         trigger.CloseTrigger(),
-                        new SleepAction(1.2)
+                        new SleepAction(1.2),
+                        outtake.OuttakeStop(),
+                        go_leave_PPG.build()
                         )
                 );
             } else {
 
+                Actions.runBlocking(new SequentialAction(
+                                go_from_obelisk_to_PPG.build(),
+                                new ParallelAction(
+                                        go_collect_PPG.build(),
+                                        intake.IntakeRun()
+                                ),
+                                new SleepAction(2),
+                                intake.IntakeStop(),
+                                go_shoot_PPG.build(),
+                                outtake.OuttakeRun(),
+                                new SleepAction(1.5),
+                                trigger.OpenTrigger(),
+                                new SleepAction(1),
+                                //first artifact
+                                intake.IntakeRun(),
+                                intake.IntakeCRRun(),
+                                new SleepAction(0.6),
+                                intake.IntakeStop(),
+                                new SleepAction(1.2),
+                                //second artifact
+                                intake.IntakeRun(),
+                                intake.IntakeCRRun(),
+                                new SleepAction(0.8),
+                                intake.IntakeStop(),
+                                new SleepAction(1.2),
+                                //third artifact
+                                intake.IntakeRun(),
+                                intake.IntakeCRRun(),
+                                new SleepAction(1),
+                                intake.IntakeStop(),
+                                new SleepAction(1),
+                                trigger.CloseTrigger(),
+                                new SleepAction(1.2),
+                                outtake.OuttakeStop(),
+                                go_leave_PPG.build()
+                        )
+                );
             }
-
-            ;// Below is PPG Option (closest to Goal)
-
-
-
 
         }
     }
