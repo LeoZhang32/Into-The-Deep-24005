@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -38,10 +37,11 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Disabled
-@Autonomous (name = "auto_test5")
 
-public final class auto_test5 extends LinearOpMode {
+@Disabled
+@Autonomous (name = "auto_test6")
+
+public final class auto_test6 extends LinearOpMode {
     DcMotor FR;
     DcMotor FL;
     DcMotor BR;
@@ -163,12 +163,12 @@ public final class auto_test5 extends LinearOpMode {
                     double power =  PIDControl(145, shooterTop.getVelocity(AngleUnit.DEGREES));
                     shooterTop.setPower(power);
                     shooterBottom.setPower(power);
-                    if (shootertimer.seconds() >= 1){
+                    if (shootertimer.seconds() >= 1.3){
                         trigger.setPosition(0.68);
-                        intake.setPower(0.7);
+                        intake.setPower(1);
                         intakeCR.setPower(1);
                     }
-                    if (shootertimer.seconds() >= 5){
+                    if (shootertimer.seconds() >= 3.6){
                         shootertimer.reset();
                         return false;
                     }
@@ -184,8 +184,8 @@ public final class auto_test5 extends LinearOpMode {
                 @Override
                 public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                     shooterStopped = true;
-                    shooterTop.setPower(0.3);
-                    shooterBottom.setPower(0.3);
+                    shooterTop.setPower(0.4);
+                    shooterBottom.setPower(0.4);
                     intake.setPower(0);
                     intakeCR.setPower(0);
                     trigger.setPosition(0.95);
@@ -369,17 +369,17 @@ public final class auto_test5 extends LinearOpMode {
 
         //score held artifacts
         TrajectoryActionBuilder go_shoot_held_artifacts = drive.actionBuilder(beginPose)
-                .strafeToSplineHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
+                .strafeToSplineHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //go scan obelisk
         TrajectoryActionBuilder go_scan_obelisk = go_shoot_held_artifacts.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-10, 14), (Math.toRadians(-175)));
+                .strafeToLinearHeading(new Vector2d(-11, 15), (Math.toRadians(-175)));
 
 
 
 
 
-        //After Scan, if it is April Tag 23 (PPG), then follow this sequence: PPG
+        //After Scan, if it is April Tag 23 (PPG), then follow this sequence: 23PPG
 
         // go to PPG
         TrajectoryActionBuilder go_from_obelisk_to_PPG = go_scan_obelisk.endTrajectory().fresh()
@@ -387,21 +387,33 @@ public final class auto_test5 extends LinearOpMode {
 
         //go collect PPG
         TrajectoryActionBuilder go_collect_PPG = go_from_obelisk_to_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 51), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(-12, 53), Math.toRadians(-90));
 
         //go shoot PPG
         TrajectoryActionBuilder go_shoot_PPG = go_collect_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+
+        //go from shoot position to PGP
+        TrajectoryActionBuilder go_from_shoot_to_PGP2 = go_shoot_PPG.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(14, 28), (Math.toRadians(-90)));
+
+        //go collect PGP2
+        TrajectoryActionBuilder go_collect_PGP2 = go_from_shoot_to_PGP2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(14, 61), Math.toRadians(-90));
+
+        //go shoot PPG
+        TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //LEAVE
-        TrajectoryActionBuilder go_leave_PPG = go_shoot_PPG.endTrajectory().fresh()
+        TrajectoryActionBuilder go_leave_PGP2 = go_shoot_PGP2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(0, 20), (Math.toRadians(-135)));
 
 
 
 
 
-        //After Scan, if it is April Tag 22 (PGP), then follow this sequence: PGP
+        //After Scan, if it is April Tag 22 (PGP), then follow this sequence: 22PGP
 
         // go to PGP
         TrajectoryActionBuilder go_from_obelisk_to_PGP = go_scan_obelisk.endTrajectory().fresh()
@@ -409,15 +421,27 @@ public final class auto_test5 extends LinearOpMode {
 
         //go collect PGP
         TrajectoryActionBuilder go_collect_PGP = go_from_obelisk_to_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, 60), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(14, 61), Math.toRadians(-90));
 
-        //go shoot PPG
+        //go shoot PGP
         TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(14, 36), (Math.toRadians(180)))
-                .strafeToLinearHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+
+        //go from shoot position to PPG2
+        TrajectoryActionBuilder go_from_shoot_to_PPG2 = go_shoot_PPG.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-11, 28), (Math.toRadians(-90)));
+
+        //go collect PPG2
+        TrajectoryActionBuilder go_collect_PPG2 = go_from_shoot_to_PPG2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-11, 53), Math.toRadians(-90));
+
+        //go shoot PPG2
+        TrajectoryActionBuilder go_shoot_PPG2 = go_collect_PPG2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //LEAVE
-        TrajectoryActionBuilder go_leave_PGP = go_shoot_PGP.endTrajectory().fresh()
+        TrajectoryActionBuilder go_leave_PPG2 = go_shoot_PPG2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(0, 20), (Math.toRadians(-135)));
 
 
@@ -432,19 +456,34 @@ public final class auto_test5 extends LinearOpMode {
 
         //go collect GPP
         TrajectoryActionBuilder go_collect_GPP = go_from_obelisk_to_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, 56), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(36, 59), Math.toRadians(-90));
 
         //go shoot GPP
         TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(36, 25), Math.toRadians(-170))
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+
+        //go from shoot position to PPG3
+        TrajectoryActionBuilder go_from_shoot_to_PPG3 = go_shoot_PPG.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-11, 28), (Math.toRadians(-90)));
+
+        //go collect PPG3
+        TrajectoryActionBuilder go_collect_PPG3 = go_from_shoot_to_PPG3.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-11, 53), Math.toRadians(-90));
+
+        //go shoot PPG3
+        TrajectoryActionBuilder go_shoot_PPG3 = go_collect_PPG3.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //LEAVE
-        TrajectoryActionBuilder go_leave_GPP = go_shoot_GPP.endTrajectory().fresh()
+        TrajectoryActionBuilder go_leave_PPG3 = go_shoot_PPG3.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(0, 20), (Math.toRadians(-135)));
 
         waitForStart();
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() <= 0.1 && !isStopRequested()) {
+
+
             Actions.runBlocking(new SequentialAction(
                     outtake.OuttakeIdle(),
                     go_shoot_held_artifacts.build(),
@@ -495,13 +534,24 @@ public final class auto_test5 extends LinearOpMode {
                     go_from_obelisk_to_GPP.build(),
                     intake.IntakeRun(),
                     go_collect_GPP.build(),
-                    new SleepAction(0.5),
+//                    new SleepAction(0.4),
                     intake.IntakeStop(),
                     go_shoot_GPP.build(),
                     outtake.OuttakeTimerReset(),
                     outtake.OuttakeRun(),
+                    outtake.OuttakeIdle(),
+
+                    //go collect and shoot PPG3
+                    go_from_shoot_to_PPG3.build(),
+                    intake.IntakeRun(),
+                    go_collect_PPG3.build(),
+//                    new SleepAction(0.4),
+                    intake.IntakeStop(),
+                    go_shoot_PPG3.build(),
+                    outtake.OuttakeTimerReset(),
+                    outtake.OuttakeRun(),
                     outtake.OuttakeStop(),
-                    go_leave_GPP.build()
+                    go_leave_PPG3.build()
                     )
                 );
 
@@ -510,13 +560,24 @@ public final class auto_test5 extends LinearOpMode {
                     go_from_obelisk_to_PGP.build(),
                     intake.IntakeRun(),
                     go_collect_PGP.build(),
-                    new SleepAction(0.5),
+//                    new SleepAction(0.4),
                     intake.IntakeStop(),
-                    go_shoot_GPP.build(),
+                    go_shoot_PGP.build(),
+                    outtake.OuttakeTimerReset(),
+                    outtake.OuttakeRun(),
+                    outtake.OuttakeIdle(),
+
+                    //go collect and shoot PPG2
+                    go_from_shoot_to_PPG2.build(),
+                    intake.IntakeRun(),
+                    go_collect_PPG2.build(),
+//                    new SleepAction(0.4),
+                    intake.IntakeStop(),
+                    go_shoot_PPG2.build(),
                     outtake.OuttakeTimerReset(),
                     outtake.OuttakeRun(),
                     outtake.OuttakeStop(),
-                    go_leave_PGP.build()
+                    go_leave_PPG2.build()
                     )
                 );
             } else if  (target23Found == true) { //PPG
@@ -524,28 +585,31 @@ public final class auto_test5 extends LinearOpMode {
                     go_from_obelisk_to_PPG.build(),
                     intake.IntakeRun(),
                     go_collect_PPG.build(),
-                    new SleepAction(0.5),
+//                    new SleepAction(0.4),
                     intake.IntakeStop(),
                     go_shoot_PPG.build(),
                     outtake.OuttakeTimerReset(),
                     outtake.OuttakeRun(),
+                    outtake.OuttakeIdle(),
+
+                    //go collect and shoot PGP
+                    go_from_shoot_to_PGP2.build(),
+                    intake.IntakeRun(),
+                    go_collect_PGP2.build(),
+//                    new SleepAction(0.4),
+                    intake.IntakeStop(),
+                    go_shoot_PGP2.build(),
+                    outtake.OuttakeTimerReset(),
+                    outtake.OuttakeRun(),
                     outtake.OuttakeStop(),
-                    go_leave_PPG.build()
+                    go_leave_PGP2.build()
                     )
                 );
             } else {
 
                 Actions.runBlocking(new SequentialAction(
-                                go_from_obelisk_to_PPG.build(),
-                                intake.IntakeRun(),
-                                go_collect_PPG.build(),
-                                new SleepAction(0.5),
-                                intake.IntakeStop(),
-                                go_shoot_PPG.build(),
-                                outtake.OuttakeTimerReset(),
-                                outtake.OuttakeRun(),
-                                outtake.OuttakeStop(),
-                                go_leave_PPG.build()
+
+                                go_leave_PPG2.build()
                         )
                 );
             }
