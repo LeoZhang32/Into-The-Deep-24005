@@ -17,6 +17,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -32,6 +33,7 @@ import org.firstinspires.ftc.teamcode.itd.nationals.positions_and_variables;
 import java.util.List;
 
 
+@Disabled
 @Autonomous (name = "auto_SAMPLE_0plus5")
 
 public final class auto_SAMPLE_0plus5 extends LinearOpMode {

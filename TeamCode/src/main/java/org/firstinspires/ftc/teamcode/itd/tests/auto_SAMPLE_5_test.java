@@ -33,6 +33,7 @@ import org.firstinspires.ftc.teamcode.itd.nationals.positions_and_variables;
 import java.util.List;
 
 
+@Disabled
 @Autonomous (name = "auto_SAMPLE_5_test")
 
 public final class auto_SAMPLE_5_test extends LinearOpMode {

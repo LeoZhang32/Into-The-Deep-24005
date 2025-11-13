@@ -101,7 +101,7 @@ public class DecodeRobotHardware {
     private View relativeLayout;
 
     private double integralSum = 0;
-    private double Kp = 0.035;
+    private double Kp = 0.0325;
     private double Ki = 0;
     private double Kd = 0;
     private double Kf = 0.0032;
@@ -448,7 +448,7 @@ public class DecodeRobotHardware {
             }
         }
 
-        double outtakePower = PIDControl(145, shooterTop.getVelocity(AngleUnit.DEGREES));
+        double outtakePower = PIDControl(155, shooterTop.getVelocity(AngleUnit.DEGREES));
         if (!outtakeOn){
             shooterTop.setPower(0);
             shooterBottom.setPower(0);

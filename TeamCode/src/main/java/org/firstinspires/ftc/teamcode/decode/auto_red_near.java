@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 @Autonomous (name = "decode auto red near")
 
-public final class decode_auto_red_near extends LinearOpMode {
+public final class auto_red_near extends LinearOpMode {
     DcMotor FR;
     DcMotor FL;
     DcMotor BR;
@@ -59,7 +59,7 @@ public final class decode_auto_red_near extends LinearOpMode {
     boolean target23Found = false;
     boolean targetAligned = false;
     double integralSum = 0;
-    double Kp = 0.035;
+    double Kp = 0.0325;
     double Ki = 0;
     double Kd = 0;
     double Kf = 0.0032;
@@ -157,7 +157,7 @@ public final class decode_auto_red_near extends LinearOpMode {
 
                 @Override
                 public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                    double power =  PIDControl(145, shooterTop.getVelocity(AngleUnit.DEGREES));
+                    double power =  PIDControl(155, shooterTop.getVelocity(AngleUnit.DEGREES));
                     shooterTop.setPower(power);
                     shooterBottom.setPower(power);
                     if (shootertimer.seconds() >= 1.3){
@@ -605,8 +605,27 @@ public final class decode_auto_red_near extends LinearOpMode {
             } else {
 
                 Actions.runBlocking(new SequentialAction(
+                                go_from_obelisk_to_PPG.build(),
+                                intake.IntakeRun(),
+                                go_collect_PPG.build(),
+//                    new SleepAction(0.4),
+                                intake.IntakeStop(),
+                                go_shoot_PPG.build(),
+                                outtake.OuttakeTimerReset(),
+                                outtake.OuttakeRun(),
+                                outtake.OuttakeIdle(),
 
-                                go_leave_PPG2.build()
+                                //go collect and shoot PGP
+                                go_from_shoot_to_PGP2.build(),
+                                intake.IntakeRun(),
+                                go_collect_PGP2.build(),
+//                    new SleepAction(0.4),
+                                intake.IntakeStop(),
+                                go_shoot_PGP2.build(),
+                                outtake.OuttakeTimerReset(),
+                                outtake.OuttakeRun(),
+                                outtake.OuttakeStop(),
+                                go_leave_PGP2.build()
                         )
                 );
             }
