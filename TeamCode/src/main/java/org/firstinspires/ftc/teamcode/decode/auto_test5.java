@@ -24,12 +24,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Autonomous (name = "auto_test5")
@@ -41,6 +47,8 @@ public final class auto_test5 extends LinearOpMode {
     DcMotor BL;
     Limelight3A limelight;
     private final ElapsedTime runtime = new ElapsedTime();
+    private static final boolean USE_WEBCAM = true;
+    private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
     private static final int DESIRED_TAG_ID21 = 21;
     private static final int DESIRED_TAG_ID22 = 22;
@@ -52,6 +60,13 @@ public final class auto_test5 extends LinearOpMode {
     boolean target22Found = false;
     boolean target23Found = false;
     boolean targetAligned = false;
+    double integralSum = 0;
+    double Kp = 0.035;
+    double Ki = 0;
+    double Kd = 0;
+    double Kf = 0.0032;
+    double lastError = 0;
+    ElapsedTime timer = new ElapsedTime();
 
         public class Intake {
         private final DcMotorEx intake;
@@ -116,25 +131,29 @@ public final class auto_test5 extends LinearOpMode {
             private final DcMotorEx intake;
             private Servo trigger;
             private CRServo intakeCR;
-            double integralSum = 0;
-            double Kp = 0.035;
-            double Ki = 0;
-            double Kd = 0;
-            double Kf = 0.0032;
-            double lastError = 0;
-            ElapsedTime timer = new ElapsedTime();
+            boolean shooterStopped = false;
+            ElapsedTime shootertimer = new ElapsedTime();
 
             public Outtake (HardwareMap hardwareMap) {
-
                 shooterTop = hardwareMap.get(DcMotorEx.class, "shooterTop");
                 shooterBottom = hardwareMap.get(DcMotorEx.class, "shooterBottom");
+                shooterTop.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                shooterBottom.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 shooterBottom.setDirection(DcMotorSimple.Direction.REVERSE);
                 intake = hardwareMap.get(DcMotorEx.class, "intake");
                 intakeCR = hardwareMap.get(CRServo.class, "intakeCR");
+                intakeCR.setDirection(CRServo.Direction.REVERSE);
                 trigger = hardwareMap.get(Servo.class, "trigger");
-
+                shootertimer.reset();
             }
-
+            public class OuttakeTimerReset implements Action{
+                @Override
+                public boolean run(@NonNull TelemetryPacket telemetryPacket){
+                    shootertimer.reset();
+                    return false;
+                }
+            }
+            public Action OuttakeTimerReset() {return new OuttakeTimerReset();}
             //OuttakeRun Function
             public class OuttakeRun implements Action {
 
@@ -143,34 +162,50 @@ public final class auto_test5 extends LinearOpMode {
                     double power =  PIDControl(145, shooterTop.getVelocity(AngleUnit.DEGREES));
                     shooterTop.setPower(power);
                     shooterBottom.setPower(power);
-                    return false;
+                    if (shootertimer.seconds() >= 1){
+                        trigger.setPosition(0.68);
+                        intake.setPower(0.7);
+                        intakeCR.setPower(1);
+                    }
+                    if (shootertimer.seconds() >= 7){
+                        shootertimer.reset();
+                        return false;
+                    }
+                    else {return true;}
                 }
             }
             public Action OuttakeRun() {
                 return new OuttakeRun();
             }
+            //OuttakeStop Function
+            public class OuttakeIdle implements Action {
 
-            public double PIDControl (double reference, double state){
-                double error = reference - state;
-                integralSum += error * timer.seconds();
-
-                double derivative = (error- lastError) / timer.seconds();
-                lastError = error;
-
-                timer.reset();
-
-                double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki) + (reference * Kf);
-                return output;
+                @Override
+                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                    shooterStopped = true;
+                    shooterTop.setPower(0.3);
+                    shooterBottom.setPower(0.3);
+                    intake.setPower(0);
+                    intakeCR.setPower(0);
+                    trigger.setPosition(0.95);
+                    return false;
+                }
             }
-
+            public Action OuttakeIdle() {
+                return new OuttakeIdle();
+            }
 
             //OuttakeStop Function
             public class OuttakeStop implements Action {
 
                 @Override
                 public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                    shooterStopped = true;
                     shooterTop.setPower(0);
                     shooterBottom.setPower(0);
+                    intake.setPower(0);
+                    intakeCR.setPower(0);
+                    trigger.setPosition(0.95);
                     return false;
                 }
             }
@@ -227,7 +262,7 @@ public final class auto_test5 extends LinearOpMode {
 
 
 
-        Pose2d beginPose = new Pose2d(-38, 52, Math.toRadians(90));
+        Pose2d beginPose = new Pose2d(-40.5, 57, Math.toRadians(90));
         PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
@@ -253,247 +288,281 @@ public final class auto_test5 extends LinearOpMode {
         limelight.pipelineSwitch(7);
         limelight.start();
         ElapsedTime LLCorrectionTimer = new ElapsedTime();
-        ElapsedTime ShooterTimer = new ElapsedTime();
 
 
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        aprilTag.setDecimation(2);
+
+        // Create the vision portal by using a builder.
+        if (USE_WEBCAM) {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessor(aprilTag)
+                    .build();
+        } else {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(aprilTag)
+                    .build();
+        }
+        if (USE_WEBCAM){
+            if (visionPortal == null) {
+                return;
+            }
+
+            // Make sure camera is streaming before we try to set the exposure controls
+            if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                telemetry.addData("Camera", "Waiting");
+                telemetry.update();
+                while (!isStopRequested() &&(visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                    sleep(20);
+                }
+                telemetry.addData("Camera", "Ready");
+                telemetry.update();
+            }
+
+            // Set camera controls unless we are stopping.
+            if (!isStopRequested()) {
+                ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+                if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                    exposureControl.setMode(ExposureControl.Mode.Manual);
+                    sleep(50);
+                }
+                exposureControl.setExposure((long) 1, TimeUnit.MILLISECONDS);
+                sleep(20);
+                GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+                gainControl.setGain(250);
+                sleep(20);
+            }
+        }
+
+        if (visionPortal.getCameraState() != null) {
+            if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                    sleep(20);
+                }
+            }
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested()) {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure(6, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(250);
+            sleep(20);
+        }
+
+        telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.update();
 
 
 
         //score held artifacts
         TrajectoryActionBuilder go_shoot_held_artifacts = drive.actionBuilder(beginPose)
-                .strafeToSplineHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
+                .strafeToSplineHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
 
         //go scan obelisk
         TrajectoryActionBuilder go_scan_obelisk = go_shoot_held_artifacts.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 12), (Math.toRadians(-165)));
-
-
-
-        //After Scan, if April Tag shows PGP, then follow this sequence:
-        //first PGP, then PPG
-
-
-
-        // go to PGP
-        TrajectoryActionBuilder go_from_obelisk_to_PGP = go_scan_obelisk.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12, 24), (Math.toRadians(-90)));
-//
-//        //go collect PGP
-//        TrajectoryActionBuilder go_collect_PGP = go_from_obelisk_to_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(12, 48), Math.toRadians(-90));
-//
-//        //go shoot PPG
-//        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
-
-//        //go to PGP
-//        TrajectoryActionBuilder go_from_shoot_to_PGP = go_shoot_PPG.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-12, 24), (Math.toRadians(-90)));
-//
-//        //go collect PGP
-//        TrajectoryActionBuilder go_collect_PGP = go_from_shoot_to_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-12, 48), Math.toRadians(-90));
-//
-//        //go shoot PGP
-//        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
-//
-//        //LEAVE
-//        TrajectoryActionBuilder go_leave = go_shoot_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(0, 48), (Math.toRadians(180)));
+                .strafeToLinearHeading(new Vector2d(-10, 14), (Math.toRadians(-175)));
 
 
 
 
-        //After Scan, if April Tag shows PPG, then follow this sequence:
-        //first PPG, then PGP
+
+        //After Scan, if it is April Tag 23 (PPG), then follow this sequence: PPG
 
         // go to PPG
         TrajectoryActionBuilder go_from_obelisk_to_PPG = go_scan_obelisk.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 24), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(-12, 28), (Math.toRadians(-90)));
 
         //go collect PPG
         TrajectoryActionBuilder go_collect_PPG = go_from_obelisk_to_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 48), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(-12, 51), Math.toRadians(-90));
 
         //go shoot PPG
         TrajectoryActionBuilder go_shoot_PPG = go_collect_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
-
-        //go to PGP
-        TrajectoryActionBuilder go_from_shoot_to_PGP = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12, 24), (Math.toRadians(-90)));
-
-        //go collect PGP
-        TrajectoryActionBuilder go_collect_PGP = go_from_shoot_to_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12, 48), Math.toRadians(-90));
-
-        //go shoot PGP
-        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-15, 12), (Math.toRadians(130)));
+                .strafeToLinearHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
 
         //LEAVE
-        TrajectoryActionBuilder go_leave = go_shoot_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0, 48), (Math.toRadians(180)));
+        TrajectoryActionBuilder go_leave_PPG = go_shoot_PPG.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0, 20), (Math.toRadians(-135)));
 
+
+
+
+
+        //After Scan, if it is April Tag 22 (PGP), then follow this sequence: PGP
+
+        // go to PGP
+        TrajectoryActionBuilder go_from_obelisk_to_PGP = go_scan_obelisk.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(14, 28), (Math.toRadians(-90)));
+
+        //go collect PGP
+        TrajectoryActionBuilder go_collect_PGP = go_from_obelisk_to_PGP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(14, 60), Math.toRadians(-90));
+
+        //go shoot PPG
+        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(14, 36), (Math.toRadians(180)))
+                .strafeToLinearHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
+
+        //LEAVE
+        TrajectoryActionBuilder go_leave_PGP = go_shoot_PGP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0, 20), (Math.toRadians(-135)));
+
+
+
+
+
+        //After Scan, if it is April Tag 21 (GPP), then follow this sequence: GPP
+
+        // go to GPP
+        TrajectoryActionBuilder go_from_obelisk_to_GPP = go_scan_obelisk.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(36, 28), (Math.toRadians(-90)));
+
+        //go collect GPP
+        TrajectoryActionBuilder go_collect_GPP = go_from_obelisk_to_GPP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(36, 56), Math.toRadians(-90));
+
+        //go shoot GPP
+        TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-11, 16), (Math.toRadians(136)));
+
+        //LEAVE
+        TrajectoryActionBuilder go_leave_GPP = go_shoot_GPP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0, 20), (Math.toRadians(-135)));
 
         waitForStart();
         runtime.reset();
-
         while (opModeIsActive() && runtime.seconds() <= 0.1 && !isStopRequested()) {
             Actions.runBlocking(new SequentialAction(
+                    outtake.OuttakeIdle(),
                     go_shoot_held_artifacts.build(),
+                    outtake.OuttakeTimerReset(),
                     outtake.OuttakeRun(),
-                    new SleepAction(1.5),
-                    trigger.OpenTrigger(),
-                    new SleepAction(1),
-                    //first artifact
-                    intake.IntakeRun(),
-                    intake.IntakeCRRun(),
-                    new SleepAction(0.6),
-                    intake.IntakeStop(),
-                    new SleepAction(1.2),
-                    //second artifact
-                    intake.IntakeRun(),
-                    intake.IntakeCRRun(),
-                    new SleepAction(0.8),
-                    intake.IntakeStop(),
-                    new SleepAction(1.2),
-                    //third artifact
-                    intake.IntakeRun(),
-                    intake.IntakeCRRun(),
-                    new SleepAction(1),
-                    intake.IntakeStop(),
-                    new SleepAction(1),
-                    trigger.CloseTrigger(),
-                    new SleepAction(1.2),
+                    outtake.OuttakeIdle(),
                     go_scan_obelisk.build()
             )
             );
 
-            while (opModeIsActive() && !isStopRequested()) {
-                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                for (AprilTagDetection detection : currentDetections) {
-                    // Look to see if we have size info on this tag.
-                    if (detection.metadata != null) {
-                        //  Check to see if we want to track towards this tag.
-                        if (detection.id == DESIRED_TAG_ID21) {
-                            // Yes, we want to use this tag.
-                            target21Found = true;
-                            desiredTag21 = detection;
-                            telemetry.addData("Tag Detected", detection.id);
-                            break;  // don't look any further.
-                        } else if (detection.id == DESIRED_TAG_ID22){
-                            // Yes, we want to use this tag.
-                            target22Found = true;
-                            desiredTag22 = detection;
-                            telemetry.addData("Tag Detected", detection.id);
-                            break;  // don't look any further.
-                        } else if (detection.id == DESIRED_TAG_ID23){
-                            // Yes, we want to use this tag.
-                            target23Found = true;
-                            desiredTag23 = detection;
-                            telemetry.addData("Tag Detected", detection.id);
-                            break;  // don't look any further.
-                        } else {
-                            // This tag is in the library, but we do not want to track it right now.
-                            telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                        }
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    //  Check to see if we want to track towards this tag.
+                    if (detection.id == DESIRED_TAG_ID21) {
+                        // Yes, we want to use this tag.
+                        target21Found = true;
+                        desiredTag21 = detection;
+                        telemetry.addData("Tag Detected", detection.id);
+                        break;  // don't look any further.
+                    } else if (detection.id == DESIRED_TAG_ID22){
+                        // Yes, we want to use this tag.
+                        target22Found = true;
+                        desiredTag22 = detection;
+                        telemetry.addData("Tag Detected", detection.id);
+                        break;  // don't look any further.
+                    } else if (detection.id == DESIRED_TAG_ID23){
+                        // Yes, we want to use this tag.
+                        target23Found = true;
+                        desiredTag23 = detection;
+                        telemetry.addData("Tag Detected", detection.id);
+                        break;  // don't look any further.
                     } else {
-                        // This tag is NOT in the library, so we don't have enough information to track to it.
-                        telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                        // This tag is in the library, but we do not want to track it right now.
+                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
                     }
+                } else {
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                 }
-
             }
 
-            if (target21Found = true) { //GPP
 
 
-            } else if  (target22Found = true) { //PGP
-
-
+            if (target21Found == true) { //GPP
                 Actions.runBlocking(new SequentialAction(
-                                go_from_obelisk_to_PGP.build(),
-                                new ParallelAction(
-                                        go_collect_PGP.build(),
-                                        intake.IntakeRun()
-                                ),
-                                new SleepAction(1.5),
-                                go_shoot_PGP.build(),
-                                outtake.OuttakeRun(),
-                                new SleepAction(1.5),
-                                trigger.OpenTrigger(),
-                                new SleepAction(1),
-                                //first artifact
-                                intake.IntakeRun(),
-                                intake.IntakeCRRun(),
-                                new SleepAction(0.6),
-                                intake.IntakeStop(),
-                                new SleepAction(1.2),
-                                //second artifact
-                                intake.IntakeRun(),
-                                intake.IntakeCRRun(),
-                                new SleepAction(0.8),
-                                intake.IntakeStop(),
-                                new SleepAction(1.2),
-                                //third artifact
-                                intake.IntakeRun(),
-                                intake.IntakeCRRun(),
-                                new SleepAction(1),
-                                intake.IntakeStop(),
-                                new SleepAction(1),
-                                trigger.CloseTrigger(),
-                                new SleepAction(1.2)
-                        )
+                    go_from_obelisk_to_GPP.build(),
+                    intake.IntakeRun(),
+                    go_collect_GPP.build(),
+                    new SleepAction(0.6),
+                    intake.IntakeStop(),
+                    go_shoot_GPP.build(),
+                    outtake.OuttakeTimerReset(),
+                    outtake.OuttakeRun(),
+                    outtake.OuttakeStop(),
+                    go_leave_GPP.build()
+                    )
                 );
-            } else if  (target23Found = true) { //PPG
 
-
+            } else if  (target22Found == true) { //PGP
                 Actions.runBlocking(new SequentialAction(
-                        go_from_obelisk_to_PPG.build(),
-                        new ParallelAction(
-                                go_collect_PPG.build(),
-                                intake.IntakeRun()
-                        ),
-                        new SleepAction(1.5),
-                        go_shoot_PPG.build(),
-                        outtake.OuttakeRun(),
-                        new SleepAction(1.5),
-                        trigger.OpenTrigger(),
-                        new SleepAction(1),
-                        //first artifact
-                        intake.IntakeRun(),
-                        intake.IntakeCRRun(),
-                        new SleepAction(0.6),
-                        intake.IntakeStop(),
-                        new SleepAction(1.2),
-                        //second artifact
-                        intake.IntakeRun(),
-                        intake.IntakeCRRun(),
-                        new SleepAction(0.8),
-                        intake.IntakeStop(),
-                        new SleepAction(1.2),
-                        //third artifact
-                        intake.IntakeRun(),
-                        intake.IntakeCRRun(),
-                        new SleepAction(1),
-                        intake.IntakeStop(),
-                        new SleepAction(1),
-                        trigger.CloseTrigger(),
-                        new SleepAction(1.2)
-                        )
+                    go_from_obelisk_to_PGP.build(),
+                    intake.IntakeRun(),
+                    go_collect_PGP.build(),
+                    new SleepAction(0.6),
+                    intake.IntakeStop(),
+                    go_shoot_GPP.build(),
+                    outtake.OuttakeTimerReset(),
+                    outtake.OuttakeRun(),
+                    outtake.OuttakeStop(),
+                    go_leave_PGP.build()
+                    )
+                );
+            } else if  (target23Found == true) { //PPG
+                Actions.runBlocking(new SequentialAction(
+                    go_from_obelisk_to_PPG.build(),
+                    intake.IntakeRun(),
+                    go_collect_PPG.build(),
+                    new SleepAction(0.6),
+                    intake.IntakeStop(),
+                    go_shoot_PPG.build(),
+                    outtake.OuttakeTimerReset(),
+                    outtake.OuttakeRun(),
+                    outtake.OuttakeStop(),
+                    go_leave_PPG.build()
+                    )
                 );
             } else {
 
+                Actions.runBlocking(new SequentialAction(
+                                go_from_obelisk_to_PPG.build(),
+                                new ParallelAction(
+                                        go_collect_PPG.build(),
+                                        intake.IntakeRun()
+                                ),
+                                new SleepAction(2),
+                                intake.IntakeStop(),
+                                go_shoot_PPG.build(),
+                                outtake.OuttakeTimerReset(),
+                                outtake.OuttakeRun(),
+                                outtake.OuttakeStop(),
+                                go_leave_PPG.build()
+                        )
+                );
             }
-
-            ;// Below is PPG Option (closest to Goal)
-
-
-
-
         }
+    }
+    public double PIDControl (double reference, double state){
+        double error = reference - state;
+        integralSum += error * timer.seconds();
+
+        double derivative = (error- lastError) / timer.seconds();
+        lastError = error;
+
+        timer.reset();
+
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki) + (reference * Kf);
+        return output;
     }
 }
 
