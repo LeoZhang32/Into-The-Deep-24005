@@ -44,6 +44,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -78,9 +79,6 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public class DecodeRobotHardware {
-    public static double outtakePower = 0.6;
-    public static double triggerThreshold = 140;
-    public static double triggerPosition = 0.68;
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
@@ -101,6 +99,14 @@ public class DecodeRobotHardware {
     private DcMotorEx lift = null;
     private NormalizedColorSensor colorSensor;
     private View relativeLayout;
+
+    private double integralSum = 0;
+    private double Kp = 0.035;
+    private double Ki = 0;
+    private double Kd = 0;
+    private double Kf = 0.0032;
+    private double lastError = 0;
+    ElapsedTime timer = new ElapsedTime();
 
 
     // Adjust these numbers to suit your robot.
@@ -423,25 +429,6 @@ public class DecodeRobotHardware {
             light.setPosition(0);
         }
 
-//        velocityValid2 = shooterVelocity >= 143;
-//        if (velocityValid2) gate.setPosition(0.65);
-//        else gate.setPosition(0.98);
-
-//        if (intakeCRIn){
-//            intakeCR.setPower(1);
-//        }
-//        else if (intakeInInput){
-//            intake.setPower(1);
-//        }
-//        else if (intakeOutInput){
-//            intake.setPower(-1);
-//            intakeCR.setPower(-1);
-//        }
-//        else {
-//            intake.setPower(0);
-//            intakeCR.setPower(0);
-//        }
-
         if (intakeOutInput){
             intake.setPower(-1);
             intakeCR.setPower(-1);
@@ -461,14 +448,14 @@ public class DecodeRobotHardware {
             }
         }
 
-
+        double outtakePower = PIDControl(145, shooterTop.getVelocity(AngleUnit.DEGREES));
         if (!outtakeOn){
             shooterTop.setPower(0);
             shooterBottom.setPower(0);
         }
         else {
-            shooterTop.setPower(0.65);
-            shooterBottom.setPower(0.65);
+            shooterTop.setPower(outtakePower);
+            shooterBottom.setPower(outtakePower);
         }
 
         // Explain basic gain information via telemetry
@@ -535,6 +522,19 @@ public class DecodeRobotHardware {
         }
         myOpMode.telemetry.addData("lift encoder", lift.getCurrentPosition());
         myOpMode.telemetry.update();
+    }
+
+    public double PIDControl (double reference, double state){
+        double error = reference - state;
+        integralSum += error * timer.seconds();
+
+        double derivative = (error- lastError) / timer.seconds();
+        lastError = error;
+
+        timer.reset();
+
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki) + (reference * Kf);
+        return output;
     }
 }
 
