@@ -107,6 +107,7 @@ public class DecodeRobotHardware {
     private double Kf = 0.0032;
     private double lastError = 0;
     ElapsedTime timer = new ElapsedTime();
+    private double targetVelocity = 0;
 
 
     // Adjust these numbers to suit your robot.
@@ -393,9 +394,10 @@ public class DecodeRobotHardware {
      * @param intakeInInput -intake button
      * @param intakeOutInput -reverse intake button
      * @param intakeCRIn - intake servo in button
-     * @param outtakeOn -outtake button
+     * @param outtakeClose -outtake close button
+     * @param outtakeFar - outake far button
      */
-    public void intakeOuttakeAction(boolean intakeInInput, boolean intakeCRIn, boolean intakeOutInput, boolean outtakeOn){
+    public void intakeOuttakeAction(boolean intakeInInput, boolean intakeCRIn, boolean intakeOutInput, boolean outtakeClose, boolean outtakeFar){
         double shooterVelocity = 0;
         shooterVelocity = shooterTop.getVelocity(AngleUnit.DEGREES);
         myOpMode.telemetry.addData("velocity",shooterVelocity);
@@ -403,25 +405,43 @@ public class DecodeRobotHardware {
 
         float gain = 2;
         String lightcolor;
-
         boolean velocityValid = false;
         boolean velocityValid2 = false;
 
-        velocityValid = shooterVelocity >= 140;
+        double outtakePower = PIDControl(targetVelocity, shooterTop.getVelocity(AngleUnit.DEGREES));
+        if (outtakeClose){
+            velocityValid = shooterVelocity >= 145;
+            targetVelocity = 155;
+            shooterTop.setPower(outtakePower);
+            shooterBottom.setPower(outtakePower);
+        }
+        else if (outtakeFar){
+            velocityValid = shooterVelocity >= 178;
+            targetVelocity = 188;
+            shooterTop.setPower(outtakePower);
+            shooterBottom.setPower(outtakePower);
+        }
+        else {
+            shooterTop.setPower(0);
+            shooterBottom.setPower(0);
+        }
+
+
+
         if (velocityValid) {
             trigger.setPosition(0.68);
             light.setPosition(0.277); //red color
             lightcolor = "red";
         }
         else if (hsvValues[0] >= 120 && hsvValues[0] <= 180) {
-                lightcolor = "green";
-                trigger.setPosition(0.95);
-                light.setPosition(0.5);
+            lightcolor = "green";
+            trigger.setPosition(0.95);
+            light.setPosition(0.5);
         }
         else if (hsvValues[0] >= 200 && hsvValues[0] <= 280) {
-                lightcolor = "purple";
-                trigger.setPosition(0.95);
-                light.setPosition(0.722);
+            lightcolor = "purple";
+            trigger.setPosition(0.95);
+            light.setPosition(0.722);
         }
         else {
             lightcolor = "null";
@@ -446,16 +466,6 @@ public class DecodeRobotHardware {
             else {
                 intake.setPower(0);
             }
-        }
-
-        double outtakePower = PIDControl(155, shooterTop.getVelocity(AngleUnit.DEGREES));
-        if (!outtakeOn){
-            shooterTop.setPower(0);
-            shooterBottom.setPower(0);
-        }
-        else {
-            shooterTop.setPower(outtakePower);
-            shooterBottom.setPower(outtakePower);
         }
 
         // Explain basic gain information via telemetry

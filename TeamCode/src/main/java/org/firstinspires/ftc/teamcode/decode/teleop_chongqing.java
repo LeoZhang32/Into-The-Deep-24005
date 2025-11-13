@@ -9,7 +9,8 @@ public class teleop_chongqing extends LinearOpMode {
 
     Boolean slowModeOn = false;
     Boolean imuReset = false;
-    Boolean shooterOn = false;
+    Boolean shooterClose = false;
+    Boolean shooterFar = false;
     Boolean intakeForward = false;
     Boolean intakeBackward = false;
     Boolean intakeServoForward = false;
@@ -30,6 +31,7 @@ public class teleop_chongqing extends LinearOpMode {
             imuReset = gamepad1.start;
             cycle_gamepad1.updateLB(2);
             cycle_gamepad2.updateRB(2);
+            cycle_gamepad2.updateLB(2);
 
             slowModeOn = cycle_gamepad1.lbPressCount != 0;
             autoAlignOn = gamepad1.left_trigger >= 0.5;
@@ -43,11 +45,24 @@ public class teleop_chongqing extends LinearOpMode {
                 robot.driveRobot(drive_y, drive_x, turn, slowModeOn, imuReset);
             }
 
-            shooterOn = cycle_gamepad2.rbPressCount != 0;
+            if (cycle_gamepad2.rbPressCount == 1 && cycle_gamepad2.lbPressCount == 0){
+                shooterClose = true;
+                shooterFar = false;
+            }
+            else if (cycle_gamepad2.rbPressCount == 0 && cycle_gamepad2.lbPressCount == 1){
+                shooterClose = false;
+                shooterFar = true;
+            }
+            else if ((cycle_gamepad2.rbPressCount == 1 && cycle_gamepad2.lbPressCount == 1) || (cycle_gamepad2.rbPressCount == 0 && cycle_gamepad2.lbPressCount == 0)){
+                cycle_gamepad2.rbPressCount = 0;
+                cycle_gamepad2.lbPressCount = 0;
+                shooterClose = false;
+                shooterFar = false;
+            }
             intakeForward = gamepad1.a || gamepad2.a;
             intakeBackward = gamepad1.b || gamepad2.b;
             intakeServoForward = gamepad2.right_trigger >=0.5;
-            robot.intakeOuttakeAction(intakeForward, intakeServoForward,intakeBackward,shooterOn);
+            robot.intakeOuttakeAction(intakeForward, intakeServoForward,intakeBackward, shooterClose, shooterFar);
 
             robot.liftAction(gamepad2.dpad_up,gamepad2.dpad_down);
         }

@@ -4,29 +4,21 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
-@TeleOp(name="PID Test1")
-public class teleop_pidtest1 extends LinearOpMode {
+@TeleOp(name="shooter Test1")
+public class teleop_shootertest1 extends LinearOpMode {
     DecodeRobotHardware robot = new DecodeRobotHardware(this);
 
     DcMotorEx shooterTop;
     DcMotorEx shooterBottom;
 
-    double integralSum = 0;
-    public static double Kp = 0;
-    public static double Ki = 0;
-    public static double Kd = 0;
-    public static double Kf = 0;
-    public static double targetVelocity = 188;
-    private double lastError = 0;
+    public static double shooterPower = 0;
     ElapsedTime timer = new ElapsedTime();
 
     @Override
@@ -42,27 +34,13 @@ public class teleop_pidtest1 extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            double power = PIDControl(targetVelocity, shooterTop.getVelocity(AngleUnit.DEGREES));
-            telemetry.addData("velocity top", shooterTop.getVelocity(AngleUnit.DEGREES));
+            shooterTop.setPower(shooterPower);
+            shooterBottom.setPower(shooterPower);
             dashboardTelemetry.addData("velocity", shooterTop.getVelocity(AngleUnit.DEGREES));
-            dashboardTelemetry.addData("reference", targetVelocity);
             dashboardTelemetry.update();
-            shooterTop.setPower(power);
-            shooterBottom.setPower(power);
+            telemetry.addData("velocity", shooterTop.getVelocity(AngleUnit.DEGREES));
             telemetry.update();
         }
-    }
-    public double PIDControl (double reference, double state){
-        double error = reference - state;
-        integralSum += error * timer.seconds();
-
-        double derivative = (error- lastError) / timer.seconds();
-        lastError = error;
-
-        timer.reset();
-
-        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki) + (reference * Kf);
-        return output;
     }
 }
 
