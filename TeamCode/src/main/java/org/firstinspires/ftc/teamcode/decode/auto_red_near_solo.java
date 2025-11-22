@@ -491,7 +491,7 @@ public final class auto_red_near_solo extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() <= 0.1 && !isStopRequested()) {
+        while (opModeIsActive() && runtime.seconds() <= 0.01 && !isStopRequested()) {
 
 
             Actions.runBlocking(new SequentialAction(

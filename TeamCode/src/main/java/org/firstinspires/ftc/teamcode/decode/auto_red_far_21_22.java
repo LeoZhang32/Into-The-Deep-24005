@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -419,7 +420,7 @@ public final class auto_red_far_21_22 extends LinearOpMode {
 
         //go collect PGP
         TrajectoryActionBuilder go_collect_PGP2 = go_from_shoot_to_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12, 61), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(12, 64), Math.toRadians(-90));
 
         //go shoot PGP
         TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
@@ -432,15 +433,27 @@ public final class auto_red_far_21_22 extends LinearOpMode {
 
         //go collect GPP2
         TrajectoryActionBuilder go_collect_GPP2 = go_from_shoot_to_GPP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, 59), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(36, 64), Math.toRadians(-90));
 
         //go shoot GPP2
         TrajectoryActionBuilder go_shoot_GPP2 = go_collect_GPP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(59, 20), (Math.toRadians(162)));
+                .strafeToLinearHeading(new Vector2d(59, 20), (Math.toRadians(159)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_GPP2 = go_shoot_GPP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46, 27), (Math.toRadians(-70)));
+                .strafeToLinearHeading(new Vector2d(54, 57), (Math.toRadians(-90)));
+
+        //go collect loading PGP
+        TrajectoryActionBuilder go_collect_loading_1_PGP = go_leave_GPP2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(57, 60), Math.toRadians(-100));
+
+        //go collect loading 2 PGP
+        TrajectoryActionBuilder go_collect_loading_2_PGP = go_collect_loading_1_PGP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(62, 61.5), Math.toRadians(-100));
+
+        //go collect loading 3 PGP
+        TrajectoryActionBuilder go_collect_loading_3_PGP = go_collect_loading_2_PGP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(59, 59), Math.toRadians(-90));
 
 
 
@@ -454,7 +467,7 @@ public final class auto_red_far_21_22 extends LinearOpMode {
 
         //go collect GPP
         TrajectoryActionBuilder go_collect_GPP = go_from_shoot_to_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(33, 59), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(33, 64), Math.toRadians(-90));
 
         //go shoot GPP
         TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
@@ -466,7 +479,7 @@ public final class auto_red_far_21_22 extends LinearOpMode {
 
         //go collect PGP
         TrajectoryActionBuilder go_collect_PGP = go_from_shoot_to_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12, 61), Math.toRadians(-100));
+                .strafeToLinearHeading(new Vector2d(12, 64), Math.toRadians(-100));
 
         //go shoot PGP
         TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
@@ -474,11 +487,23 @@ public final class auto_red_far_21_22 extends LinearOpMode {
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PGP = go_shoot_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46, 27), (Math.toRadians(-70)));
+                .strafeToLinearHeading(new Vector2d(54, 57), (Math.toRadians(-90)));
+
+        //go collect loading GPP
+        TrajectoryActionBuilder go_collect_loading_1_GPP = go_leave_PGP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(57, 60), Math.toRadians(-100));
+
+        //go collect loading 2 GPP
+        TrajectoryActionBuilder go_collect_loading_2_GPP = go_collect_loading_1_GPP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(62, 61.5), Math.toRadians(-100));
+
+        //go collect loading 3 GPP
+        TrajectoryActionBuilder go_collect_loading_3_GPP = go_collect_loading_2_GPP.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(59, 59), Math.toRadians(-90));
 
         waitForStart();
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() <= 0.1 && !isStopRequested()) {
+        while (opModeIsActive() && runtime.seconds() <= 0.01 && !isStopRequested()) {
 
 
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -530,9 +555,13 @@ public final class auto_red_far_21_22 extends LinearOpMode {
                     go_from_shoot_to_GPP.build(),
                     intake.IntakeRun(),
                     go_collect_GPP.build(),
-//                    new SleepAction(0.4),
-                    intake.IntakeStop(),
-                    go_shoot_GPP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_GPP.build()
+                                ),
                     outtake.OuttakeTimerReset(),
                     outtake.OuttakeRun(),
                     outtake.OuttakeIdle(),
@@ -541,14 +570,21 @@ public final class auto_red_far_21_22 extends LinearOpMode {
                     go_from_shoot_to_PGP.build(),
                     intake.IntakeRun(),
                     go_collect_PGP.build(),
-//                    new SleepAction(0.5),
-
-                    intake.IntakeStop(),
-                    go_shoot_PGP.build(),
+                        new ParallelAction(
+                                new SequentialAction(
+                                        new SleepAction(0.5),
+                                        intake.IntakeStop()
+                                ),
+                                go_shoot_PGP.build()
+                        ),
                     outtake.OuttakeTimerReset(),
                     outtake.OuttakeRun(),
                     outtake.OuttakeStop(),
-                    go_leave_PGP.build()
+                    go_leave_PGP.build(),
+                    intake.IntakeRun(),
+                    go_collect_loading_1_GPP.build(),
+                    go_collect_loading_2_GPP.build(),
+                    go_collect_loading_3_GPP.build()
                     )
                 );
 
@@ -558,9 +594,13 @@ public final class auto_red_far_21_22 extends LinearOpMode {
                                 go_from_shoot_to_PGP2.build(),
                                 intake.IntakeRun(),
                                 go_collect_PGP2.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
-                                go_shoot_PGP2.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_PGP2.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeIdle(),
@@ -569,14 +609,21 @@ public final class auto_red_far_21_22 extends LinearOpMode {
                                 go_from_shoot_to_GPP2.build(),
                                 intake.IntakeRun(),
                                 go_collect_GPP2.build(),
-//                                new SleepAction(0.5),
-
-                                intake.IntakeStop(),
-                                go_shoot_GPP2.build(),
+                                new ParallelAction(
+                                new SequentialAction(
+                                        new SleepAction(0.5),
+                                        intake.IntakeStop()
+                                        ),
+                                go_shoot_GPP2.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeStop(),
-                                go_leave_GPP2.build()
+                                go_leave_GPP2.build(),
+                                intake.IntakeRun(),
+                                go_collect_loading_1_PGP.build(),
+                                go_collect_loading_2_PGP.build(),
+                                go_collect_loading_3_PGP.build()
                         )
                 );
 
@@ -586,9 +633,13 @@ public final class auto_red_far_21_22 extends LinearOpMode {
                                 go_from_shoot_to_GPP.build(),
                                 intake.IntakeRun(),
                                 go_collect_GPP.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
-                                go_shoot_GPP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_GPP.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeIdle(),
@@ -597,27 +648,36 @@ public final class auto_red_far_21_22 extends LinearOpMode {
                                 go_from_shoot_to_PGP.build(),
                                 intake.IntakeRun(),
                                 go_collect_PGP.build(),
-//                                new SleepAction(0.5),
-
-                                intake.IntakeStop(),
-                                go_shoot_PGP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_PGP.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeStop(),
-                                go_leave_PGP.build()
+                                go_leave_PGP.build(),
+                                intake.IntakeRun(),
+                                go_collect_loading_1_GPP.build(),
+                                go_collect_loading_2_GPP.build(),
+                                go_collect_loading_3_GPP.build()
                         )
                 );
-
-
             } else {//still GPP then PGP
 
                 Actions.runBlocking(new SequentialAction(
                                 go_from_shoot_to_GPP.build(),
                                 intake.IntakeRun(),
                                 go_collect_GPP.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
-                                go_shoot_GPP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_GPP.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeIdle(),
@@ -626,14 +686,21 @@ public final class auto_red_far_21_22 extends LinearOpMode {
                                 go_from_shoot_to_PGP.build(),
                                 intake.IntakeRun(),
                                 go_collect_PGP.build(),
-//                                new SleepAction(0.5),
-
-                                intake.IntakeStop(),
-                                go_shoot_PGP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_PGP.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeStop(),
-                                go_leave_PGP.build()
+                                go_leave_PGP.build(),
+                                intake.IntakeRun(),
+                                go_collect_loading_1_GPP.build(),
+                                go_collect_loading_2_GPP.build(),
+                                go_collect_loading_3_GPP.build()
                         )
                 );
             }

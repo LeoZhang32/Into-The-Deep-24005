@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -163,10 +164,10 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
                     shooterBottom.setPower(power);
                     if (shootertimer.seconds() >= 1.3){
                         trigger.setPosition(0.68);
-                        intake.setPower(1);
+                        intake.setPower(0.7);
                         intakeCR.setPower(1);
                     }
-                    if (shootertimer.seconds() >= 3.6){
+                    if (shootertimer.seconds() >= 4.2){
                         shootertimer.reset();
                         return false;
                     }
@@ -261,7 +262,7 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
 
 
 
-        Pose2d beginPose = new Pose2d(63, -9, Math.toRadians(180));
+        Pose2d beginPose = new Pose2d(63, -9, Math.toRadians(-180));
         PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
@@ -376,74 +377,74 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
 
 
 
-
-        //After Scan, if it is April Tag 23 (PPG), then follow this sequence: 23PPG
-
-        // go to PPG
-        TrajectoryActionBuilder go_from_obelisk_to_PPG = go_shoot_held_artifacts.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -28), (Math.toRadians(90)));
-
-        //go collect PPG
-        TrajectoryActionBuilder go_collect_PPG = go_from_obelisk_to_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -53), Math.toRadians(90));
-
-        //go shoot PPG
-        TrajectoryActionBuilder go_shoot_PPG = go_collect_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
-
-        //go from shoot position to PGP
-        TrajectoryActionBuilder go_from_shoot_to_PGP2 = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, -28), (Math.toRadians(90)));
-
-        //go collect PGP2
-        TrajectoryActionBuilder go_collect_PGP2 = go_from_shoot_to_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, -61), Math.toRadians(90));
-
-        //go shoot PPG
-        TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
-
-        //LEAVE
-        TrajectoryActionBuilder go_leave_PGP2 = go_shoot_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0, -20), (Math.toRadians(135)));
-
-
-
-
-
-        //After Scan, if it is April Tag 22 (PGP), then follow this sequence: 22PGP
-
-        // go to PGP
-        TrajectoryActionBuilder go_from_obelisk_to_PGP = go_shoot_held_artifacts.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, -28), (Math.toRadians(90)));
-
-        //go collect PGP
-        TrajectoryActionBuilder go_collect_PGP = go_from_obelisk_to_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, -61), Math.toRadians(90));
-
-        //go shoot PGP
-        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, -36), (Math.toRadians(-180)))
-                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
-
-        //go from shoot position to PPG2
-        TrajectoryActionBuilder go_from_shoot_to_PPG2 = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, -28), (Math.toRadians(90)));
-
-        //go collect PPG2
-        TrajectoryActionBuilder go_collect_PPG2 = go_from_shoot_to_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, -53), Math.toRadians(90));
-
-        //go shoot PPG2
-        TrajectoryActionBuilder go_shoot_PPG2 = go_collect_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
-
-        //LEAVE
-        TrajectoryActionBuilder go_leave_PPG2 = go_shoot_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0, -20), (Math.toRadians(135)));
-
-
-
+//
+//        //After Scan, if it is April Tag 23 (PPG), then follow this sequence: 23PPG
+//
+//        // go to PPG
+//        TrajectoryActionBuilder go_from_obelisk_to_PPG = go_shoot_held_artifacts.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-12, -28), (Math.toRadians(90)));
+//
+//        //go collect PPG
+//        TrajectoryActionBuilder go_collect_PPG = go_from_obelisk_to_PPG.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-12, -53), Math.toRadians(90));
+//
+//        //go shoot PPG
+//        TrajectoryActionBuilder go_shoot_PPG = go_collect_PPG.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+//
+//        //go from shoot position to PGP
+//        TrajectoryActionBuilder go_from_shoot_to_PGP2 = go_shoot_PPG.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(14, -28), (Math.toRadians(90)));
+//
+//        //go collect PGP2
+//        TrajectoryActionBuilder go_collect_PGP2 = go_from_shoot_to_PGP2.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(14, -61), Math.toRadians(90));
+//
+//        //go shoot PPG
+//        TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+//
+//        //LEAVE
+//        TrajectoryActionBuilder go_leave_PGP2 = go_shoot_PGP2.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(0, -20), (Math.toRadians(135)));
+//
+//
+//
+//
+//
+//        //After Scan, if it is April Tag 22 (PGP), then follow this sequence: 22PGP
+//
+//        // go to PGP
+//        TrajectoryActionBuilder go_from_obelisk_to_PGP = go_shoot_held_artifacts.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(14, -28), (Math.toRadians(90)));
+//
+//        //go collect PGP
+//        TrajectoryActionBuilder go_collect_PGP = go_from_obelisk_to_PGP.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(14, -61), Math.toRadians(90));
+//
+//        //go shoot PGP
+//        TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(14, -36), (Math.toRadians(-180)))
+//                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+//
+//        //go from shoot position to PPG2
+//        TrajectoryActionBuilder go_from_shoot_to_PPG2 = go_shoot_PPG.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-11, -28), (Math.toRadians(90)));
+//
+//        //go collect PPG2
+//        TrajectoryActionBuilder go_collect_PPG2 = go_from_shoot_to_PPG2.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-11, -53), Math.toRadians(90));
+//
+//        //go shoot PPG2
+//        TrajectoryActionBuilder go_shoot_PPG2 = go_collect_PPG2.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+//
+//        //LEAVE
+//        TrajectoryActionBuilder go_leave_PPG2 = go_shoot_PPG2.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(0, -20), (Math.toRadians(135)));
+//
+//
+//
 
 
         //After Scan, if it is April Tag 21 (GPP), then follow this sequence: GPP
@@ -454,11 +455,11 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
 
         //go collect GPP
         TrajectoryActionBuilder go_collect_GPP = go_from_shoot_to_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(33, -59), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(33, -64), Math.toRadians(90));
 
         //go shoot GPP
         TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-160)));
+                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-158)));
 
         //go from shoot position to loading
         TrajectoryActionBuilder go_from_shoot_to_loading = go_shoot_GPP.endTrajectory().fresh()
@@ -474,15 +475,15 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
 
         //go shoot loading
         TrajectoryActionBuilder go_shoot_loading = go_collect_loading_2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-160)));
+                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-157)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_loading = go_shoot_loading.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46, -27), (Math.toRadians(70)));
+                .strafeToLinearHeading(new Vector2d(50, -61), (Math.toRadians(30)));
 
         waitForStart();
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() <= 0.1 && !isStopRequested()) {
+        while (opModeIsActive() && runtime.seconds() <= 0.01 && !isStopRequested()) {
 
 
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -531,40 +532,16 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
 
             if (target21Found == true) { //GPP then loading
                 Actions.runBlocking(new SequentialAction(
-                    go_from_shoot_to_GPP.build(),
-                    intake.IntakeRun(),
-                    go_collect_GPP.build(),
-//                    new SleepAction(0.4),
-                    intake.IntakeStop(),
-                    go_shoot_GPP.build(),
-                    outtake.OuttakeTimerReset(),
-                    outtake.OuttakeRun(),
-                    outtake.OuttakeIdle(),
-
-                    //go collect and shoot loading
-                    go_from_shoot_to_loading.build(),
-                    intake.IntakeRun(),
-                    go_collect_loading_1.build(),
-                    new SleepAction(0.5),
-                    go_collect_loading_2.build(),
-                    new SleepAction(0.5),
-                    intake.IntakeStop(),
-                    go_shoot_loading.build(),
-                    outtake.OuttakeTimerReset(),
-                    outtake.OuttakeRun(),
-                    outtake.OuttakeStop(),
-                    go_leave_loading.build()
-                    )
-                );
-
-            } else if  (target22Found == true) { //still GPP then loading
-                Actions.runBlocking(new SequentialAction(
                                 go_from_shoot_to_GPP.build(),
                                 intake.IntakeRun(),
                                 go_collect_GPP.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
-                                go_shoot_GPP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_GPP.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeIdle(),
@@ -576,8 +553,50 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
                                 new SleepAction(0.5),
                                 go_collect_loading_2.build(),
                                 new SleepAction(0.5),
-                                intake.IntakeStop(),
-                                go_shoot_loading.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_loading.build()
+                                ),
+                                outtake.OuttakeTimerReset(),
+                                outtake.OuttakeRun(),
+                                outtake.OuttakeStop(),
+                                go_leave_loading.build()
+                        )
+                );
+
+            } else if  (target22Found == true) { //still GPP then loading
+                Actions.runBlocking(new SequentialAction(
+                                go_from_shoot_to_GPP.build(),
+                                intake.IntakeRun(),
+                                go_collect_GPP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_GPP.build()
+                                ),
+                                outtake.OuttakeTimerReset(),
+                                outtake.OuttakeRun(),
+                                outtake.OuttakeIdle(),
+
+                                //go collect and shoot loading
+                                go_from_shoot_to_loading.build(),
+                                intake.IntakeRun(),
+                                go_collect_loading_1.build(),
+                                new SleepAction(0.5),
+                                go_collect_loading_2.build(),
+                                new SleepAction(0.5),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_loading.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeStop(),
@@ -589,9 +608,13 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
                                 go_from_shoot_to_GPP.build(),
                                 intake.IntakeRun(),
                                 go_collect_GPP.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
-                                go_shoot_GPP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_GPP.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeIdle(),
@@ -603,8 +626,13 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
                                 new SleepAction(0.5),
                                 go_collect_loading_2.build(),
                                 new SleepAction(0.5),
-                                intake.IntakeStop(),
-                                go_shoot_loading.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_loading.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeStop(),
@@ -617,9 +645,13 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
                                 go_from_shoot_to_GPP.build(),
                                 intake.IntakeRun(),
                                 go_collect_GPP.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
-                                go_shoot_GPP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_GPP.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeIdle(),
@@ -631,8 +663,13 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
                                 new SleepAction(0.5),
                                 go_collect_loading_2.build(),
                                 new SleepAction(0.5),
-                                intake.IntakeStop(),
-                                go_shoot_loading.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_loading.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeStop(),
