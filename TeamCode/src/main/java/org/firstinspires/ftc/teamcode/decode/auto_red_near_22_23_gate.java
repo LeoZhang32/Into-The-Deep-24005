@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -37,9 +38,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-@Autonomous (name = "decode auto blue near open gate")
+@Autonomous (name = "decode auto red near 22 23 gate")
 
-public final class auto_blue_near_open_gate extends LinearOpMode {
+public final class auto_red_near_22_23_gate extends LinearOpMode {
     DcMotor FR;
     DcMotor FL;
     DcMotor BR;
@@ -261,7 +262,7 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
 
 
 
-        Pose2d beginPose = new Pose2d(-40.5, -57, Math.toRadians(-90));
+        Pose2d beginPose = new Pose2d(-40.5, 57, Math.toRadians(90));
         PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
@@ -367,11 +368,11 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
 
         //score held artifacts
         TrajectoryActionBuilder go_shoot_held_artifacts = drive.actionBuilder(beginPose)
-                .strafeToSplineHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+                .strafeToSplineHeading(new Vector2d(-10, 20), (Math.toRadians(135)));
 
         //go scan obelisk
         TrajectoryActionBuilder go_scan_obelisk = go_shoot_held_artifacts.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, -15), (Math.toRadians(175)));
+                .strafeToLinearHeading(new Vector2d(-11, 15), (Math.toRadians(-175)));
 
 
 
@@ -381,39 +382,40 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
 
         // go to PPG
         TrajectoryActionBuilder go_from_obelisk_to_PPG = go_scan_obelisk.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -28), (Math.toRadians(90)));
+                .strafeToLinearHeading(new Vector2d(-12, 28), (Math.toRadians(-90)));
 
         //go collect PPG
         TrajectoryActionBuilder go_collect_PPG = go_from_obelisk_to_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -53), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(-12, 57), Math.toRadians(-90));
 
         //go open gate
         TrajectoryActionBuilder go_open_gate_PPG = go_collect_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-4, -54), Math.toRadians(179));
+                .strafeToLinearHeading(new Vector2d(-5, 51), Math.toRadians(-90));
 
         //open gate
         TrajectoryActionBuilder open_gate_PPG = go_open_gate_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-4, -55), Math.toRadians(179));
+                .strafeToLinearHeading(new Vector2d(-5, 58.5), Math.toRadians(-90));
 
         //go shoot PPG
         TrajectoryActionBuilder go_shoot_PPG = open_gate_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //go from shoot position to PGP
         TrajectoryActionBuilder go_from_shoot_to_PGP2 = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, -28), (Math.toRadians(90)));
+                .strafeToLinearHeading(new Vector2d(14, 28), (Math.toRadians(-90)));
 
         //go collect PGP2
         TrajectoryActionBuilder go_collect_PGP2 = go_from_shoot_to_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, -61), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(14, 64), Math.toRadians(-90));
 
-        //go shoot PPG
+        //go shoot PGP2
         TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+                .strafeToLinearHeading(new Vector2d(14, 45), Math.toRadians(-130))
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PGP2 = go_shoot_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0, -20), (Math.toRadians(135)));
+                .strafeToLinearHeading(new Vector2d(0, 48), (Math.toRadians(180)));
 
 
 
@@ -423,40 +425,41 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
 
         // go to PGP
         TrajectoryActionBuilder go_from_obelisk_to_PGP = go_scan_obelisk.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, -28), (Math.toRadians(90)));
+                .strafeToLinearHeading(new Vector2d(14, 28), (Math.toRadians(-90)));
 
         //go collect PGP
         TrajectoryActionBuilder go_collect_PGP = go_from_obelisk_to_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, -61), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(14, 64.5), Math.toRadians(-90));
 
         //go open gate
         TrajectoryActionBuilder go_open_gate_PGP = go_collect_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(6, -54), Math.toRadians(179));
+//                .strafeToLinearHeading(new Vector2d(14, 51), Math.toRadians(-90))
+                .strafeToLinearHeading(new Vector2d(7, 53), Math.toRadians(-90));
 
         //open gate
         TrajectoryActionBuilder open_gate_PGP = go_open_gate_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(6, -57.5), Math.toRadians(179));
+                .strafeToLinearHeading(new Vector2d(5, 58.5), Math.toRadians(-90));
 
         //go shoot PGP
         TrajectoryActionBuilder go_shoot_PGP = open_gate_PGP.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(7, 26), (Math.toRadians(180)))
-                .strafeToSplineHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+                .strafeToLinearHeading(new Vector2d(5, 26), (Math.toRadians(180)))
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //go from shoot position to PPG2
         TrajectoryActionBuilder go_from_shoot_to_PPG2 = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, -28), (Math.toRadians(90)));
+                .strafeToLinearHeading(new Vector2d(-11, 28), (Math.toRadians(-90)));
 
         //go collect PPG2
         TrajectoryActionBuilder go_collect_PPG2 = go_from_shoot_to_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, -53), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(-11, 57), Math.toRadians(-90));
 
         //go shoot PPG2
         TrajectoryActionBuilder go_shoot_PPG2 = go_collect_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PPG2 = go_shoot_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0, -20), (Math.toRadians(135)));
+                .strafeToLinearHeading(new Vector2d(0, 48), (Math.toRadians(180)));
 
 
 
@@ -466,32 +469,32 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
 
         // go to GPP
         TrajectoryActionBuilder go_from_obelisk_to_GPP = go_scan_obelisk.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, -28), (Math.toRadians(90)));
+                .strafeToLinearHeading(new Vector2d(36, 28), (Math.toRadians(-90)));
 
         //go collect GPP
         TrajectoryActionBuilder go_collect_GPP = go_from_obelisk_to_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, -59), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(36, 64), Math.toRadians(-90));
 
         //go shoot GPP
         TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, -25), Math.toRadians(170))
-                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+                .strafeToLinearHeading(new Vector2d(36, 25), Math.toRadians(-170))
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //go from shoot position to PPG3
         TrajectoryActionBuilder go_from_shoot_to_PPG3 = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, -28), (Math.toRadians(90)));
+                .strafeToLinearHeading(new Vector2d(-11, 28), (Math.toRadians(-90)));
 
         //go collect PPG3
         TrajectoryActionBuilder go_collect_PPG3 = go_from_shoot_to_PPG3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, -53), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(-11, 57), Math.toRadians(-90));
 
         //go shoot PPG3
         TrajectoryActionBuilder go_shoot_PPG3 = go_collect_PPG3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PPG3 = go_shoot_PPG3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0, -20), (Math.toRadians(135)));
+                .strafeToLinearHeading(new Vector2d(14, 28), (Math.toRadians(-90)));
 
         waitForStart();
         runtime.reset();
@@ -542,14 +545,18 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
             }
 
 
-            if (target21Found == true) { //GPP
+            if (target21Found == true) { //let teammate do GPP; we still do 23PPG
                 Actions.runBlocking(new SequentialAction(
                                 go_from_obelisk_to_PPG.build(),
                                 intake.IntakeRun(),
                                 go_collect_PPG.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
-                                go_open_gate_PPG.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_open_gate_PPG.build()
+                                ),
                                 open_gate_PPG.build(),
                                 new SleepAction(1.5),
                                 go_shoot_PPG.build(),
@@ -561,26 +568,33 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
                                 go_from_shoot_to_PGP2.build(),
                                 intake.IntakeRun(),
                                 go_collect_PGP2.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
-                                go_shoot_PGP2.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_PGP2.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeStop(),
                                 go_leave_PGP2.build()
                         )
                 );
-
             } else if  (target22Found == true) { //PGP
                 Actions.runBlocking(new SequentialAction(
                     go_from_obelisk_to_PGP.build(),
                     intake.IntakeRun(),
                     go_collect_PGP.build(),
-//                    new SleepAction(0.4),
-                    intake.IntakeStop(),
-                    go_open_gate_PGP.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_open_gate_PGP.build()
+                                ),
                     open_gate_PGP.build(),
-                    new SleepAction(0.8),
+                    new SleepAction(1.5),
                     go_shoot_PGP.build(),
                     outtake.OuttakeTimerReset(),
                     outtake.OuttakeRun(),
@@ -590,9 +604,13 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
                     go_from_shoot_to_PPG2.build(),
                     intake.IntakeRun(),
                     go_collect_PPG2.build(),
-//                    new SleepAction(0.4),
-                    intake.IntakeStop(),
-                    go_shoot_PPG2.build(),
+                        new ParallelAction(
+                                new SequentialAction(
+                                        new SleepAction(0.5),
+                                        intake.IntakeStop()
+                                ),
+                                go_shoot_PPG2.build()
+                        ),
                     outtake.OuttakeTimerReset(),
                     outtake.OuttakeRun(),
                     outtake.OuttakeStop(),
@@ -601,40 +619,18 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
                 );
             } else if  (target23Found == true) { //PPG
                 Actions.runBlocking(new SequentialAction(
-                    go_from_obelisk_to_PPG.build(),
-                    intake.IntakeRun(),
-                    go_collect_PPG.build(),
-//                    new SleepAction(0.4),
-                    intake.IntakeStop(),
-                    go_open_gate_PPG.build(),
-                    open_gate_PPG.build(),
-                    new SleepAction(1.5),
-                    go_shoot_PPG.build(),
-                    outtake.OuttakeTimerReset(),
-                    outtake.OuttakeRun(),
-                    outtake.OuttakeIdle(),
-
-                    //go collect and shoot PGP
-                    go_from_shoot_to_PGP2.build(),
-                    intake.IntakeRun(),
-                    go_collect_PGP2.build(),
-//                    new SleepAction(0.4),
-                    intake.IntakeStop(),
-                    go_shoot_PGP2.build(),
-                    outtake.OuttakeTimerReset(),
-                    outtake.OuttakeRun(),
-                    outtake.OuttakeStop(),
-                    go_leave_PGP2.build()
-                    )
-                );
-            } else {
-
-                Actions.runBlocking(new SequentialAction(
                                 go_from_obelisk_to_PPG.build(),
                                 intake.IntakeRun(),
                                 go_collect_PPG.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_open_gate_PPG.build()
+                                ),
+                                open_gate_PPG.build(),
+                                new SleepAction(1.5),
                                 go_shoot_PPG.build(),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
@@ -644,9 +640,49 @@ public final class auto_blue_near_open_gate extends LinearOpMode {
                                 go_from_shoot_to_PGP2.build(),
                                 intake.IntakeRun(),
                                 go_collect_PGP2.build(),
-//                    new SleepAction(0.4),
-                                intake.IntakeStop(),
-                                go_shoot_PGP2.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_PGP2.build()
+                                ),
+                                outtake.OuttakeTimerReset(),
+                                outtake.OuttakeRun(),
+                                outtake.OuttakeStop(),
+                                go_leave_PGP2.build()
+                        )
+                );
+            } else {
+                Actions.runBlocking(new SequentialAction(
+                                go_from_obelisk_to_PPG.build(),
+                                intake.IntakeRun(),
+                                go_collect_PPG.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_open_gate_PPG.build()
+                                ),
+                                open_gate_PPG.build(),
+                                new SleepAction(1.5),
+                                go_shoot_PPG.build(),
+                                outtake.OuttakeTimerReset(),
+                                outtake.OuttakeRun(),
+                                outtake.OuttakeIdle(),
+
+                                //go collect and shoot PGP
+                                go_from_shoot_to_PGP2.build(),
+                                intake.IntakeRun(),
+                                go_collect_PGP2.build(),
+                                new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                intake.IntakeStop()
+                                        ),
+                                        go_shoot_PGP2.build()
+                                ),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
                                 outtake.OuttakeStop(),
