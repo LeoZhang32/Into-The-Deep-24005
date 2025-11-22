@@ -529,7 +529,7 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
                     )
             );
 
-            if (target21Found == true) { //GPP
+            if (target21Found == true) { //GPP then loading
                 Actions.runBlocking(new SequentialAction(
                     go_from_shoot_to_GPP.build(),
                     intake.IntakeRun(),

@@ -111,7 +111,7 @@ public class DecodeRobotHardware {
 
 
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 48; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 78; //  this is how close the camera should get to the target (inches) 48
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -125,7 +125,7 @@ public class DecodeRobotHardware {
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = 24;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private static final int DESIRED_TAG_ID = 20;     // Choose the tag you want to approach or set to -1 for ANY tag. 24 FOR RED; 20 FOR BLUE.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag  //  Clip the turn speed to this max value (adjust for your robot)
@@ -396,8 +396,9 @@ public class DecodeRobotHardware {
      * @param intakeCRIn - intake servo in button
      * @param outtakeClose -outtake close button
      * @param outtakeFar - outake far button
+     * @param outtakeMid - outtake mid
      */
-    public void intakeOuttakeAction(boolean intakeInInput, boolean intakeCRIn, boolean intakeOutInput, boolean outtakeClose, boolean outtakeFar){
+    public void intakeOuttakeAction(boolean intakeInInput, boolean intakeCRIn, boolean intakeOutInput, boolean outtakeClose, boolean outtakeFar, boolean outtakeMid){
         double shooterVelocity = 0;
         shooterVelocity = shooterTop.getVelocity(AngleUnit.DEGREES);
         myOpMode.telemetry.addData("velocity",shooterVelocity);
@@ -410,10 +411,18 @@ public class DecodeRobotHardware {
 
         double outtakePower = PIDControl(targetVelocity, shooterTop.getVelocity(AngleUnit.DEGREES));
         if (outtakeClose){
-            velocityValid = shooterVelocity >= 145;
-            targetVelocity = 155;
-            shooterTop.setPower(outtakePower);
-            shooterBottom.setPower(outtakePower);
+            if (outtakeMid){
+                velocityValid = shooterVelocity >= 153;
+                targetVelocity = 163;
+                shooterTop.setPower(outtakePower);
+                shooterBottom.setPower(outtakePower);
+            }
+            else {
+                velocityValid = shooterVelocity >= 145;
+                targetVelocity = 155;
+                shooterTop.setPower(outtakePower);
+                shooterBottom.setPower(outtakePower);
+            }
         }
         else if (outtakeFar){
             velocityValid = shooterVelocity >= 178;

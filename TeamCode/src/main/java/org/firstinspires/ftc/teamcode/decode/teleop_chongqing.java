@@ -11,6 +11,7 @@ public class teleop_chongqing extends LinearOpMode {
     Boolean imuReset = false;
     Boolean shooterClose = false;
     Boolean shooterFar = false;
+    Boolean shooterMid = false;
     Boolean intakeForward = false;
     Boolean intakeBackward = false;
     Boolean intakeServoForward = false;
@@ -48,21 +49,24 @@ public class teleop_chongqing extends LinearOpMode {
             if (cycle_gamepad2.rbPressCount == 1 && cycle_gamepad2.lbPressCount == 0){
                 shooterClose = true;
                 shooterFar = false;
+                shooterMid = gamepad2.left_trigger >= 0.5;
             }
             else if (cycle_gamepad2.rbPressCount == 0 && cycle_gamepad2.lbPressCount == 1){
                 shooterClose = false;
                 shooterFar = true;
+                shooterMid = false;
             }
             else if ((cycle_gamepad2.rbPressCount == 1 && cycle_gamepad2.lbPressCount == 1) || (cycle_gamepad2.rbPressCount == 0 && cycle_gamepad2.lbPressCount == 0)){
                 cycle_gamepad2.rbPressCount = 0;
                 cycle_gamepad2.lbPressCount = 0;
                 shooterClose = false;
                 shooterFar = false;
+                shooterMid = false;
             }
             intakeForward = gamepad1.a || gamepad2.a;
             intakeBackward = gamepad1.b || gamepad2.b;
             intakeServoForward = gamepad2.right_trigger >=0.5;
-            robot.intakeOuttakeAction(intakeForward, intakeServoForward,intakeBackward, shooterClose, shooterFar);
+            robot.intakeOuttakeAction(intakeForward, intakeServoForward,intakeBackward, shooterClose, shooterFar, shooterMid);
 
             robot.liftAction(gamepad2.dpad_up,gamepad2.dpad_down);
         }

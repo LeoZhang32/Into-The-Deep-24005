@@ -398,8 +398,9 @@ public final class auto_red_near extends LinearOpMode {
         TrajectoryActionBuilder go_collect_PGP2 = go_from_shoot_to_PGP2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(14, 61), Math.toRadians(-90));
 
-        //go shoot PPG
+        //go shoot PGP2
         TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(14, 28), Math.toRadians(-90))
                 .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
 
         //LEAVE

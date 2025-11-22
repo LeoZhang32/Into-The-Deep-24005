@@ -400,6 +400,7 @@ public final class auto_blue_near extends LinearOpMode {
 
         //go shoot PPG
         TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(14, -28), (Math.toRadians(90)))
                 .strafeToLinearHeading(new Vector2d(-12, -17), (Math.toRadians(-136)));
 
         //LEAVE
