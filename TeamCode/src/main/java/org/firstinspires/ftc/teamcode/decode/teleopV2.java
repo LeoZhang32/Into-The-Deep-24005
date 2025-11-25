@@ -66,7 +66,7 @@ public class teleopV2 extends LinearOpMode {
             }
             robot.intakeOuttakeAction(gamepad1.a, gamepad2.right_trigger >= 0.5, gamepad2.left_trigger >= 0.5, gamepad1.b || gamepad2.b, shooterClose, shooterFar, shooterMid);
 
-//            robot.liftAction(gamepad2.dpad_up,gamepad2.dpad_down);
+            robot.liftAction(gamepad2.dpad_up,gamepad2.dpad_down);
         }
     }
 }

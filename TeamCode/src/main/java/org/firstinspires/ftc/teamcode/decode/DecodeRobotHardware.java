@@ -530,11 +530,18 @@ public class DecodeRobotHardware {
      *
      * */
     public void liftAction(boolean liftUpInput, boolean liftDownInput){
-        if (liftUpInput){
-            lift.setPower(1);
-        }
-        else if (liftDownInput){
-            lift.setPower(-1);
+
+    if (liftUpInput){
+            if (lift.getCurrentPosition() > 2000) {
+                lift.setPower(0);
+                myOpMode.telemetry.addData("lift", "over limit");
+                myOpMode.telemetry.update();
+            }
+            else {
+//                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                lift.setPower(1);
+            }
+
         }
         else {
             lift.setPower(0);
