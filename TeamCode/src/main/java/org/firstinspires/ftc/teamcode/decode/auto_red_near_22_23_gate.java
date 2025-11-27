@@ -386,7 +386,7 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
 
         //go collect PPG
         TrajectoryActionBuilder go_collect_PPG = go_from_obelisk_to_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 57), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(-12, 58), Math.toRadians(-90));
 
         //go open gate
         TrajectoryActionBuilder go_open_gate_PPG = go_collect_PPG.endTrajectory().fresh()
@@ -398,7 +398,7 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
 
         //go shoot PPG
         TrajectoryActionBuilder go_shoot_PPG = open_gate_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(-14, 17), (Math.toRadians(129)));
 
         //go from shoot position to PGP
         TrajectoryActionBuilder go_from_shoot_to_PGP2 = go_shoot_PPG.endTrajectory().fresh()
@@ -410,8 +410,8 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
 
         //go shoot PGP2
         TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, 45), Math.toRadians(-130))
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+//                .strafeToLinearHeading(new Vector2d(14, 45), Math.toRadians(-130))
+                .strafeToSplineHeading(new Vector2d(-14, 17), (Math.toRadians(129)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PGP2 = go_shoot_PGP2.endTrajectory().fresh()
@@ -443,7 +443,7 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
         //go shoot PGP
         TrajectoryActionBuilder go_shoot_PGP = open_gate_PGP.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(5, 26), (Math.toRadians(180)))
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(-13, 17), (Math.toRadians(130)));
 
         //go from shoot position to PPG2
         TrajectoryActionBuilder go_from_shoot_to_PPG2 = go_shoot_PPG.endTrajectory().fresh()
@@ -455,7 +455,7 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
 
         //go shoot PPG2
         TrajectoryActionBuilder go_shoot_PPG2 = go_collect_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(-13, 17), (Math.toRadians(130)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PPG2 = go_shoot_PPG2.endTrajectory().fresh()

@@ -372,7 +372,7 @@ public final class auto_red_near_solo extends LinearOpMode {
 
         //go scan obelisk
         TrajectoryActionBuilder go_scan_obelisk = go_shoot_held_artifacts.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, 15), (Math.toRadians(-175)));
+                .strafeToLinearHeading(new Vector2d(-11, 15), (Math.toRadians(-160)));
 
 
 
@@ -382,36 +382,36 @@ public final class auto_red_near_solo extends LinearOpMode {
 
         // go to PPG
         TrajectoryActionBuilder go_from_obelisk_to_PPG = go_scan_obelisk.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 28), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(-13, 28), (Math.toRadians(-88)));
 
         //go collect PPG
         TrajectoryActionBuilder go_collect_PPG = go_from_obelisk_to_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 57), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(-13, 57), Math.toRadians(-88));
 
         //go shoot PPG
         TrajectoryActionBuilder go_shoot_PPG = go_collect_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(-16, 20), (Math.toRadians(129)));
 
         //go from shoot position to PGP
         TrajectoryActionBuilder go_from_shoot_to_PGP2 = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, 28), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(15, 28), (Math.toRadians(-88)));
 
         //go collect PGP2
         TrajectoryActionBuilder go_collect_PGP2 = go_from_shoot_to_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, 64), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(15, 65), Math.toRadians(-88));
 
         //go shoot PGP2
         TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, 45), Math.toRadians(-130))
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(15, 45), Math.toRadians(-130))
+                .strafeToLinearHeading(new Vector2d(-17, 20), (Math.toRadians(129)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PGP2 = go_shoot_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, 28), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(37, 28), (Math.toRadians(-87)));
 
         //go collect GPP3
         TrajectoryActionBuilder go_collect_GPP2 = go_leave_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, 65), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(37, 66), (Math.toRadians(-87)));
 
 
 
@@ -429,19 +429,19 @@ public final class auto_red_near_solo extends LinearOpMode {
         //go shoot PGP
         TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(14, 36), (Math.toRadians(180)))
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(-14, 17), (Math.toRadians(132)));
 
         //go from shoot position to PPG2
         TrajectoryActionBuilder go_from_shoot_to_PPG2 = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, 28), (Math.toRadians(-90)));
+                .strafeToLinearHeading(new Vector2d(-12, 28), (Math.toRadians(-90)));
 
         //go collect PPG2
         TrajectoryActionBuilder go_collect_PPG2 = go_from_shoot_to_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, 57), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(-12, 57), Math.toRadians(-90));
 
         //go shoot PPG2
         TrajectoryActionBuilder go_shoot_PPG2 = go_collect_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(-14, 17), (Math.toRadians(132)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PPG2 = go_shoot_PPG2.endTrajectory().fresh()

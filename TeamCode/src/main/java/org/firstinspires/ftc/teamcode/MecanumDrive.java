@@ -64,13 +64,13 @@ public class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
-        public double lateralInPerTick = 0.621077144461229; //TODO before adding weight: 0.69855753004239693333333333333333
-        public double trackWidthTicks = 13.299851701070400; //TODO before adding weight: 14.71 //13.539911372758029
+        public double lateralInPerTick = 0.690003634882091; //TODO before adding weight: 0.69855753004239693333333333333333
+        public double trackWidthTicks = 13.654817904287100; //TODO before adding weight: 14.71 //13.539911372758029
 
         // feedforward parameters (in tick units) avg kV = 0.140391718664841026667 avg kS = 1.5253672305515611
-        public double kS = 1.296037040606880; //TODO before adding weight: 1.2899544192594723
-        public double kV = 0.148440797813735; //TODO before adding weight: 0.13910233560284496
-        public double kA = 0.036; //TODO before adding weight: 0.03
+        public double kS = 1.233099446424790; //TODO before adding weight: 1.2899544192594723
+        public double kV = 0.142862786242921; //TODO before adding weight: 0.13910233560284496
+        public double kA = 0.0465; //TODO before adding weight: 0.03
 
         // path profile parameters (in inches)
         public double maxWheelVel = 70; //TODO previously chongqing 50
@@ -82,9 +82,9 @@ public class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 6;
-        public double lateralGain = 0.4; //TODO before adding weight: 0.5
-        public double headingGain = 1.5; //TODO before adding weight: 2
+        public double axialGain = 7;
+        public double lateralGain = 1; //TODO before adding weight: 0.5
+        public double headingGain = 3.5; //TODO before adding weight: 2
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
