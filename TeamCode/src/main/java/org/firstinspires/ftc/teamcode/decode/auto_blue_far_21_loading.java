@@ -373,7 +373,7 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
 
         //score held artifacts
         TrajectoryActionBuilder go_shoot_held_artifacts = drive.actionBuilder(beginPose)
-                .strafeToSplineHeading(new Vector2d(59, -20), (Math.toRadians(-160)));
+                .strafeToSplineHeading(new Vector2d(59, -20), (Math.toRadians(-156)));
 
 
 
@@ -455,7 +455,7 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
 
         //go collect GPP
         TrajectoryActionBuilder go_collect_GPP = go_from_shoot_to_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(33, -64), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(33, -62.5), Math.toRadians(90));
 
         //go shoot GPP
         TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
@@ -475,11 +475,11 @@ public final class auto_blue_far_21_loading extends LinearOpMode {
 
         //go shoot loading
         TrajectoryActionBuilder go_shoot_loading = go_collect_loading_2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-157)));
+                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-154.5)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_loading = go_shoot_loading.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(50, -61), (Math.toRadians(30)));
+                .strafeToLinearHeading(new Vector2d(50, -57), (Math.toRadians(30)));
 
         waitForStart();
         runtime.reset();

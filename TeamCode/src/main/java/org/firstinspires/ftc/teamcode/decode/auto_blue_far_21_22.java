@@ -373,7 +373,7 @@ public final class auto_blue_far_21_22 extends LinearOpMode {
 
         //score held artifacts
         TrajectoryActionBuilder go_shoot_held_artifacts = drive.actionBuilder(beginPose)
-                .strafeToSplineHeading(new Vector2d(59, -20), (Math.toRadians(-160)));
+                .strafeToSplineHeading(new Vector2d(59, -20), (Math.toRadians(-156.5)));
 
 
 
@@ -425,15 +425,15 @@ public final class auto_blue_far_21_22 extends LinearOpMode {
         //go shoot PGP
         TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(15, -22), (Math.toRadians(-180)))
-                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-162)));
+                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-160)));
 
         //go from shoot position to GPP2
         TrajectoryActionBuilder go_from_shoot_to_GPP2 = go_shoot_PGP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, -28), (Math.toRadians(90)));
+                .strafeToLinearHeading(new Vector2d(35, -28), (Math.toRadians(90)));
 
         //go collect GPP2
         TrajectoryActionBuilder go_collect_GPP2 = go_from_shoot_to_GPP2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, -64), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(35, -64), Math.toRadians(90));
 
         //go shoot GPP2
         TrajectoryActionBuilder go_shoot_GPP2 = go_collect_GPP2.endTrajectory().fresh()
@@ -465,11 +465,11 @@ public final class auto_blue_far_21_22 extends LinearOpMode {
 
         //go collect GPP
         TrajectoryActionBuilder go_collect_GPP = go_from_shoot_to_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(33, -64), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(33, -62.5), Math.toRadians(90));
 
         //go shoot GPP
         TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-160)));
+                .strafeToLinearHeading(new Vector2d(59, -20), (Math.toRadians(-159)));
 
         //go from shoot position to PGP
         TrajectoryActionBuilder go_from_shoot_to_PGP = go_shoot_GPP.endTrajectory().fresh()
@@ -477,7 +477,7 @@ public final class auto_blue_far_21_22 extends LinearOpMode {
 
         //go collect PGP
         TrajectoryActionBuilder go_collect_PGP = go_from_shoot_to_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12, -64), Math.toRadians(100));
+                .strafeToLinearHeading(new Vector2d(12, -62.5), Math.toRadians(100));
 
         //go shoot PGP
         TrajectoryActionBuilder go_shoot_PGP = go_collect_PGP.endTrajectory().fresh()
