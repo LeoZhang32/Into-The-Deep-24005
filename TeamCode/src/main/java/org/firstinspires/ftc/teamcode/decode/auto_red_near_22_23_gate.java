@@ -390,11 +390,11 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
 
         //go open gate
         TrajectoryActionBuilder go_open_gate_PPG = go_collect_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-5, 51), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(-6, 50), Math.toRadians(-90));
 
         //open gate
         TrajectoryActionBuilder open_gate_PPG = go_open_gate_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-5, 58.5), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(-3, 58.5), Math.toRadians(-90));
 
         //go shoot PPG
         TrajectoryActionBuilder go_shoot_PPG = open_gate_PPG.endTrajectory().fresh()
@@ -410,7 +410,7 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
 
         //go shoot PGP2
         TrajectoryActionBuilder go_shoot_PGP2 = go_collect_PGP2.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(14, 45), Math.toRadians(-130))
+                .strafeToLinearHeading(new Vector2d(14, 45), Math.toRadians(-130))
                 .strafeToSplineHeading(new Vector2d(-14, 17), (Math.toRadians(129)));
 
         //LEAVE
@@ -434,16 +434,16 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
         //go open gate
         TrajectoryActionBuilder go_open_gate_PGP = go_collect_PGP.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(14, 51), Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(7, 53), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(6, 51), Math.toRadians(-90));
 
         //open gate
         TrajectoryActionBuilder open_gate_PGP = go_open_gate_PGP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(5, 58.5), Math.toRadians(-90));
+                .strafeToLinearHeading(new Vector2d(4, 58.5), Math.toRadians(-90));
 
         //go shoot PGP
         TrajectoryActionBuilder go_shoot_PGP = open_gate_PGP.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(5, 26), (Math.toRadians(180)))
-                .strafeToLinearHeading(new Vector2d(-13, 17), (Math.toRadians(130)));
+                .strafeToLinearHeading(new Vector2d(-15, 17), (Math.toRadians(128)));
 
         //go from shoot position to PPG2
         TrajectoryActionBuilder go_from_shoot_to_PPG2 = go_shoot_PPG.endTrajectory().fresh()
@@ -455,7 +455,7 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
 
         //go shoot PPG2
         TrajectoryActionBuilder go_shoot_PPG2 = go_collect_PPG2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-13, 17), (Math.toRadians(130)));
+                .strafeToLinearHeading(new Vector2d(-16, 17), (Math.toRadians(128)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PPG2 = go_shoot_PPG2.endTrajectory().fresh()
@@ -464,37 +464,37 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
 
 
 
-
-        //After Scan, if it is April Tag 21 (GPP), then follow this sequence: GPP
-
-        // go to GPP
-        TrajectoryActionBuilder go_from_obelisk_to_GPP = go_scan_obelisk.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, 28), (Math.toRadians(-90)));
-
-        //go collect GPP
-        TrajectoryActionBuilder go_collect_GPP = go_from_obelisk_to_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, 64), Math.toRadians(-90));
-
-        //go shoot GPP
-        TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, 25), Math.toRadians(-170))
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
-
-        //go from shoot position to PPG3
-        TrajectoryActionBuilder go_from_shoot_to_PPG3 = go_shoot_PPG.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, 28), (Math.toRadians(-90)));
-
-        //go collect PPG3
-        TrajectoryActionBuilder go_collect_PPG3 = go_from_shoot_to_PPG3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11, 57), Math.toRadians(-90));
-
-        //go shoot PPG3
-        TrajectoryActionBuilder go_shoot_PPG3 = go_collect_PPG3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
-
-        //LEAVE
-        TrajectoryActionBuilder go_leave_PPG3 = go_shoot_PPG3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(14, 28), (Math.toRadians(-90)));
+//
+//        //After Scan, if it is April Tag 21 (GPP), then follow this sequence: GPP
+//
+//        // go to GPP
+//        TrajectoryActionBuilder go_from_obelisk_to_GPP = go_scan_obelisk.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(36, 28), (Math.toRadians(-90)));
+//
+//        //go collect GPP
+//        TrajectoryActionBuilder go_collect_GPP = go_from_obelisk_to_GPP.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(36, 64), Math.toRadians(-90));
+//
+//        //go shoot GPP
+//        TrajectoryActionBuilder go_shoot_GPP = go_collect_GPP.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(36, 25), Math.toRadians(-170))
+//                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+//
+//        //go from shoot position to PPG3
+//        TrajectoryActionBuilder go_from_shoot_to_PPG3 = go_shoot_PPG.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-11, 28), (Math.toRadians(-90)));
+//
+//        //go collect PPG3
+//        TrajectoryActionBuilder go_collect_PPG3 = go_from_shoot_to_PPG3.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-11, 57), Math.toRadians(-90));
+//
+//        //go shoot PPG3
+//        TrajectoryActionBuilder go_shoot_PPG3 = go_collect_PPG3.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+//
+//        //LEAVE
+//        TrajectoryActionBuilder go_leave_PPG3 = go_shoot_PPG3.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(14, 28), (Math.toRadians(-90)));
 
         waitForStart();
         runtime.reset();
@@ -558,7 +558,7 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
                                         go_open_gate_PPG.build()
                                 ),
                                 open_gate_PPG.build(),
-                                new SleepAction(1.5),
+                                new SleepAction(1),
                                 go_shoot_PPG.build(),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
@@ -630,7 +630,7 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
                                         go_open_gate_PPG.build()
                                 ),
                                 open_gate_PPG.build(),
-                                new SleepAction(1.5),
+                                new SleepAction(1),
                                 go_shoot_PPG.build(),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),
@@ -666,7 +666,7 @@ public final class auto_red_near_22_23_gate extends LinearOpMode {
                                         go_open_gate_PPG.build()
                                 ),
                                 open_gate_PPG.build(),
-                                new SleepAction(1.5),
+                                new SleepAction(1),
                                 go_shoot_PPG.build(),
                                 outtake.OuttakeTimerReset(),
                                 outtake.OuttakeRun(),

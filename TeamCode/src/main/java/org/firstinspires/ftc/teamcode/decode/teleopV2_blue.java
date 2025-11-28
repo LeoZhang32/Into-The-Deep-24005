@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.decode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="Teleop V2")
-public class teleopV2 extends LinearOpMode {
+@TeleOp(name="Teleop V2 Blue")
+public class teleopV2_blue extends LinearOpMode {
     DecodeRobotHardwareV2 robot = new DecodeRobotHardwareV2(this);
 
     Boolean slowModeOn = false;
@@ -37,8 +37,8 @@ public class teleopV2 extends LinearOpMode {
             slowModeOn = cycle_gamepad1.lbPressCount != 0;
             autoAlignOn = gamepad1.left_trigger >= 0.5 || gamepad1.right_trigger >= 0.5;
             if (autoAlignOn) {
-                if (gamepad1.left_trigger >= 0.5) robot.driveToApril(true, 24, true);
-                else if (gamepad1.right_trigger >= 0.5) robot.driveToApril(true, 24, false);
+                if (gamepad1.left_trigger >= 0.5) robot.driveToApril(true, 20, true);
+                else if (gamepad1.right_trigger >= 0.5) robot.driveToApril(true, 20, false);
             }
             else {
                 drive_y = -gamepad1.left_stick_y;

@@ -479,7 +479,7 @@ public final class auto_red_near_solo extends LinearOpMode {
 
         //go shoot PPG3
         TrajectoryActionBuilder go_shoot_PPG3 = go_collect_PPG3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(136)));
+                .strafeToLinearHeading(new Vector2d(-12, 17), (Math.toRadians(134)));
 
         //LEAVE
         TrajectoryActionBuilder go_leave_PPG3 = go_shoot_PPG3.endTrajectory().fresh()
