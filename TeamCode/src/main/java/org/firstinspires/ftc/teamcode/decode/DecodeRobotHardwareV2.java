@@ -357,25 +357,43 @@ public class DecodeRobotHardwareV2 {
                     desiredHeading = 0;
                     desiredYaw = 0;
                 }
-                if (10 < desiredTag.ftcPose.yaw && desiredTag.ftcPose.yaw <= 30){
-                    //yaw 19.2
-                    //bearing -3
-                    //distance 57.4
-                    desiredDistance = 57.4;
-                    desiredHeading = -3;
-                    desiredYaw = 19.2;
+                if (desiredTagID == 24) {
+                    if (10 < desiredTag.ftcPose.yaw && desiredTag.ftcPose.yaw <= 30){
+                        //yaw 19.2
+                        //bearing -3
+                        //distance 57.4
+                        desiredDistance = 57.4;
+                        desiredHeading = -3;
+                        desiredYaw = 19.2;
+                    }
+                    if (30 < desiredTag.ftcPose.yaw) {
+                        desiredDistance = 53;
+                        desiredHeading = -1.9;
+                        desiredYaw = 37.5;
+                    }
                 }
-                if (30 < desiredTag.ftcPose.yaw) {
-                    desiredDistance = 53;
-                    desiredHeading = -1.9;
-                    desiredYaw = 37.5;
+                if (desiredTagID == 20){
+                    if (-10 > desiredTag.ftcPose.yaw && desiredTag.ftcPose.yaw >= -30){
+                        //yaw 19.2
+                        //bearing -3
+                        //distance 57.4
+                        desiredDistance = 57.4;
+                        desiredHeading = -3;
+                        desiredYaw = -19.2;
+                    }
+                    if (-30 > desiredTag.ftcPose.yaw) {
+                        desiredDistance = 53;
+                        desiredHeading = -1.9;
+                        desiredYaw = -37.5;
+                    }
                 }
 
             }
             else {
                 desiredDistance = 104.7;
                 desiredHeading = 4.1;
-                desiredYaw = -27.4;
+                if (desiredTagID == 24) desiredYaw = -27.4;
+                if (desiredTagID == 20) desiredYaw = 27.4;
             }
             rangeError = (desiredTag.ftcPose.range - desiredDistance);
             headingError = desiredTag.ftcPose.bearing - desiredHeading;
