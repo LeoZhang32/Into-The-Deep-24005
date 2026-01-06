@@ -11,6 +11,13 @@ public class timertest extends LinearOpMode {
     Servo flicker1;
     Servo flicker2;
     Servo flicker3;
+
+    public static double home1 = 0.96;
+    public static double home2 = 0.03;
+    public static double home3 = 0.175;
+    public static double score1 = 0.66;
+    public static double score2 = 0.33;
+    public static double score3 = 0.475;
     int flickerCount = 1;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,7 +29,7 @@ public class timertest extends LinearOpMode {
         if (isStopRequested()) return;
         while (!isStopRequested() && opModeIsActive()) {
             if (gamepad1.a){
-                if (nextTimer.seconds() >= 2){
+                if (nextTimer.seconds() >= 0.4){
                     flickerTimer.reset();
                     nextTimer.reset();
                     flickerCount += 1;
@@ -31,28 +38,28 @@ public class timertest extends LinearOpMode {
                     flickerCount = 1;
                 }
                 if (flickerCount == 1){
-                    if (flickerTimer.seconds() <= 1){
-                        flicker1.setPosition(0.95);
+                    if (flickerTimer.seconds() <= 0.25){
+                        flicker1.setPosition(score1);
                     }
-                    else flicker1.setPosition(0.65);
+                    else flicker1.setPosition(home1);
                 }
                 else if (flickerCount == 2){
-                    if (flickerTimer.seconds() <= 1){
-                        flicker2.setPosition(0.55);
+                    if (flickerTimer.seconds() <= 0.25){
+                        flicker2.setPosition(score2);
                     }
-                    else flicker2.setPosition(0.85);
+                    else flicker2.setPosition(home2);
                 }
                 else if (flickerCount == 3){
-                    if (flickerTimer.seconds() <= 1){
-                        flicker3.setPosition(0.46);
+                    if (flickerTimer.seconds() <= 0.25){
+                        flicker3.setPosition(score3);
                     }
-                    else flicker3.setPosition(0.76);
+                    else flicker3.setPosition(home3);
                 }
             }
             else {
-                flicker1.setPosition(0.65);
-                flicker2.setPosition(0.85);
-                flicker3.setPosition(0.76);
+                flicker1.setPosition(home1);
+                flicker2.setPosition(home2);
+                flicker3.setPosition(home3);
 
             }
             telemetry.addData("nexttimer:", nextTimer.seconds());

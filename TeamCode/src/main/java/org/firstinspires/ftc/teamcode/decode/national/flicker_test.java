@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @TeleOp
 public class flicker_test extends LinearOpMode {
 
+    DcMotor intake;
     Servo flicker1;
     boolean ball1_button_pressed;
     boolean ball1_released;
@@ -21,16 +23,17 @@ public class flicker_test extends LinearOpMode {
     Servo flicker3;
     boolean ball3_button_pressed;
     boolean ball3_released;
-    public static double home1 = 0.65;
-    public static double home2 = 0.85;
-    public static double home3 = 0.76;
-    public static double score1 = 0.95;
-    public static double score2 = 0.55;
-    public static double score3 = 0.46;
+    public static double home1 = 0.96;
+    public static double home2 = 0.03;
+    public static double home3 = 0.175;
+    public static double score1 = 0.66;
+    public static double score2 = 0.33;
+    public static double score3 = 0.475;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
+        intake = hardwareMap.dcMotor.get("intake");
         flicker1 = hardwareMap.servo.get("flicker1");
         flicker2 = hardwareMap.servo.get("flicker2");
         flicker3 = hardwareMap.servo.get("flicker3");
@@ -42,6 +45,14 @@ public class flicker_test extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (!isStopRequested() && opModeIsActive()) {
+
+            if (gamepad1.dpad_up){
+                intake.setPower(1);
+            }
+            else if (gamepad1.dpad_down){
+                intake.setPower(-1);
+            }
+            else intake.setPower(0);
 
             if (gamepad1.x) {
                 if (!ball1_button_pressed) {

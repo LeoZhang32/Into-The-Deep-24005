@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.decode.CycleGamepad;
 import org.firstinspires.ftc.teamcode.decode.DecodeRobotHardware;
 
 @Config
-@TeleOp(name="intake + flicker + PID Test1")
-public class intake_flicker_pid_test1 extends LinearOpMode {
+@TeleOp(name="intake + flicker + PID Test2")
+public class intake_flicker_pid_test2 extends LinearOpMode {
     DecodeRobotHardware robot = new DecodeRobotHardware(this);
 
     DcMotorEx shooterTop;
@@ -40,6 +40,15 @@ public class intake_flicker_pid_test1 extends LinearOpMode {
     Servo flicker3;
     boolean ball3_button_pressed;
     boolean ball3_released;
+    ElapsedTime nextTimer = new ElapsedTime();
+    ElapsedTime flickerTimer = new ElapsedTime();
+    int flickerCount = 1;
+    public static double home1 = 0.96;
+    public static double home2 = 0.03;
+    public static double home3 = 0.175;
+    public static double score1 = 0.66;
+    public static double score2 = 0.33;
+    public static double score3 = 0.475;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -57,16 +66,80 @@ public class intake_flicker_pid_test1 extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
         CycleGamepad cyclegamepad1 = new CycleGamepad(gamepad1);
-
+        nextTimer.reset();
 
         waitForStart();
-        while (opModeIsActive()) {
+        if (isStopRequested()) return;
+        while (!isStopRequested() && opModeIsActive()) {
             cyclegamepad1.updateRB(2);
             double power = PIDControl(targetVelocity, shooterTop.getVelocity(AngleUnit.DEGREES));
             telemetry.addData("velocity top", shooterTop.getVelocity(AngleUnit.DEGREES));
             dashboardTelemetry.addData("velocity", shooterTop.getVelocity(AngleUnit.DEGREES));
             dashboardTelemetry.addData("reference", targetVelocity);
             dashboardTelemetry.update();
+
+            if (gamepad1.y){
+                if (nextTimer.seconds() >= 0.4){
+                    flickerTimer.reset();
+                    nextTimer.reset();
+                    flickerCount += 1;
+                }
+                if (flickerCount == 4){
+                    flickerCount = 1;
+                }
+                if (flickerCount == 1){
+                    if (flickerTimer.seconds() <= 0.25){
+                        flicker1.setPosition(score1);
+                    }
+                    else flicker1.setPosition(home1);
+                }
+                else if (flickerCount == 2){
+                    if (flickerTimer.seconds() <= 0.25){
+                        flicker2.setPosition(score2);
+                    }
+                    else flicker2.setPosition(home2);
+                }
+                else if (flickerCount == 3){
+                    if (flickerTimer.seconds() <= 0.25){
+                        flicker3.setPosition(score3);
+                    }
+                    else flicker3.setPosition(home3);
+                }
+            }
+            else {
+                if (gamepad1.x) {
+                    if (!ball1_button_pressed) {
+                        ball1_released = !ball1_released;
+                    }
+                    ball1_button_pressed = true;
+
+                } else ball1_button_pressed = false;
+
+
+
+                if (gamepad1.a) {
+                    if (!ball2_button_pressed) {
+                        ball2_released = !ball2_released;
+                    }
+                    ball2_button_pressed = true;
+
+                } else ball2_button_pressed = false;
+
+
+
+                if (gamepad1.b) {
+                    if (!ball3_button_pressed) {
+                        ball3_released = !ball3_released;
+                    }
+                    ball3_button_pressed = true;
+
+                } else ball3_button_pressed = false;
+
+
+            }
+            telemetry.addData("nexttimer:", nextTimer.seconds());
+            telemetry.update();
+
             if (cyclegamepad1.rbPressCount == 0) {
                 shooterTop.setPower(0);
                 shooterBottom.setPower(0);
@@ -77,34 +150,7 @@ public class intake_flicker_pid_test1 extends LinearOpMode {
 
             telemetry.update();
 
-            if (gamepad1.x) {
-                if (!ball1_button_pressed) {
-                    ball1_released = !ball1_released;
-                }
-                ball1_button_pressed = true;
 
-            } else ball1_button_pressed = false;
-            updateBooleans();
-
-
-            if (gamepad1.a) {
-                if (!ball2_button_pressed) {
-                    ball2_released = !ball2_released;
-                }
-                ball2_button_pressed = true;
-
-            } else ball2_button_pressed = false;
-            updateBooleans();
-
-
-            if (gamepad1.b) {
-                if (!ball3_button_pressed) {
-                    ball3_released = !ball3_released;
-                }
-                ball3_button_pressed = true;
-
-            } else ball3_button_pressed = false;
-            updateBooleans();
 
 
 
@@ -116,7 +162,7 @@ public class intake_flicker_pid_test1 extends LinearOpMode {
             }
             else intake.setPower(0);
 
-
+            updateBooleans();
 
         }
     }
@@ -136,21 +182,21 @@ public class intake_flicker_pid_test1 extends LinearOpMode {
 
     public void updateBooleans() {
         if (ball1_released) {
-            flicker1.setPosition(0.66);
+            flicker1.setPosition(score1);
         } else {
-            flicker1.setPosition(0.96);// lower position
+            flicker1.setPosition(home1);// lower position
         }
 
         if (ball2_released) {
-            flicker2.setPosition(0.33);
+            flicker2.setPosition(score2);
         } else {
-            flicker2.setPosition(0.03);// lower position
+            flicker2.setPosition(home2);// lower position
         }
 
         if (ball3_released) {
-            flicker3.setPosition(0.475);
+            flicker3.setPosition(score3);
         } else {
-            flicker3.setPosition(0.175);// lower position
+            flicker3.setPosition(home3);// lower position
         }
 
     }
